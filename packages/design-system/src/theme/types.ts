@@ -29,12 +29,10 @@ export type Tokens = {
     hover: string; // #8a5cff
   };
 
-  // Shadows for elevation
+  // Shadow colors for elevation functions
   shadow: {
-    sm: string; // subtle shadow for cards
-    md: string; // medium shadow for raised elements
-    lg: string; // strong shadow for modals, dropdowns
-    inner: string; // inner highlight for top edge
+    color: string; // main shadow color
+    highlight: string; // inner highlight color for elevation effects
   };
 
   // Intent-based semantic colors - core design tokens only

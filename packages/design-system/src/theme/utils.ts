@@ -29,7 +29,7 @@ export function cardStyle(tokens: Tokens) {
     background: `linear-gradient(180deg, ${lighten(tokens.card, 0.02)} 0%, ${
       tokens.card
     } 100%)`,
-    boxShadow: `${tokens.shadow.sm}, ${tokens.shadow.inner}`,
+    boxShadow: `0 1px 3px ${tokens.shadow.color}, 0 1px 2px ${tokens.shadow.color}, inset 0 1px 0 ${tokens.shadow.highlight}`,
     border: `1px solid ${tokens.border}`,
   };
 }
@@ -39,7 +39,7 @@ export function raisedStyle(tokens: Tokens) {
     background: `linear-gradient(180deg, ${lighten(tokens.raised, 0.03)} 0%, ${
       tokens.raised
     } 100%)`,
-    boxShadow: `${tokens.shadow.md}, ${tokens.shadow.inner}`,
+    boxShadow: `0 4px 8px ${tokens.shadow.color}, 0 2px 4px ${tokens.shadow.color}, inset 0 1px 0 ${tokens.shadow.highlight}`,
     border: `1px solid ${tokens.border}`,
   };
 }
@@ -49,7 +49,7 @@ export function elevatedStyle(tokens: Tokens) {
     background: `linear-gradient(180deg, ${lighten(tokens.raised, 0.05)} 0%, ${
       tokens.raised
     } 100%)`,
-    boxShadow: `${tokens.shadow.lg}, ${tokens.shadow.inner}`,
+    boxShadow: `0 10px 30px ${tokens.shadow.color}, 0 6px 10px ${tokens.shadow.color}, inset 0 1px 0 ${tokens.shadow.highlight}`,
     border: `1px solid ${tokens.border}`,
   };
 }
@@ -58,9 +58,7 @@ export function concaveStyle(tokens: Tokens) {
   return {
     background: `linear-gradient(145deg, ${tokens.page} 0%, ${tokens.card} 100%)`,
     border: `1px solid ${tokens.border}`,
-    boxShadow: `inset 2px 2px 4px ${
-      tokens.shadow.sm.split(",")[0]
-    }, inset -1px -1px 2px rgba(255,255,255,0.05)`,
+    boxShadow: `inset 2px 2px 4px ${tokens.shadow.color}, inset -1px -1px 2px ${tokens.shadow.highlight}`,
   };
 }
 

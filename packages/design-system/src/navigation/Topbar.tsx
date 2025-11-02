@@ -10,7 +10,7 @@ export const Topbar: React.FC<{ onMenu?: () => void }> = ({ onMenu }) => {
       style={{
         background: tokens.card,
         borderBottom: `1px solid ${tokens.border}`,
-        boxShadow: tokens.shadow.sm,
+        boxShadow: `0 1px 3px ${tokens.shadow.color}, 0 1px 2px ${tokens.shadow.color}`,
         color: tokens.text,
       }}
     >

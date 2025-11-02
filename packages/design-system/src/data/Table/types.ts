@@ -42,6 +42,7 @@ export interface TableProps<T = any> {
 export interface LoadingOverlayProps {
   message: string;
   children: React.ReactNode;
+  headerOffset?: number; // Offset from top to avoid covering headers (default: 50px)
 }
 
 export interface TableSkeletonProps<T = any> {

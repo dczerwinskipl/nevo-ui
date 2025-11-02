@@ -10,6 +10,7 @@ import { LoadingOverlayProps } from "./types";
 export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
   message,
   children,
+  headerOffset = 50, // Default offset to avoid covering headers, but configurable
 }) => {
   const { tokens } = useTheme();
 
@@ -20,7 +21,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
         className="absolute flex items-center justify-center backdrop-blur-sm"
         style={{
           backgroundColor: `${tokens.raised}80`,
-          top: "50px", // Offset to avoid covering headers
+          top: `${headerOffset}px`,
           left: "0",
           right: "0",
           bottom: "0",

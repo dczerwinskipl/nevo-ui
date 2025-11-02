@@ -31,7 +31,7 @@ export const NumberFilter: React.FC<NumberFilterProps> = ({
       {...(label && { label })}
       type="number"
       size={size}
-      value={String(value)}
+      value={value !== undefined ? String(value) : ""}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
         const v = e.target.value === "" ? undefined : Number(e.target.value);
         onChange(v);

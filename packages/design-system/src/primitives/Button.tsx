@@ -54,7 +54,7 @@ export const Button: React.FC<ButtonProps> = ({
         background: style.background,
         color: style.color,
         border: style.border,
-        boxShadow: variant === "solid" ? tokens.shadow.sm : "none",
+        boxShadow: variant === "solid" ? `0 1px 3px ${tokens.shadow.color}, 0 1px 2px ${tokens.shadow.color}` : "none",
       }}
     >
       {loading ? "Loading..." : children}

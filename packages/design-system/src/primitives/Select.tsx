@@ -140,6 +140,7 @@ export const Select: React.FC<SelectProps> = ({
 
       {isOpen && (
         <div
+          role="listbox"
           className="absolute top-full left-0 right-0 z-50 mt-1 rounded-lg shadow-lg border max-h-60 overflow-auto"
           style={{
             backgroundColor: tokens.card,
@@ -150,6 +151,8 @@ export const Select: React.FC<SelectProps> = ({
             <button
               key={option.value}
               type="button"
+              role="option"
+              aria-selected={option.value === value}
               onClick={() => handleSelect(option.value === "" ? null : option)}
               className={clsx(
                 "w-full text-left px-3 py-2 text-sm transition-colors duration-150 first:rounded-t-lg last:rounded-b-lg",

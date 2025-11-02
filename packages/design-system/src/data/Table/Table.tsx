@@ -38,7 +38,7 @@ export const Table = <T extends Record<string, any>>({
       setSnapshotData(data || []);
     }
     setPrevIsLoading(isLoading);
-  }, [isLoading, prevIsLoading, data]);
+  }, [isLoading, prevIsLoading]);
 
   const handleActionClick = (action: TableAction<T>, row: T) => {
     action.onClick?.(row);
