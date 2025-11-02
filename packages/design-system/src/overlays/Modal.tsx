@@ -35,11 +35,13 @@ export const Modal: React.FC<{
       tabIndex={-1}
       role="presentation"
     >
-      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
         className="absolute inset-0 bg-black/50"
         onClick={handleOverlayClick}
         onKeyDown={handleOverlayKeyDown}
+        role="button"
+        tabIndex={0}
+        aria-label="Close modal overlay"
       />
       <div
         className="relative w-full max-w-xl rounded-2xl p-4"

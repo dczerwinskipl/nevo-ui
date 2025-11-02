@@ -83,6 +83,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {open && (
         <div className="fixed inset-0 z-50 md:hidden">
           <button
+            type="button"
             className="absolute inset-0 bg-black/50 w-full h-full cursor-default border-none p-0"
             onClick={onClose}
             onKeyDown={(e) => {
@@ -101,8 +102,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               boxShadow: `0 10px 30px ${tokens.shadow.color}, 0 6px 10px ${tokens.shadow.color}`,
               color: tokens.text,
             }}
-            role="navigation"
-            aria-label="Main navigation"
+            onClickCapture={(e) => e.stopPropagation()}
           >
             <div className="p-4 h-full overflow-y-auto">
               <NavList

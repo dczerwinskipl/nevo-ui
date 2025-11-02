@@ -1,5 +1,5 @@
 // Jest setup file
-require('@testing-library/jest-dom');
+require("@testing-library/jest-dom");
 
 // Mock IntersectionObserver if needed for components
 global.IntersectionObserver = class IntersectionObserver {
@@ -18,9 +18,9 @@ global.ResizeObserver = class ResizeObserver {
 };
 
 // Mock matchMedia for responsive components
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -37,8 +37,8 @@ const originalConsoleError = console.error;
 beforeEach(() => {
   console.error = (...args) => {
     if (
-      typeof args[0] === 'string' &&
-      args[0].includes('Warning: ReactDOM.render is deprecated')
+      typeof args[0] === "string" &&
+      args[0].includes("Warning: ReactDOM.render is deprecated")
     ) {
       return;
     }
@@ -53,18 +53,31 @@ afterEach(() => {
 // Custom matchers for better test assertions
 expect.extend({
   toHaveAccessibleName(received, expectedName) {
-    const accessibleName = received.getAttribute('aria-label') || 
-                          received.getAttribute('aria-labelledby') ||
-                          received.textContent;
-    
+    let accessibleName = received.getAttribute("aria-label");
+
+    // If no aria-label, try to resolve aria-labelledby
+    if (!accessibleName) {
+      const labelledBy = received.getAttribute("aria-labelledby");
+      if (labelledBy) {
+        const labelElement = document.getElementById(labelledBy);
+        accessibleName = labelElement ? labelElement.textContent : labelledBy;
+      }
+    }
+
+    // Fall back to text content
+    if (!accessibleName) {
+      accessibleName = received.textContent;
+    }
+
     const pass = accessibleName === expectedName;
-    
+
     return {
       pass,
-      message: () => 
-        pass 
+      message: () =>
+        pass
           ? `Expected element not to have accessible name "${expectedName}"`
-          : `Expected element to have accessible name "${expectedName}", but got "${accessibleName}"`
+          : `Expected element to have accessible name "${expectedName}", ` +
+            `but got "${accessibleName}"`,
     };
-  }
+  },
 });

@@ -77,7 +77,9 @@ module.exports = {
       lines: 100,
       statements: 100,
     },
-  }, // Transform configuration
+  },
+
+  // Transform configuration
   transform: {
     "^.+\\.(ts|tsx)$": [
       "ts-jest",
