@@ -1,22 +1,20 @@
 import { useCallback, useMemo, useState } from 'react';
 
-export type FilterValue = string | number | '';
+export type FilterValue = string | number | '' | undefined;
 
-export type InferFilterType<T> = T extends string ? 'text' | 'select' : T extends number ? 'number' | 'select' : never;
+export interface BaseFilterFieldConfig {
+  name: string;
+  label: string;
+  type: 'text' | 'select' | 'number';
+  placeholder?: string;
+  options?: Array<{ label: string; value: string | number }>;
+  min?: number;
+  max?: number;
+  disabled?: boolean;
+  isError?: boolean;
+}
 
-export type FilterConfig<TFilters extends Record<string, FilterValue>> = {
-  [K in keyof TFilters]: {
-    name: K;
-    label: string;
-    type: InferFilterType<TFilters[K]>;
-    placeholder?: string;
-    options?: TFilters[K] extends string ? Array<{ label: string; value: TFilters[K] }> : never;
-    min?: TFilters[K] extends number ? number : never;
-    max?: TFilters[K] extends number ? number : never;
-    disabled?: boolean;
-    isError?: boolean;
-  };
-};
+export type FilterConfig<TFilters extends Record<string, FilterValue>> = Record<keyof TFilters, BaseFilterFieldConfig>;
 
 export function useFilters<TFilters extends Record<string, FilterValue>>(initialFilters: TFilters, config: FilterConfig<TFilters>) {
   const [pending, setPending] = useState<TFilters>(initialFilters);
@@ -36,8 +34,20 @@ export function useFilters<TFilters extends Record<string, FilterValue>>(initial
   }, [pending]);
 
   const isDirty = useMemo(() => {
-    return Object.keys(initialFilters).some((k) => (pending as any)[k] !== (applied as any)[k]);
-  }, [pending, applied, initialFilters]);
+    // Check all config keys, not just initialFilters keys
+    const dirty = (Object.keys(config) as Array<keyof TFilters>).some((k) => {
+      const pendingValue = pending[k];
+      const appliedValue = applied[k];
+      // Consider undefined and empty string as equivalent for dirty detection
+      const normalizedPending = pendingValue === "" ? undefined : pendingValue;
+      const normalizedApplied = appliedValue === "" ? undefined : appliedValue;
+      const isDifferent = normalizedPending !== normalizedApplied;
+      
+      return isDifferent;
+    });
+    
+    return dirty;
+  }, [pending, applied, config]);
 
   const pendingFilters = pending;
 
@@ -45,7 +55,7 @@ export function useFilters<TFilters extends Record<string, FilterValue>>(initial
     const errors: Partial<Record<keyof TFilters, boolean>> = {};
     (Object.keys(config) as Array<keyof TFilters>).forEach((key) => {
       const c = config[key];
-      if (c && (c as any).isError) errors[key] = true;
+      if (c?.isError) errors[key] = true;
     });
     return errors;
   }, [config]);

@@ -1,0 +1,74 @@
+import useFilters from '../../../hooks/useFilters';
+import useProducts from '../../../hooks/useProducts';
+import type { ProductFilters } from '../types/Product';
+import type { FilterConfig } from '../../../hooks/useFilters';
+
+// Filter configuration with options - properly typed for intellisense
+const productFilterConfig: FilterConfig<ProductFilters> = {
+  search: {
+    name: 'search',
+    label: 'Search Products',
+    type: 'text',
+    placeholder: 'Name, SKU, description...',
+  },
+  tag: {
+    name: 'tag',
+    label: 'Tag',
+    type: 'select',
+    placeholder: 'All Tags',
+    options: [
+      { label: "Electronics", value: "electronics" },
+      { label: "Premium", value: "premium" },
+      { label: "Sale", value: "sale" },
+      { label: "New", value: "new" },
+    ],
+  },
+  price: {
+    name: 'price',
+    label: 'Maximum Price',
+    type: 'number',
+    placeholder: 'Maximum price',
+    min: 0,
+  },
+  status: {
+    name: 'status',
+    label: 'Status',
+    type: 'select',
+    placeholder: 'All Statuses',
+    options: [
+      { label: "Active", value: "active" },
+      { label: "Inactive", value: "inactive" },
+    ],
+  },
+};
+
+export function useProductFilters() {
+  const initial: ProductFilters = {};
+
+  const { filters, pendingFilters, updateFilter, applyFilters, clearFilters, isDirty } = useFilters(
+    initial, 
+    productFilterConfig
+  );
+
+  // Query hook manages its own loading states and receives applied filters directly
+  const { data, isLoading, isFetching, error, refetch } = useProducts(filters);
+
+  return {
+    data,
+    error,
+    refetch,
+    // Filter state and actions
+    pendingFilters,
+    updateFilter,
+    applyFilters,
+    clearFilters,
+    isDirty,
+    // Loading states come from query, not filters
+    isLoading,
+    isFetching,
+    // Config with options
+    config: productFilterConfig,
+  } as const;
+}
+
+export default useProductFilters;

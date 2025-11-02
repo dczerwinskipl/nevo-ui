@@ -3,8 +3,8 @@ import type { Product } from '../features/products/types/Product';
 
 export interface ProductsQueryParams {
   search?: string;
-  category?: string;
-  price?: number | '';
+  tag?: string;
+  price?: number;
   status?: string;
 }
 
@@ -23,14 +23,14 @@ export async function fetchProducts(params: ProductsQueryParams = {}, delay = 30
       if (p.status.toLowerCase() !== String(params.status).toLowerCase()) return false;
     }
 
-    if (params.price !== undefined && params.price !== '' && typeof params.price === 'number') {
-      const max = params.price as number;
+    if (params.price !== undefined && typeof params.price === 'number' && params.price > 0) {
+      const max = params.price;
       if (Number(p.price) > max) return false;
     }
 
-    // category not present in mock product schema; keep placeholder for mapping
-    if (params.category && params.category !== '') {
-      // If category filtering is required, implement mapping in app-level code.
+    // tag filtering - check if product has the specified tag
+    if (params.tag && params.tag !== '') {
+      if (!p.tags.includes(params.tag)) return false;
     }
 
     return true;

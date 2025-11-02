@@ -21,6 +21,16 @@ const SIZE_CLASSES: Record<ComponentSize, string> = {
   xl: "px-5 py-5 text-xl min-h-[52px]", // Largest touch target
 } as const;
 
+// Input styling constants to disable browser defaults
+const INPUT_RESET_CLASSES =
+  "flex-1 bg-transparent outline-none placeholder:opacity-60 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
+
+const getInputResetStyles = (type?: string): React.CSSProperties => ({
+  // Hide number input spinners for all browsers
+  WebkitAppearance: type === "number" ? "none" : undefined,
+  MozAppearance: type === "number" ? "textfield" : undefined,
+});
+
 export interface InputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
   label?: string;
@@ -59,7 +69,7 @@ export const Input: React.FC<InputProps> = ({
       {label && <span style={{ color: tokens.muted }}>{label}</span>}
       <div
         className={clsx(
-          "flex items-center gap-2 rounded-lg transition-all duration-200 focus-within:ring-2",
+          "flex items-center gap-2 rounded-lg transition-all duration-200 group",
           SIZE_CLASSES[size]
         )}
         style={
@@ -67,16 +77,35 @@ export const Input: React.FC<InputProps> = ({
             ...baseStyle,
             borderColor: borderColor,
             color: tokens.text,
-            "--focus-ring-color": focusRingColor,
-          } as React.CSSProperties & { "--focus-ring-color": string }
+          } as React.CSSProperties
         }
       >
         {left}
         <input
           {...rest}
-          className="flex-1 bg-transparent outline-none placeholder:opacity-60 focus-within:ring-[var(--focus-ring-color)]"
+          className={clsx(INPUT_RESET_CLASSES, "focus:border-opacity-100")}
           style={{
             color: tokens.text,
+            ...getInputResetStyles(rest.type),
+            ...rest.style,
+          }}
+          onFocus={(e) => {
+            // Change parent border color on focus
+            const parent = e.target.parentElement;
+            if (parent) {
+              parent.style.borderColor = focusRingColor;
+              parent.style.boxShadow = `inset 2px 2px 4px rgba(109,106,255,0.1), inset -1px -1px 2px rgba(255,255,255,0.05)`;
+            }
+            rest.onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            // Restore original border color on blur
+            const parent = e.target.parentElement;
+            if (parent) {
+              parent.style.borderColor = borderColor;
+              parent.style.boxShadow = (baseStyle as any).boxShadow || "";
+            }
+            rest.onBlur?.(e);
           }}
         />
       </div>

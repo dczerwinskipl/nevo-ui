@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "../primitives/Button";
+import { Spinner } from "../primitives/Spinner";
 
 interface FilterActionsProps {
   onApply: () => void;
@@ -24,30 +25,11 @@ export const FilterActions: React.FC<FilterActionsProps> = ({
         intent="primary"
         size="sm"
         onClick={onApply}
-        disabled={disabled || isLoading}
+        disabled={disabled}
         className="flex items-center justify-center"
       >
         {/* Show a small spinner when loading, avoid changing text */}
-        {isLoading ? (
-          <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-            <circle
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-              opacity="0.25"
-            />
-            <path
-              d="M4 12a8 8 0 018-8"
-              stroke="currentColor"
-              strokeWidth="4"
-              strokeLinecap="round"
-            />
-          </svg>
-        ) : (
-          applyLabel
-        )}
+        {isLoading ? <Spinner size="sm" /> : applyLabel}
       </Button>
 
       <Button

@@ -1,43 +1,48 @@
 import React from "react";
-import { Card, Button, Input, Select } from "@nevo/design-system";
+import { Card, FiltersForm } from "@nevo/design-system";
+import type { ProductFilters } from "../types/Product";
+import type { FilterConfig } from "../../../hooks/useFilters";
 
 export interface ProductsFiltersProps {
-  onFilter?: () => void;
+  filters: ProductFilters;
+  config: FilterConfig<ProductFilters>;
+  onUpdateFilter: <K extends keyof ProductFilters>(
+    key: K,
+    value: ProductFilters[K]
+  ) => void;
+  onApplyFilters: () => void;
+  onClearFilters: () => void;
+  isLoading?: boolean;
+  isFetching?: boolean;
+  isDirty?: boolean;
 }
 
-export function ProductsFilters({ onFilter }: ProductsFiltersProps) {
+export function ProductsFilters({
+  filters,
+  config,
+  onUpdateFilter,
+  onApplyFilters,
+  onClearFilters,
+  isLoading = false,
+  isFetching = false,
+  isDirty = false,
+}: ProductsFiltersProps) {
   return (
     <Card>
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-        <div>
-          <Input label="Szukaj" placeholder="Nazwa, SKU..." size="sm" />
-        </div>
-        <div>
-          <Select
-            label="Kategoria"
-            options={[{ label: "Audio", value: "audio" }]}
-            size="sm"
-          />
-        </div>
-        <div>
-          <Select
-            label="Status"
-            options={[{ label: "W drodze", value: "shipping" }]}
-            size="sm"
-          />
-        </div>
-        <div className="flex flex-col justify-end gap-1 text-sm">
-          <Button
-            intent="primary"
-            variant="solid"
-            size="sm"
-            className="w-full"
-            onClick={onFilter}
-          >
-            Zastosuj
-          </Button>
-        </div>
-      </div>
+      <FiltersForm<ProductFilters>
+        filters={filters}
+        config={config}
+        onUpdateFilter={onUpdateFilter}
+        onApplyFilters={onApplyFilters}
+        onClearFilters={onClearFilters}
+        isLoading={isLoading}
+        isFetching={isFetching}
+        isDirty={isDirty}
+        applyLabel="Apply"
+        clearLabel="Clear"
+      />
     </Card>
   );
 }
+
+export default ProductsFilters;

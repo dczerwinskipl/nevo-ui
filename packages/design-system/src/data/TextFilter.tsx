@@ -8,6 +8,8 @@ interface TextFilterProps {
   disabled?: boolean;
   isError?: boolean;
   size?: "sm" | "md" | "lg";
+  label?: string;
+  error?: string;
 }
 
 export const TextFilter: React.FC<TextFilterProps> = ({
@@ -17,9 +19,12 @@ export const TextFilter: React.FC<TextFilterProps> = ({
   disabled,
   isError,
   size = "sm",
+  label,
+  error,
 }) => {
   return (
     <Input
+      {...(label && { label })}
       size={size}
       value={value}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -28,6 +33,8 @@ export const TextFilter: React.FC<TextFilterProps> = ({
       placeholder={placeholder}
       disabled={disabled}
       aria-invalid={isError}
+      intent={isError ? "error" : "neutral"}
+      {...(error && { helperText: error })}
     />
   );
 };

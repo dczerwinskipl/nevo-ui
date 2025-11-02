@@ -160,4 +160,4 @@ types/
 
 # Allow committing source types folders used by the app (override global types/ ignore)
 !apps/**/src/**/types/
-!apps/**/src/**/types/**
+!apps/**/src/**/types/**apps/admin/.vite

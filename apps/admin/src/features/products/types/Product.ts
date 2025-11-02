@@ -15,11 +15,11 @@ export interface Product {
   updated: string; // ISO date or human readable
 }
 
-export interface ProductFilters {
-  search: string;
-  category: string;
-  price: number | '';
-  status: string;
-}
+export type ProductFilters = {
+  search?: string;
+  tag?: string;
+  price?: number;
+  status?: string;
+};
 
 export default Product;

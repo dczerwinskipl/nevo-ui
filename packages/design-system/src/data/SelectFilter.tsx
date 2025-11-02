@@ -9,6 +9,8 @@ interface SelectFilterProps<T extends string | number> {
   disabled?: boolean;
   isError?: boolean;
   size?: "sm" | "md" | "lg";
+  label?: string;
+  error?: string;
 }
 
 export function SelectFilter<T extends string | number>({
@@ -19,15 +21,20 @@ export function SelectFilter<T extends string | number>({
   disabled,
   isError,
   size = "sm",
+  label,
+  error,
 }: SelectFilterProps<T>) {
   return (
     <Select
-      options={options as any}
-      value={value as any}
+      {...(label && { label })}
+      options={options}
+      value={value}
       onChange={(v) => onChange(v as T)}
       placeholder={placeholder ?? "Select"}
       disabled={disabled ?? false}
-      size={size as any}
+      size={size}
+      intent={isError ? "error" : "neutral"}
+      {...(error && { helperText: error })}
     />
   );
 }

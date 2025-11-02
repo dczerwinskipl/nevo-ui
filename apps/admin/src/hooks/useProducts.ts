@@ -1,37 +1,38 @@
-import { useCallback, useEffect, useState } from 'react';
-import type { Product } from '../features/products/types/Product';
-import { fetchProducts } from '../services/productsApi';
+import { useQuery } from '@tanstack/react-query';
+import type { Product, ProductFilters } from '../features/products/types/Product';
+import { fetchProducts, type ProductsQueryParams } from '../services/productsApi';
 
-export function useProducts(filters: Partial<Record<string, any>> = {}) {
-  const [data, setData] = useState<Product[] | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isFetching, setIsFetching] = useState<boolean>(false);
-  const [error, setError] = useState<Error | null>(null);
+export function useProducts(filters: ProductFilters = {}) {
+  // Transform ProductFilters to ProductsQueryParams
+  const apiParams: ProductsQueryParams = {};
+  
+  if (filters.search) {
+    apiParams.search = filters.search;
+  }
+  if (filters.tag) {
+    apiParams.tag = filters.tag;
+  }
+  if (filters.price !== undefined) {
+    apiParams.price = filters.price;
+  }
+  if (filters.status) {
+    apiParams.status = filters.status;
+  }
 
-  const load = useCallback(async (params = {}) => {
-    try {
-      if (data === null) {
-        setIsLoading(true);
-      } else {
-        setIsFetching(true);
-      }
-
-      setError(null);
-      const res = await fetchProducts(params as any);
-      setData(res);
-    } catch (err) {
-      setError(err as Error);
-    } finally {
-      setIsLoading(false);
-      setIsFetching(false);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    load(filters);
-  }, [filters, load]);
-
-  const refetch = useCallback(() => load(filters), [load, filters]);
+  const {
+    data,
+    isLoading,
+    isFetching,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ['products', apiParams],
+    queryFn: async () => {
+      const result = await fetchProducts(apiParams, 2000);
+      return result;
+    },
+    staleTime: 1 * 60 * 1000, // 1 minute
+  });
 
   return {
     data: data ?? [],
