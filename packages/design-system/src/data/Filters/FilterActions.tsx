@@ -1,6 +1,6 @@
 import React from "react";
-import { Button } from "../primitives/Button";
-import { Spinner } from "../primitives/Spinner";
+import { Button } from "../../primitives/Button";
+import { Spinner } from "../../primitives/Spinner";
 
 interface FilterActionsProps {
   onApply: () => void;

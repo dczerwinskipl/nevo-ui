@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, FiltersForm } from "@nevo/design-system";
+import { Card, Filters } from "@nevo/design-system";
 import type { ProductFilters } from "../types/Product";
 import type { FilterConfig } from "../../../hooks/useFilters";
 
@@ -31,7 +31,7 @@ export function ProductsFilters({
 }: ProductsFiltersProps) {
   return (
     <Card>
-      <FiltersForm<ProductFilters>
+      <Filters<ProductFilters>
         filters={filters}
         config={config}
         onUpdateFilter={onUpdateFilter}
