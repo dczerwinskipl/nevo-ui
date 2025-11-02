@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 import {
   useTheme,
   getIntentStyle,
   ComponentIntent,
   ComponentVariant,
-} from '../theme';
+} from "../theme";
 
 export type BadgeIntent = ComponentIntent;
 export type BadgeVariant = ComponentVariant;
@@ -16,8 +16,8 @@ export interface BadgeProps {
 }
 
 export const Badge: React.FC<BadgeProps> = ({
-  intent = 'neutral',
-  variant = 'subtle',
+  intent = "neutral",
+  variant = "subtle",
   children,
 }) => {
   const { tokens } = useTheme();

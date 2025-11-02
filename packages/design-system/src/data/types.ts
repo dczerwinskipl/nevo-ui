@@ -1,9 +1,9 @@
-export type FilterValue = string | number | '' | undefined;
+export type FilterValue = string | number | "" | undefined;
 
 export interface BaseFilterFieldConfig {
   name: string;
   label: string;
-  type: 'text' | 'select' | 'number';
+  type: "text" | "select" | "number";
   placeholder?: string;
   options?: Array<{ label: string; value: string | number }>;
   min?: number;
@@ -12,4 +12,7 @@ export interface BaseFilterFieldConfig {
   isError?: boolean;
 }
 
-export type FilterConfig<TFilters extends Record<string, FilterValue>> = Record<keyof TFilters, BaseFilterFieldConfig>;
+export type FilterConfig<TFilters extends Record<string, FilterValue>> = Record<
+  keyof TFilters,
+  BaseFilterFieldConfig
+>;

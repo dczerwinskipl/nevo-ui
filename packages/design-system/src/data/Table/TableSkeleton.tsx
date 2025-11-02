@@ -1,7 +1,7 @@
-import React from 'react';
-import { useTheme } from '../../theme';
-import { TableSkeletonProps } from './types';
-import { TableHeader } from './TableHeader';
+import React from "react";
+import { useTheme } from "../../theme";
+import { TableSkeletonProps } from "./types";
+import { TableHeader } from "./TableHeader";
 
 /**
  * TableSkeleton component displays a skeleton loading state that matches
@@ -11,19 +11,19 @@ export const TableSkeleton = <T,>({
   rows,
   columns,
   hasActions,
-  actionsHeaderText = 'Actions',
+  actionsHeaderText = "Actions",
 }: TableSkeletonProps<T>) => {
   const { tokens } = useTheme();
   const SkeletonRow = ({
     column,
   }: {
-    column: { align?: 'left' | 'center' | 'right' };
+    column: { align?: "left" | "center" | "right" };
   }) => (
-    <td className="px-4 py-3" style={{ textAlign: column.align || 'left' }}>
+    <td className="px-4 py-3" style={{ textAlign: column.align || "left" }}>
       <div
         className="animate-pulse rounded"
         style={{
-          height: '16px',
+          height: "16px",
           backgroundColor: tokens.border,
         }}
       />
@@ -45,7 +45,7 @@ export const TableSkeleton = <T,>({
               style={{
                 borderBottom: `1px solid ${tokens.border}`,
                 background:
-                  rowIndex % 2 === 0 ? 'transparent' : `${tokens.raised}10`,
+                  rowIndex % 2 === 0 ? "transparent" : `${tokens.raised}10`,
               }}
             >
               {columns.map((column) => (
@@ -60,8 +60,8 @@ export const TableSkeleton = <T,>({
                           key={i}
                           className="animate-pulse rounded"
                           style={{
-                            width: '32px',
-                            height: '32px',
+                            width: "32px",
+                            height: "32px",
                             backgroundColor: tokens.border,
                           }}
                         />

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useTheme, raisedStyle, Tokens } from '../theme';
+import React, { useState } from "react";
+import { useTheme, Tokens } from "../theme";
 import {
   LayoutGrid,
   Package,
@@ -7,33 +7,33 @@ import {
   User,
   ChevronDown,
   ChevronRight,
-} from 'lucide-react';
+} from "lucide-react";
 
 // TODO: TASK-020 - Move sections array outside component to prevent recreation on each render
 
 // Extracted constants - no recreation on each render
 const NAVIGATION_SECTIONS: NavigationItem[] = [
   {
-    key: 'dashboard',
-    label: 'Dashboard',
+    key: "dashboard",
+    label: "Dashboard",
     icon: <LayoutGrid className="w-4 h-4" />,
   },
   {
-    key: 'products',
-    label: 'Produkty',
+    key: "products",
+    label: "Produkty",
     icon: <Package className="w-4 h-4" />,
     children: [
-      { key: 'products', label: 'Lista' },
-      { key: 'product-edit', label: 'Edycja' },
+      { key: "products", label: "Lista" },
+      { key: "product-edit", label: "Edycja" },
     ],
   },
   {
-    key: 'order',
-    label: 'Zamówienia',
+    key: "order",
+    label: "Zamówienia",
     icon: <ShoppingCart className="w-4 h-4" />,
-    children: [{ key: 'order', label: 'Szczegóły' }],
+    children: [{ key: "order", label: "Szczegóły" }],
   },
-  { key: 'users', label: 'Użytkownicy', icon: <User className="w-4 h-4" /> },
+  { key: "users", label: "Użytkownicy", icon: <User className="w-4 h-4" /> },
 ] as const;
 
 export interface NavigationChild {
@@ -81,8 +81,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <>
       {/* Mobile Sidebar Overlay */}
       {open && (
-        <div className="fixed inset-0 z-50 md:hidden" onClick={onClose}>
-          <div className="absolute inset-0 bg-black/50" />
+        <div className="fixed inset-0 z-50 md:hidden">
+          <button
+            className="absolute inset-0 bg-black/50 w-full h-full cursor-default border-none p-0"
+            onClick={onClose}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                onClose?.();
+              }
+            }}
+            aria-label="Close navigation menu"
+            tabIndex={0}
+          />
           <div
             className="absolute inset-y-0 left-0 w-72 max-w-[85vw] overflow-hidden"
             style={{
@@ -91,7 +101,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
               boxShadow: `0 10px 30px ${tokens.shadow.color}, 0 6px 10px ${tokens.shadow.color}`,
               color: tokens.text,
             }}
-            onClick={(e) => e.stopPropagation()}
+            role="navigation"
+            aria-label="Main navigation"
           >
             <div className="p-4 h-full overflow-y-auto">
               <NavList
@@ -149,7 +160,7 @@ function NavList({
         const isActive = route === s.key;
         const isChildActive =
           hasChildren &&
-          s.children!.some((c: NavigationChild) => c.key === route);
+          s.children?.some((c: NavigationChild) => c.key === route);
 
         return (
           <div key={s.key}>
@@ -158,12 +169,12 @@ function NavList({
               style={{
                 background:
                   isActive || isChildActive
-                    ? 'rgba(109,106,255,.15)'
-                    : 'transparent',
+                    ? "rgba(109,106,255,.15)"
+                    : "transparent",
                 color: isActive || isChildActive ? tokens.text : tokens.text,
                 border: `1px solid ${
                   isActive || isChildActive
-                    ? 'rgba(109,106,255,.3)'
+                    ? "rgba(109,106,255,.3)"
                     : tokens.border
                 }`,
                 boxShadow:
@@ -195,7 +206,7 @@ function NavList({
                 className="mt-1 ml-6 pl-3 space-y-1 border-l"
                 style={{ borderColor: tokens.border }}
               >
-                {s.children!.map((c: NavigationChild) => {
+                {s.children?.map((c: NavigationChild) => {
                   const subActive = route === c.key;
                   return (
                     <button
@@ -203,15 +214,15 @@ function NavList({
                       className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 hover:scale-[1.02]"
                       style={{
                         background: subActive
-                          ? 'rgba(109,106,255,.12)'
-                          : 'transparent',
+                          ? "rgba(109,106,255,.12)"
+                          : "transparent",
                         color: subActive ? tokens.text : tokens.text,
                         border: `1px solid ${
-                          subActive ? 'rgba(109,106,255,.2)' : 'transparent'
+                          subActive ? "rgba(109,106,255,.2)" : "transparent"
                         }`,
                         boxShadow: subActive
                           ? `0 1px 3px ${tokens.shadow.color}, 0 1px 2px ${tokens.shadow.color}`
-                          : 'none',
+                          : "none",
                       }}
                       onClick={() => onNavigate(c.key)}
                     >
@@ -219,8 +230,8 @@ function NavList({
                         className="w-1.5 h-1.5 rounded-full"
                         style={{
                           background: subActive
-                            ? 'rgba(109,106,255,.6)'
-                            : 'currentColor',
+                            ? "rgba(109,106,255,.6)"
+                            : "currentColor",
                           opacity: subActive ? 1 : 0.4,
                         }}
                       />

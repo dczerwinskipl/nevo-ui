@@ -3,13 +3,9 @@
   "compilerOptions": {
     "types": ["jest", "@testing-library/jest-dom"],
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true
   },
-  "include": [
-    "src/**/*",
-    "src/**/*.test.*",
-    "src/**/*.spec.*",
-    "jest.setup.js"
-  ],
+  "include": ["src/**/*"],
   "exclude": ["dist", "node_modules"]
 }

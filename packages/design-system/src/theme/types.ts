@@ -1,14 +1,14 @@
 // Intent and variant types
 export type ComponentIntent =
-  | 'primary'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'info'
-  | 'neutral';
+  | "primary"
+  | "success"
+  | "warning"
+  | "error"
+  | "info"
+  | "neutral";
 
-export type ComponentVariant = 'solid' | 'outline' | 'ghost' | 'subtle';
-export type ComponentSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type ComponentVariant = "solid" | "outline" | "ghost" | "subtle";
+export type ComponentSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 // Simplified tokens structure - only core design system values
 export type Tokens = {
@@ -44,7 +44,7 @@ export type Tokens = {
     info: { bg: string; border: string; text: string };
     neutral: { bg: string; border: string; text: string };
   };
-  
+
   // Semantic state colors - simplified
   states: {
     success: string;

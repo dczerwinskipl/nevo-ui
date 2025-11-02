@@ -1,6 +1,6 @@
-import React from 'react';
-import { Button } from '../../primitives/Button';
-import { Spinner } from '../../primitives/Spinner';
+import React from "react";
+import { Button } from "../../primitives/Button";
+import { Spinner } from "../../primitives/Spinner";
 
 interface FilterActionsProps {
   onApply: () => void;
@@ -18,8 +18,8 @@ export const FilterActions: React.FC<FilterActionsProps> = ({
   isLoading = false,
   disabled = false,
   clearDisabled = false,
-  applyLabel = 'Apply',
-  clearLabel = 'Clear',
+  applyLabel = "Apply",
+  clearLabel = "Clear",
 }) => {
   return (
     <div className="flex items-center gap-2">

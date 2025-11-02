@@ -1,6 +1,6 @@
-import React from 'react';
-import { clsx } from 'clsx';
-import { useTheme, cardStyle } from '../theme';
+import React from "react";
+import { clsx } from "clsx";
+import { useTheme, cardStyle } from "../theme";
 
 // TODO: TASK-019 - Replace string interpolation with clsx utility for better className merging
 
@@ -13,7 +13,7 @@ export const Card: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   return (
     <div
       {...rest}
-      className={clsx('rounded-xl p-4 relative', className)}
+      className={clsx("rounded-xl p-4 relative", className)}
       style={{
         ...cardStyle(tokens),
         color: tokens.text,

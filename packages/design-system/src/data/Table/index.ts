@@ -1,9 +1,9 @@
-export { Table } from './Table';
-export { TableSkeleton } from './TableSkeleton';
-export { LoadingOverlay } from './LoadingOverlay';
-export { TableHeader } from './TableHeader';
-export { TableRow } from './TableRow';
-export { TableActions } from './TableActions';
+export { Table } from "./Table";
+export { TableSkeleton } from "./TableSkeleton";
+export { LoadingOverlay } from "./LoadingOverlay";
+export { TableHeader } from "./TableHeader";
+export { TableRow } from "./TableRow";
+export { TableActions } from "./TableActions";
 export type {
   TableProps,
   TableColumn,
@@ -11,4 +11,4 @@ export type {
   CellRenderer,
   LoadingOverlayProps,
   TableSkeletonProps,
-} from './types';
+} from "./types";

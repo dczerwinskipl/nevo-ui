@@ -1,6 +1,6 @@
-import React from 'react';
-import { clsx } from 'clsx';
-import { useTheme, ComponentIntent } from '../theme';
+import React from "react";
+import { clsx } from "clsx";
+import { useTheme, ComponentIntent } from "../theme";
 
 export interface FormLabelProps {
   htmlFor?: string;
@@ -8,13 +8,13 @@ export interface FormLabelProps {
   children: React.ReactNode;
   className?: string;
   intent?: ComponentIntent;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
 }
 
 const SIZE_CLASSES = {
-  sm: 'text-xs',
-  md: 'text-sm',
-  lg: 'text-base',
+  sm: "text-xs",
+  md: "text-sm",
+  lg: "text-base",
 } as const;
 
 export function FormLabel({
@@ -22,18 +22,18 @@ export function FormLabel({
   required = false,
   children,
   className,
-  intent = 'neutral',
-  size = 'md',
+  intent = "neutral",
+  size = "md",
 }: FormLabelProps) {
   const { tokens } = useTheme();
 
   const intentColor =
-    intent === 'error' ? tokens.intent.error.text : tokens.text;
+    intent === "error" ? tokens.intent.error.text : tokens.text;
 
   return (
     <label
       htmlFor={htmlFor}
-      className={clsx('block font-medium', SIZE_CLASSES[size], className)}
+      className={clsx("block font-medium", SIZE_CLASSES[size], className)}
       style={{ color: intentColor }}
     >
       {children}

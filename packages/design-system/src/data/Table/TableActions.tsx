@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
-import { Button } from '../../primitives/Button';
-import { TableAction } from './types';
+import React, { useCallback } from "react";
+import { Button } from "../../primitives/Button";
+import { TableAction } from "./types";
 
 export interface TableActionsProps<T> {
   actions: TableAction<T>[];
@@ -22,7 +22,7 @@ export const TableActions = <T,>({
       e.stopPropagation();
       onActionClick(action, row);
     },
-    [onActionClick, row],
+    [onActionClick, row]
   );
 
   if (actions.length === 0) {
@@ -34,8 +34,8 @@ export const TableActions = <T,>({
       {actions.map((action, actionIndex) => (
         <Button
           key={actionIndex}
-          intent={action.intent || 'neutral'}
-          variant={action.variant || 'ghost'}
+          intent={action.intent || "neutral"}
+          variant={action.variant || "ghost"}
           size="sm"
           aria-label={action.label}
           onClick={(e) => handleActionClick(e, action)}

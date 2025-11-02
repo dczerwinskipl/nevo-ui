@@ -1,16 +1,17 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { useTheme } from '../../theme';
-import { EmptyState, ErrorState } from '../../feedback';
-import { TableSkeleton } from './TableSkeleton';
-import { LoadingOverlay } from './LoadingOverlay';
-import { TableHeader } from './TableHeader';
-import { TableRow } from './TableRow';
-import { TableProps, TableAction } from './types';
+import React, { useMemo, useState, useEffect } from "react";
+import { useTheme } from "../../theme";
+import { EmptyState, ErrorState } from "../../feedback";
+import { TableSkeleton } from "./TableSkeleton";
+import { LoadingOverlay } from "./LoadingOverlay";
+import { TableHeader } from "./TableHeader";
+import { TableRow } from "./TableRow";
+import { TableProps, TableAction } from "./types";
 
 /**
  * Generic Table component with built-in loading, empty, and error states.
  * Supports data persistence during loading for smooth UX during filter operations.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Table = <T extends Record<string, any>>({
   data,
   columns,
@@ -21,11 +22,11 @@ export const Table = <T extends Record<string, any>>({
   error,
   onRetry,
   skeletonRows = 5,
-  emptyTitle = 'No data found',
-  emptyDescription = 'Try adjusting your filters or search criteria',
-  fetchingMessage = 'Updating...',
+  emptyTitle = "No data found",
+  emptyDescription = "Try adjusting your filters or search criteria",
+  fetchingMessage = "Updating...",
   emptyIcon,
-  actionsHeaderText = 'Actions',
+  actionsHeaderText = "Actions",
 }: TableProps<T>): React.ReactElement => {
   const { tokens } = useTheme();
   const [snapshotData, setSnapshotData] = useState<T[]>([]);
@@ -38,6 +39,7 @@ export const Table = <T extends Record<string, any>>({
       setSnapshotData(data || []);
     }
     setPrevIsLoading(isLoading);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, prevIsLoading]);
 
   const handleActionClick = (action: TableAction<T>, row: T) => {

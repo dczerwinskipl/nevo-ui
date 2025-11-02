@@ -1,10 +1,10 @@
-import React from 'react';
-import { FilterGroup } from './FilterGroup';
-import { FormField } from '../../forms/FormField';
-import { Input } from '../../primitives/Input';
-import { Select } from '../../primitives/Select';
-import { FilterActions } from './FilterActions';
-import type { FilterConfig, FilterValue } from '../types';
+import React from "react";
+import { FilterGroup } from "./FilterGroup";
+import { FormField } from "../../forms/FormField";
+import { Input } from "../../primitives/Input";
+import { Select } from "../../primitives/Select";
+import { FilterActions } from "./FilterActions";
+import type { FilterConfig, FilterValue } from "../types";
 
 interface FiltersProps<TFilters extends Record<string, FilterValue>> {
   filters: Partial<TFilters>;
@@ -29,12 +29,11 @@ export function Filters<TFilters extends Record<string, FilterValue>>({
   onUpdateFilter,
   onApplyFilters,
   onClearFilters,
-  isLoading = false,
   isFetching = false,
   isDirty = false,
   hasAppliedFilters = false,
-  applyLabel = 'Apply',
-  clearLabel = 'Clear',
+  applyLabel = "Apply",
+  clearLabel = "Clear",
 }: FiltersProps<TFilters>) {
   const renderField = (key: keyof TFilters) => {
     const fieldConfig = config[key];
@@ -43,44 +42,44 @@ export function Filters<TFilters extends Record<string, FilterValue>>({
     const value = filters[key];
 
     switch (fieldConfig.type) {
-      case 'text':
+      case "text":
         return (
           <Input
-            value={(value as string) || ''}
+            value={(value as string) || ""}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               onUpdateFilter(key, e.target.value as TFilters[keyof TFilters])
             }
-            placeholder={fieldConfig.placeholder || ''}
+            placeholder={fieldConfig.placeholder || ""}
             size="sm"
             intent="neutral"
           />
         );
 
-      case 'select':
+      case "select":
         return (
           <Select
-            value={(value as string) || ''}
+            value={(value as string) || ""}
             onChange={(v: string | number) =>
               onUpdateFilter(key, v as TFilters[keyof TFilters])
             }
             options={fieldConfig.options || []}
-            placeholder={fieldConfig.placeholder || 'Select...'}
+            placeholder={fieldConfig.placeholder || "Select..."}
             size="sm"
             intent="neutral"
           />
         );
 
-      case 'number':
+      case "number":
         return (
           <Input
             type="number"
-            value={value !== undefined ? String(value) : ''}
+            value={value !== undefined ? String(value) : ""}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const v =
-                e.target.value === '' ? undefined : Number(e.target.value);
+                e.target.value === "" ? undefined : Number(e.target.value);
               onUpdateFilter(key, v as TFilters[keyof TFilters]);
             }}
-            placeholder={fieldConfig.placeholder || ''}
+            placeholder={fieldConfig.placeholder || ""}
             {...(fieldConfig.min !== undefined && { min: fieldConfig.min })}
             {...(fieldConfig.max !== undefined && { max: fieldConfig.max })}
             size="sm"

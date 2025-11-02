@@ -1,15 +1,11 @@
-import React from 'react';
-import { clsx } from 'clsx';
-import {
-  useTheme,
-  ComponentIntent,
-  getIntentStyle,
-} from '../theme';
-import { X, AlertCircle, CheckCircle, AlertTriangle, Info } from 'lucide-react';
+import React from "react";
+import { clsx } from "clsx";
+import { useTheme, ComponentIntent, getIntentStyle } from "../theme";
+import { X, AlertCircle, CheckCircle, AlertTriangle, Info } from "lucide-react";
 
 export interface AlertProps {
   intent?: ComponentIntent;
-  variant?: 'subtle' | 'solid' | 'outline';
+  variant?: "subtle" | "solid" | "outline";
   title?: string;
   children: React.ReactNode;
   dismissible?: boolean;
@@ -28,8 +24,8 @@ const INTENT_ICONS = {
 } as const;
 
 export function Alert({
-  intent = 'info',
-  variant = 'subtle',
+  intent = "info",
+  variant = "subtle",
   title,
   children,
   dismissible = false,
@@ -41,22 +37,22 @@ export function Alert({
   const style = getIntentStyle(tokens, intent, variant);
 
   const IconComponent =
-    typeof icon === 'boolean' && icon ? INTENT_ICONS[intent] : null;
+    typeof icon === "boolean" && icon ? INTENT_ICONS[intent] : null;
 
   return (
     <div
-      className={clsx('p-4 rounded-lg flex gap-3', className)}
+      className={clsx("p-4 rounded-lg flex gap-3", className)}
       style={{
         backgroundColor: style.background,
         borderColor: style.border,
         color: style.color,
-        borderWidth: variant === 'outline' ? '1px' : '0',
-        borderStyle: 'solid',
+        borderWidth: variant === "outline" ? "1px" : "0",
+        borderStyle: "solid",
       }}
       role="alert"
     >
       {/* Icon */}
-      {(IconComponent || (typeof icon !== 'boolean' && icon)) && (
+      {(IconComponent || (typeof icon !== "boolean" && icon)) && (
         <div className="flex-shrink-0">
           {IconComponent ? <IconComponent className="w-5 h-5" /> : icon}
         </div>
@@ -65,7 +61,7 @@ export function Alert({
       {/* Content */}
       <div className="flex-1 min-w-0">
         {title && <h4 className="font-medium mb-1">{title}</h4>}
-        <div className={clsx(title ? 'text-sm' : '')}>{children}</div>
+        <div className={clsx(title ? "text-sm" : "")}>{children}</div>
       </div>
 
       {/* Dismiss button */}

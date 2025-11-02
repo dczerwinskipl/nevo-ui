@@ -1,6 +1,6 @@
-import React from 'react';
-import { useTheme } from '../../theme';
-import { LoadingOverlayProps } from './types';
+import React from "react";
+import { useTheme } from "../../theme";
+import { LoadingOverlayProps } from "./types";
 
 /**
  * LoadingOverlay component displays a loading indicator over existing content.
@@ -22,9 +22,9 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
         style={{
           backgroundColor: `${tokens.raised}80`,
           top: `${headerOffset}px`,
-          left: '0',
-          right: '0',
-          bottom: '0',
+          left: "0",
+          right: "0",
+          bottom: "0",
         }}
       >
         <div
@@ -38,7 +38,9 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
           <div
             className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin"
             style={{
-              borderColor: `${tokens.primary.base} transparent ${tokens.primary.base} ${tokens.primary.base}`,
+              borderColor:
+                `${tokens.primary.base} transparent ` +
+                `${tokens.primary.base} ${tokens.primary.base}`,
             }}
           />
           <span className="text-sm font-medium">{message}</span>
