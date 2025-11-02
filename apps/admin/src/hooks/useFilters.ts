@@ -34,8 +34,8 @@ export function useFilters<TFilters extends Record<string, FilterValue>>(initial
   }, [pending]);
 
   const isDirty = useMemo(() => {
-    // Check all config keys and all initialFilters keys, not just config keys
-    const allKeys = [...new Set([...Object.keys(config), ...Object.keys(initialFilters)])] as Array<keyof TFilters>;
+    // Check all config keys - config should contain all filter keys
+    const allKeys = Object.keys(config) as Array<keyof TFilters>;
     const dirty = allKeys.some((k) => {
       const pendingValue = pending[k];
       const appliedValue = applied[k];
@@ -48,7 +48,7 @@ export function useFilters<TFilters extends Record<string, FilterValue>>(initial
     });
     
     return dirty;
-  }, [pending, applied, config, initialFilters]);
+  }, [pending, applied, config]);
 
   // Check if there are any applied filters (different from initial)
   const hasAppliedFilters = useMemo(() => {

@@ -24,6 +24,9 @@ const SIZE_CLASSES: Record<ComponentSize, string> = {
 
 type Option = { label: string; value: string | number };
 
+// Sentinel value for clear option to avoid conflicts with empty string values
+const CLEAR_OPTION_VALUE = "__CLEAR_OPTION__" as const;
+
 export interface SelectProps {
   label?: string;
   options: Option[];
@@ -86,7 +89,7 @@ export const Select: React.FC<SelectProps> = ({
   }, []);
 
   const handleSelect = (option: Option | null) => {
-    if (option) {
+    if (option && option.value !== CLEAR_OPTION_VALUE) {
       onChange?.(option.value);
     } else {
       onChange?.("");
@@ -95,7 +98,7 @@ export const Select: React.FC<SelectProps> = ({
   };
 
   const allOptions = allowClear
-    ? [{ label: clearLabel, value: "" }, ...options]
+    ? [{ label: clearLabel, value: CLEAR_OPTION_VALUE }, ...options]
     : options;
 
   return (
@@ -153,12 +156,16 @@ export const Select: React.FC<SelectProps> = ({
               type="button"
               role="option"
               aria-selected={option.value === value}
-              onClick={() => handleSelect(option.value === "" ? null : option)}
+              onClick={() =>
+                handleSelect(
+                  option.value === CLEAR_OPTION_VALUE ? null : option
+                )
+              }
               className={clsx(
                 "w-full text-left px-3 py-2 text-sm transition-colors duration-150 first:rounded-t-lg last:rounded-b-lg",
                 {
                   "font-medium": option.value === value,
-                  "italic text-opacity-70": option.value === "",
+                  "italic text-opacity-70": option.value === CLEAR_OPTION_VALUE,
                 }
               )}
               style={{

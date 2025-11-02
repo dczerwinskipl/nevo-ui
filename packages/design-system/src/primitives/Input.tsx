@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { clsx } from "clsx";
 import {
   useTheme,
@@ -52,6 +52,7 @@ export const Input: React.FC<InputProps> = ({
   ...rest
 }) => {
   const { tokens } = useTheme();
+  const [isFocused, setIsFocused] = useState(false);
 
   // Get intent colors for validation states
   const intentColors = intent !== "neutral" ? tokens.intent[intent] : null;
@@ -68,6 +69,16 @@ export const Input: React.FC<InputProps> = ({
   const focusRingColor = intentColors?.border || tokens.intent.primary.border;
   const borderColor = intentColors?.border || tokens.border;
 
+  // Dynamic styles based on focus state
+  const containerStyle = {
+    ...baseStyle,
+    borderColor: isFocused ? focusRingColor : borderColor,
+    boxShadow: isFocused
+      ? `inset 2px 2px 4px ${tokens.intent.primary.bg}, inset -1px -1px 2px ${tokens.shadow.highlight}`
+      : baseStyle.boxShadow || "",
+    color: tokens.text,
+  } as React.CSSProperties;
+
   return (
     <label className={clsx("grid gap-1 text-sm", className)}>
       {label && <span style={{ color: tokens.muted }}>{label}</span>}
@@ -76,13 +87,7 @@ export const Input: React.FC<InputProps> = ({
           "flex items-center gap-2 rounded-lg transition-all duration-200 group",
           SIZE_CLASSES[size]
         )}
-        style={
-          {
-            ...baseStyle,
-            borderColor: borderColor,
-            color: tokens.text,
-          } as React.CSSProperties
-        }
+        style={containerStyle}
       >
         {left}
         <input
@@ -94,21 +99,11 @@ export const Input: React.FC<InputProps> = ({
             ...rest.style,
           }}
           onFocus={(e) => {
-            // Change parent border color on focus
-            const parent = e.target.parentElement;
-            if (parent) {
-              parent.style.borderColor = focusRingColor;
-              parent.style.boxShadow = `inset 2px 2px 4px ${tokens.intent.primary.bg}, inset -1px -1px 2px ${tokens.shadow.highlight}`;
-            }
+            setIsFocused(true);
             rest.onFocus?.(e);
           }}
           onBlur={(e) => {
-            // Restore original border color on blur
-            const parent = e.target.parentElement;
-            if (parent) {
-              parent.style.borderColor = borderColor;
-              parent.style.boxShadow = baseStyle.boxShadow || "";
-            }
+            setIsFocused(false);
             rest.onBlur?.(e);
           }}
         />

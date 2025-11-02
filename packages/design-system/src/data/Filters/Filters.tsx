@@ -95,12 +95,12 @@ export function Filters<TFilters extends Record<string, FilterValue>>({
 
   return (
     <FilterGroup>
-      {Object.keys(config).map((key) => {
+      {(Object.keys(config) as Array<keyof TFilters>).map((key) => {
         const fieldConfig = config[key];
         if (!fieldConfig) return null;
 
         return (
-          <FormField key={key} label={fieldConfig.label}>
+          <FormField key={String(key)} label={fieldConfig.label}>
             {renderField(key)}
           </FormField>
         );
