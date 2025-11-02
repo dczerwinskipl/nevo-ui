@@ -6,7 +6,7 @@ import {
   ComponentIntent,
   ComponentVariant,
   ComponentSize,
-} from "../theme/ThemeProvider";
+} from "../theme";
 
 // TODO: TASK-020 - Move sizeClasses map outside component to prevent recreation on each render
 

@@ -8,7 +8,7 @@ import {
   ComponentSize,
   Tokens,
   concaveStyle,
-} from "../theme/ThemeProvider";
+} from "../theme";
 
 // TODO: TASK-019 - Replace string interpolation with clsx utility for better className merging
 
@@ -61,8 +61,7 @@ export const Input: React.FC<InputProps> = ({
       ? { background: tokens.raised, border: `1px solid ${tokens.border}` }
       : concaveStyle(tokens);
 
-  const focusRingColor =
-    intentColors?.border || tokens.components.input.focus.ring;
+  const focusRingColor = intentColors?.border || tokens.intent.primary.border;
   const borderColor = intentColors?.border || tokens.border;
 
   return (

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useTheme, raisedStyle, Tokens } from "../theme/ThemeProvider";
+import { useTheme, raisedStyle, Tokens } from "../theme";
 import {
   LayoutGrid,
   Package,

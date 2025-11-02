@@ -1,4 +1,4 @@
-import { ComponentIntent, ComponentVariant } from "../../theme/ThemeProvider";
+import { ComponentIntent, ComponentVariant } from "../../theme";
 
 export type CellRenderer<T = any> = (value: any, row: T) => React.ReactNode;
 
@@ -39,16 +39,12 @@ export interface TableProps<T = any> {
   actionsHeaderText?: string;
 }
 
-export interface StateComponentProps {
-  tokens: any;
-}
-
-export interface LoadingOverlayProps extends StateComponentProps {
+export interface LoadingOverlayProps {
   message: string;
   children: React.ReactNode;
 }
 
-export interface TableSkeletonProps<T = any> extends StateComponentProps {
+export interface TableSkeletonProps<T = any> {
   rows: number;
   columns: TableColumn<T>[];
   hasActions: boolean;

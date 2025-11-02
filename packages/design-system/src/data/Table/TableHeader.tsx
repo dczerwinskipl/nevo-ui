@@ -1,11 +1,10 @@
 import React from "react";
-import { raisedStyle } from "../../theme/ThemeProvider";
+import { useTheme, raisedStyle } from "../../theme";
 import { TableColumn } from "./types";
 
 export interface TableHeaderProps<T> {
   columns: TableColumn<T>[];
   hasActions: boolean;
-  tokens: any;
   actionsHeaderText?: string;
 }
 
@@ -16,9 +15,10 @@ export interface TableHeaderProps<T> {
 export const TableHeader = <T,>({
   columns,
   hasActions,
-  tokens,
   actionsHeaderText = "Actions",
 }: TableHeaderProps<T>): React.ReactElement => {
+  const { tokens } = useTheme();
+
   return (
     <thead>
       <tr

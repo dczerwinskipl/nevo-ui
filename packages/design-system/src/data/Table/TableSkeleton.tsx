@@ -1,4 +1,5 @@
 import React from "react";
+import { useTheme } from "../../theme";
 import { TableSkeletonProps } from "./types";
 import { TableHeader } from "./TableHeader";
 
@@ -10,9 +11,9 @@ export const TableSkeleton = <T,>({
   rows,
   columns,
   hasActions,
-  tokens,
   actionsHeaderText = "Actions",
 }: TableSkeletonProps<T>) => {
+  const { tokens } = useTheme();
   const SkeletonRow = ({
     column,
   }: {
@@ -35,7 +36,6 @@ export const TableSkeleton = <T,>({
         <TableHeader
           columns={columns}
           hasActions={hasActions}
-          tokens={tokens}
           actionsHeaderText={actionsHeaderText}
         />
         <tbody>

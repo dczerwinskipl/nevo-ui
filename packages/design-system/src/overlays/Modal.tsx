@@ -1,5 +1,5 @@
 import React from "react";
-import { useTheme, elevatedStyle } from "../theme/ThemeProvider";
+import { useTheme, elevatedStyle } from "../theme";
 
 export const Modal: React.FC<{
   title: string;

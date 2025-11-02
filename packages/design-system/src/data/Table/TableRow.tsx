@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { useTheme } from "../../theme";
 import { TableColumn, TableAction } from "./types";
 import { TableActions } from "./TableActions";
 
@@ -9,7 +10,6 @@ export interface TableRowProps<T> {
   actions: TableAction<T>[];
   onRowClick?: (row: T) => void;
   onActionClick: (action: TableAction<T>, row: T) => void;
-  tokens: any;
   keyExtractor: (row: T) => string | number;
 }
 
@@ -24,9 +24,10 @@ export const TableRow = <T,>({
   actions,
   onRowClick,
   onActionClick,
-  tokens,
   keyExtractor,
 }: TableRowProps<T>): React.ReactElement => {
+  const { tokens } = useTheme();
+
   const getCellValue = useCallback((row: T, column: TableColumn<T>) => {
     if (typeof column.accessor === "function") {
       return column.accessor(row);

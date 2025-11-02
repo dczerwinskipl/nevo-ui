@@ -1,4 +1,5 @@
 import React from "react";
+import { useTheme } from "../../theme";
 import { LoadingOverlayProps } from "./types";
 
 /**
@@ -9,36 +10,39 @@ import { LoadingOverlayProps } from "./types";
 export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
   message,
   children,
-  tokens,
-}) => (
-  <div className="relative">
-    {children}
-    <div
-      className="absolute flex items-center justify-center backdrop-blur-sm"
-      style={{
-        backgroundColor: `${tokens.raised}80`,
-        top: "50px", // Offset to avoid covering headers
-        left: "0",
-        right: "0",
-        bottom: "0",
-      }}
-    >
+}) => {
+  const { tokens } = useTheme();
+
+  return (
+    <div className="relative">
+      {children}
       <div
-        className="flex items-center gap-3 px-4 py-2 rounded-lg shadow-lg"
+        className="absolute flex items-center justify-center backdrop-blur-sm"
         style={{
-          background: tokens.raised,
-          border: `1px solid ${tokens.border}`,
-          color: tokens.text,
+          backgroundColor: `${tokens.raised}80`,
+          top: "50px", // Offset to avoid covering headers
+          left: "0",
+          right: "0",
+          bottom: "0",
         }}
       >
         <div
-          className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin"
+          className="flex items-center gap-3 px-4 py-2 rounded-lg shadow-lg"
           style={{
-            borderColor: `${tokens.accent} transparent ${tokens.accent} ${tokens.accent}`,
+            background: tokens.raised,
+            border: `1px solid ${tokens.border}`,
+            color: tokens.text,
           }}
-        />
-        <span className="text-sm font-medium">{message}</span>
+        >
+          <div
+            className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin"
+            style={{
+              borderColor: `${tokens.primary.base} transparent ${tokens.primary.base} ${tokens.primary.base}`,
+            }}
+          />
+          <span className="text-sm font-medium">{message}</span>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};

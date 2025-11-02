@@ -1,5 +1,5 @@
 import React from "react";
-import { useTheme, raisedStyle } from "../theme/ThemeProvider";
+import { useTheme, raisedStyle } from "../theme";
 import { LayoutGrid, Search, Sun, Moon, Bell, ChevronDown } from "lucide-react";
 
 export const Topbar: React.FC<{ onMenu?: () => void }> = ({ onMenu }) => {

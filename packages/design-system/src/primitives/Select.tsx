@@ -8,7 +8,7 @@ import {
   getIntentStyle,
   Tokens,
   concaveStyle,
-} from "../theme/ThemeProvider";
+} from "../theme";
 import { ChevronDown } from "lucide-react";
 
 // TODO: TASK-019 - Replace conditional className logic with clsx utility for better readability

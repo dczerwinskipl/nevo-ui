@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { useTheme } from "../../theme/ThemeProvider";
+import { useTheme } from "../../theme";
 import { EmptyState, ErrorState } from "../../feedback";
 import { TableSkeleton } from "./TableSkeleton";
 import { LoadingOverlay } from "./LoadingOverlay";
@@ -72,7 +72,6 @@ export const Table = <T extends Record<string, any>>({
         rows={skeletonRows}
         columns={columns}
         hasActions={actions.length > 0}
-        tokens={tokens}
         actionsHeaderText={actionsHeaderText}
       />
     );
@@ -98,7 +97,6 @@ export const Table = <T extends Record<string, any>>({
         <TableHeader
           columns={columns}
           hasActions={actions.length > 0}
-          tokens={tokens}
           actionsHeaderText={actionsHeaderText}
         />
         <tbody>
@@ -111,7 +109,6 @@ export const Table = <T extends Record<string, any>>({
               actions={actions}
               {...(onRowClick && { onRowClick })}
               onActionClick={handleActionClick}
-              tokens={tokens}
               keyExtractor={keyExtractor}
             />
           ))}
@@ -123,9 +120,7 @@ export const Table = <T extends Record<string, any>>({
   // Show overlay when loading and we have snapshot data (not initial load)
   if (isLoading && snapshotData.length > 0) {
     return (
-      <LoadingOverlay message={fetchingMessage} tokens={tokens}>
-        {tableContent}
-      </LoadingOverlay>
+      <LoadingOverlay message={fetchingMessage}>{tableContent}</LoadingOverlay>
     );
   }
 

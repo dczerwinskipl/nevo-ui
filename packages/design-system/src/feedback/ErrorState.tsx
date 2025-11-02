@@ -1,5 +1,5 @@
 import React from "react";
-import { useTheme } from "../theme/ThemeProvider";
+import { useTheme } from "../theme";
 import { Button } from "../primitives/Button";
 
 export interface ErrorStateProps {

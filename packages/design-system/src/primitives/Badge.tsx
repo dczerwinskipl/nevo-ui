@@ -4,7 +4,7 @@ import {
   getIntentStyle,
   ComponentIntent,
   ComponentVariant,
-} from "../theme/ThemeProvider";
+} from "../theme";
 
 export type BadgeIntent = ComponentIntent;
 export type BadgeVariant = ComponentVariant;

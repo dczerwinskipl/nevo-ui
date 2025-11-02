@@ -1,5 +1,5 @@
 import React from "react";
-import { useTheme, raisedStyle } from "../theme/ThemeProvider";
+import { useTheme, raisedStyle } from "../theme";
 
 export const Pagination: React.FC<{ total: number; pageSize: number }> = ({
   total,
