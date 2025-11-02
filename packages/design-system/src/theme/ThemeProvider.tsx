@@ -1,18 +1,18 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
-import type { Tokens } from "./types";
-import { tokens } from "./tokens";
+import React, { createContext, useContext, useMemo, useState } from 'react';
+import type { Tokens } from './types';
+import { tokens } from './tokens';
 
 const ThemeCtx = createContext<{
   dark: boolean;
   setDark: (b: boolean) => void;
   tokens: Tokens;
-} | null>(null);
+    } | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [dark, setDark] = useState(true);
   const themeTokens = useMemo(
     () => (dark ? tokens.dark : tokens.light),
-    [dark]
+    [dark],
   );
 
   // Apply page background to body and theme class
@@ -20,9 +20,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const body = document.body;
     body.style.backgroundColor = themeTokens.page;
     body.style.color = themeTokens.text;
-    body.style.margin = "0";
-    body.style.padding = "0";
-    body.setAttribute("data-theme", dark ? "dark" : "light");
+    body.style.margin = '0';
+    body.style.padding = '0';
+    body.setAttribute('data-theme', dark ? 'dark' : 'light');
 
     // Also apply to html for complete coverage
     const html = document.documentElement;
@@ -31,7 +31,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     return () => {
       // Cleanup if needed
-      body.removeAttribute("data-theme");
+      body.removeAttribute('data-theme');
     };
   }, [themeTokens, dark]);
 
@@ -44,6 +44,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 export function useTheme() {
   const ctx = useContext(ThemeCtx);
-  if (!ctx) throw new Error("useTheme must be used within ThemeProvider");
+  if (!ctx) throw new Error('useTheme must be used within ThemeProvider');
   return ctx;
 }

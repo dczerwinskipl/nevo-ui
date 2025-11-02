@@ -1,6 +1,6 @@
-import React from "react";
-import { useTheme } from "../theme";
-import { Button } from "../primitives/Button";
+import React from 'react';
+import { useTheme } from '../theme';
+import { Button } from '../primitives/Button';
 
 export interface ErrorStateProps {
   error: Error;

@@ -1,4 +1,4 @@
-import { ComponentIntent, ComponentVariant } from "../../theme";
+import { ComponentIntent, ComponentVariant } from '../../theme';
 
 export type CellRenderer<T = any> = (value: any, row: T) => React.ReactNode;
 
@@ -7,7 +7,7 @@ export interface TableColumn<T = any> {
   header: string;
   accessor: keyof T | ((row: T) => any);
   render?: CellRenderer<T>;
-  align?: "left" | "center" | "right";
+  align?: 'left' | 'center' | 'right';
   sortable?: boolean;
 }
 

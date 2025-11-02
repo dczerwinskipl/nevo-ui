@@ -1,7 +1,7 @@
-import React, { useCallback } from "react";
-import { useTheme } from "../../theme";
-import { TableColumn, TableAction } from "./types";
-import { TableActions } from "./TableActions";
+import React, { useCallback } from 'react';
+import { useTheme } from '../../theme';
+import { TableColumn, TableAction } from './types';
+import { TableActions } from './TableActions';
 
 export interface TableRowProps<T> {
   row: T;
@@ -29,7 +29,7 @@ export const TableRow = <T,>({
   const { tokens } = useTheme();
 
   const getCellValue = useCallback((row: T, column: TableColumn<T>) => {
-    if (typeof column.accessor === "function") {
+    if (typeof column.accessor === 'function') {
       return column.accessor(row);
     }
     return row[column.accessor];
@@ -45,7 +45,7 @@ export const TableRow = <T,>({
 
       return value;
     },
-    [getCellValue]
+    [getCellValue],
   );
 
   const handleRowClick = useCallback(() => {
@@ -56,11 +56,11 @@ export const TableRow = <T,>({
     <tr
       key={keyExtractor(row)}
       className={`transition-all duration-200 hover:bg-opacity-50 ${
-        onRowClick ? "cursor-pointer" : ""
+        onRowClick ? 'cursor-pointer' : ''
       }`}
       style={{
         borderBottom: `1px solid ${tokens.border}`,
-        background: index % 2 === 0 ? "transparent" : `${tokens.raised}10`,
+        background: index % 2 === 0 ? 'transparent' : `${tokens.raised}10`,
       }}
       onClick={handleRowClick}
     >
@@ -70,7 +70,7 @@ export const TableRow = <T,>({
           className="px-4 py-3"
           style={{
             color: tokens.text,
-            textAlign: column.align || "left",
+            textAlign: column.align || 'left',
           }}
         >
           {renderCell(row, column)}

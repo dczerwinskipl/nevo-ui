@@ -1,23 +1,23 @@
-import React from "react";
-import { clsx } from "clsx";
+import React from 'react';
+import { clsx } from 'clsx';
 import {
   useTheme,
   getIntentStyle,
   ComponentIntent,
   ComponentVariant,
   ComponentSize,
-} from "../theme";
+} from '../theme';
 
 // TODO: TASK-020 - Move sizeClasses map outside component to prevent recreation on each render
 
 // Extracted constants - no recreation on each render
 // Ensure minimum 44px touch targets for mobile accessibility
 const SIZE_CLASSES: Record<ComponentSize, string> = {
-  xs: "px-3 py-2 text-xs min-h-[36px]", // Slightly larger for touch
-  sm: "px-4 py-2.5 text-sm min-h-[44px]", // Meeting minimum touch target
-  md: "px-4 py-3 text-base min-h-[44px]", // Meeting minimum touch target
-  lg: "px-6 py-4 text-lg min-h-[48px]", // Larger touch target
-  xl: "px-8 py-5 text-xl min-h-[52px]", // Largest touch target
+  xs: 'px-3 py-2 text-xs min-h-[36px]', // Slightly larger for touch
+  sm: 'px-4 py-2.5 text-sm min-h-[44px]', // Meeting minimum touch target
+  md: 'px-4 py-3 text-base min-h-[44px]', // Meeting minimum touch target
+  lg: 'px-6 py-4 text-lg min-h-[48px]', // Larger touch target
+  xl: 'px-8 py-5 text-xl min-h-[52px]', // Largest touch target
 } as const;
 
 export interface ButtonProps
@@ -29,9 +29,9 @@ export interface ButtonProps
 }
 
 export const Button: React.FC<ButtonProps> = ({
-  intent = "primary",
-  variant = "solid",
-  size = "md",
+  intent = 'primary',
+  variant = 'solid',
+  size = 'md',
   loading = false,
   className,
   disabled,
@@ -46,21 +46,21 @@ export const Button: React.FC<ButtonProps> = ({
       {...rest}
       disabled={disabled || loading}
       className={clsx(
-        "rounded-lg font-medium transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100",
+        'rounded-lg font-medium transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
         SIZE_CLASSES[size],
-        className
+        className,
       )}
       style={{
         background: style.background,
         color: style.color,
         border: style.border,
         boxShadow:
-          variant === "solid"
+          variant === 'solid'
             ? `0 1px 3px ${tokens.shadow.color}, 0 1px 2px ${tokens.shadow.color}`
-            : "none",
+            : 'none',
       }}
     >
-      {loading ? "Loading..." : children}
+      {loading ? 'Loading...' : children}
     </button>
   );
 };

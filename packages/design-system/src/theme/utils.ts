@@ -10,15 +10,15 @@ function lighten(color: string, amount: number) {
 }
 
 function hexToRgb(hex: string) {
-  const h = hex.replace("#", "");
+  const h = hex.replace('#', '');
   const bigint = parseInt(
     h.length === 3
       ? h
-          .split("")
-          .map((c) => c + c)
-          .join("")
+        .split('')
+        .map((c) => c + c)
+        .join('')
       : h,
-    16
+    16,
   );
   return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
 }
@@ -66,30 +66,30 @@ export function concaveStyle(tokens: Tokens) {
 export function getIntentStyle(
   tokens: Tokens,
   intent: ComponentIntent,
-  variant: ComponentVariant = "subtle"
+  variant: ComponentVariant = 'subtle',
 ) {
   const intentColors = tokens.intent[intent];
 
   switch (variant) {
-    case "solid":
+    case 'solid':
       return {
         background: intentColors.text, // Use text color as solid background
         color: tokens.page, // Contrasting text (page background)
         border: `1px solid ${intentColors.text}`,
       };
-    case "outline":
+    case 'outline':
       return {
-        background: "transparent",
+        background: 'transparent',
         color: intentColors.text,
         border: `1px solid ${intentColors.border}`,
       };
-    case "ghost":
+    case 'ghost':
       return {
-        background: "transparent",
+        background: 'transparent',
         color: intentColors.text,
-        border: "1px solid transparent",
+        border: '1px solid transparent',
       };
-    case "subtle":
+    case 'subtle':
     default:
       return {
         background: intentColors.bg,

@@ -1,6 +1,6 @@
-import React from "react";
-import { clsx } from "clsx";
-import { useTheme, ComponentIntent } from "../theme";
+import React from 'react';
+import { clsx } from 'clsx';
+import { useTheme, ComponentIntent } from '../theme';
 
 export interface FormFieldProps {
   label?: string;
@@ -19,12 +19,12 @@ export function FormField({
   required = false,
   children,
   className,
-  intent = "neutral",
+  intent = 'neutral',
 }: FormFieldProps) {
   const { tokens } = useTheme();
 
   return (
-    <div className={clsx("space-y-1", className)}>
+    <div className={clsx('space-y-1', className)}>
       {label && (
         <label
           className="block text-sm font-medium"

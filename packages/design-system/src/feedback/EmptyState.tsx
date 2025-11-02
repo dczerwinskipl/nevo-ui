@@ -1,5 +1,5 @@
-import React from "react";
-import { useTheme } from "../theme";
+import React from 'react';
+import { useTheme } from '../theme';
 
 export interface EmptyStateProps {
   title: string;
