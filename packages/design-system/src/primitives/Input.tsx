@@ -61,7 +61,8 @@ export const Input: React.FC<InputProps> = ({
       ? { background: tokens.raised, border: `1px solid ${tokens.border}` }
       : concaveStyle(tokens);
 
-  const focusRingColor = intentColors?.border || "rgba(109,106,255,0.3)";
+  const focusRingColor =
+    intentColors?.border || tokens.components.input.focus.ring;
   const borderColor = intentColors?.border || tokens.border;
 
   return (
@@ -94,7 +95,9 @@ export const Input: React.FC<InputProps> = ({
             const parent = e.target.parentElement;
             if (parent) {
               parent.style.borderColor = focusRingColor;
-              parent.style.boxShadow = `inset 2px 2px 4px rgba(109,106,255,0.1), inset -1px -1px 2px rgba(255,255,255,0.05)`;
+              parent.style.boxShadow = `inset 2px 2px 4px ${
+                tokens.intent.primary.bg
+              }, inset -1px -1px 2px ${tokens.shadow.inner.split(" ").pop()}`;
             }
             rest.onFocus?.(e);
           }}

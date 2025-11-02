@@ -1,5 +1,4 @@
 import React from "react";
-import { raisedStyle } from "../../theme/ThemeProvider";
 import { TableSkeletonProps } from "./types";
 import { TableHeader } from "./TableHeader";
 

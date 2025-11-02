@@ -2,6 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import type { Product, ProductFilters } from '../features/products/types/Product';
 import { fetchProducts, type ProductsQueryParams } from '../services/productsApi';
 
+// API simulation delay constant
+const API_SIMULATION_DELAY_MS = 2000;
+
 export function useProducts(filters: ProductFilters = {}) {
   // Transform ProductFilters to ProductsQueryParams
   const apiParams: ProductsQueryParams = {};
@@ -28,7 +31,7 @@ export function useProducts(filters: ProductFilters = {}) {
   } = useQuery({
     queryKey: ['products', apiParams],
     queryFn: async () => {
-      const result = await fetchProducts(apiParams, 2000);
+      const result = await fetchProducts(apiParams, API_SIMULATION_DELAY_MS);
       return result;
     },
     staleTime: 1 * 60 * 1000, // 1 minute

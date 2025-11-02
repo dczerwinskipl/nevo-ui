@@ -13,5 +13,3 @@ export type {
   TableAction, 
   CellRenderer,
 } from './Table';
-
-export type { };
