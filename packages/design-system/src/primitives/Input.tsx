@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { clsx } from "clsx";
 import {
   useTheme,
@@ -8,7 +8,7 @@ import {
   ComponentSize,
   Tokens,
   concaveStyle,
-} from "../theme/ThemeProvider";
+} from "../theme";
 
 // TODO: TASK-019 - Replace string interpolation with clsx utility for better className merging
 
@@ -20,6 +20,16 @@ const SIZE_CLASSES: Record<ComponentSize, string> = {
   lg: "px-4 py-4 text-lg min-h-[48px]", // Larger touch target
   xl: "px-5 py-5 text-xl min-h-[52px]", // Largest touch target
 } as const;
+
+// Input styling constants to disable browser defaults
+const INPUT_RESET_CLASSES =
+  "flex-1 bg-transparent outline-none placeholder:opacity-60 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
+
+const getInputResetStyles = (type?: string): React.CSSProperties => ({
+  // Hide number input spinners for all browsers
+  WebkitAppearance: type === "number" ? "none" : undefined,
+  MozAppearance: type === "number" ? "textfield" : undefined,
+});
 
 export interface InputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
@@ -42,41 +52,59 @@ export const Input: React.FC<InputProps> = ({
   ...rest
 }) => {
   const { tokens } = useTheme();
+  const [isFocused, setIsFocused] = useState(false);
 
   // Get intent colors for validation states
   const intentColors = intent !== "neutral" ? tokens.intent[intent] : null;
 
   const baseStyle =
     variant === "filled"
-      ? { background: tokens.raised, border: `1px solid ${tokens.border}` }
+      ? {
+          background: tokens.raised,
+          border: `1px solid ${tokens.border}`,
+          boxShadow: "",
+        }
       : concaveStyle(tokens);
 
-  const focusRingColor = intentColors?.border || "rgba(109,106,255,0.3)";
+  const focusRingColor = intentColors?.border || tokens.intent.primary.border;
   const borderColor = intentColors?.border || tokens.border;
+
+  // Dynamic styles based on focus state
+  const containerStyle = {
+    ...baseStyle,
+    borderColor: isFocused ? focusRingColor : borderColor,
+    boxShadow: isFocused
+      ? `inset 2px 2px 4px ${tokens.intent.primary.bg}, inset -1px -1px 2px ${tokens.shadow.highlight}`
+      : baseStyle.boxShadow || "",
+    color: tokens.text,
+  } as React.CSSProperties;
 
   return (
     <label className={clsx("grid gap-1 text-sm", className)}>
       {label && <span style={{ color: tokens.muted }}>{label}</span>}
       <div
         className={clsx(
-          "flex items-center gap-2 rounded-lg transition-all duration-200 focus-within:ring-2",
+          "flex items-center gap-2 rounded-lg transition-all duration-200 group",
           SIZE_CLASSES[size]
         )}
-        style={
-          {
-            ...baseStyle,
-            borderColor: borderColor,
-            color: tokens.text,
-            "--focus-ring-color": focusRingColor,
-          } as React.CSSProperties & { "--focus-ring-color": string }
-        }
+        style={containerStyle}
       >
         {left}
         <input
           {...rest}
-          className="flex-1 bg-transparent outline-none placeholder:opacity-60 focus-within:ring-[var(--focus-ring-color)]"
+          className={clsx(INPUT_RESET_CLASSES, "focus:border-opacity-100")}
           style={{
             color: tokens.text,
+            ...getInputResetStyles(rest.type),
+            ...rest.style,
+          }}
+          onFocus={(e) => {
+            setIsFocused(true);
+            rest.onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            setIsFocused(false);
+            rest.onBlur?.(e);
           }}
         />
       </div>

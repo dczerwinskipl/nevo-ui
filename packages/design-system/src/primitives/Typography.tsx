@@ -1,6 +1,6 @@
 import React from "react";
 import { clsx } from "clsx";
-import { useTheme, ComponentIntent } from "../theme/ThemeProvider";
+import { useTheme, ComponentIntent } from "../theme";
 
 // TODO: TASK-019 - Replace string interpolation with clsx utility for better className merging
 // TODO: TASK-020 - Move className maps outside component to prevent recreation on each render

@@ -1,17 +1,30 @@
 import React from "react";
 import { Pagination, Typography } from "@nevo/design-system";
-import { getMockProducts } from "../services/mockData";
 import { ProductsActions } from "../components/ProductsActions";
 import { ProductsFilters } from "../components/ProductsFilters";
 import { ProductsTable } from "../components/ProductsTable";
+import { useProductFilters } from "../hooks/useProductFilters";
 
 export function ProductsList() {
-  const data = getMockProducts();
+  // Container component uses the hook and manages all state
+  const {
+    data,
+    isLoading,
+    isFetching,
+    error,
+    refetch,
+    pendingFilters,
+    updateFilter,
+    applyFilters,
+    clearFilters,
+    isDirty,
+    hasAppliedFilters,
+    config,
+  } = useProductFilters();
 
   const handleAdd = () => console.log("Add product");
   const handleExport = () => console.log("Export");
   const handleSettings = () => console.log("Settings");
-  const handleFilter = () => console.log("Apply filters");
 
   return (
     <div className="space-y-4">
@@ -24,11 +37,35 @@ export function ProductsList() {
         />
       </div>
 
-      <ProductsFilters onFilter={handleFilter} />
+      {/* Pass filter state and handlers as props */}
+      <ProductsFilters
+        filters={pendingFilters}
+        config={config}
+        onUpdateFilter={updateFilter}
+        onApplyFilters={applyFilters}
+        onClearFilters={clearFilters}
+        isLoading={isLoading}
+        isFetching={isFetching}
+        isDirty={isDirty}
+        hasAppliedFilters={hasAppliedFilters}
+      />
 
-      <ProductsTable data={data} />
+      {/* Pass data and state as props */}
+      <ProductsTable
+        data={data}
+        isLoading={isLoading}
+        isFetching={isFetching}
+        error={error}
+        onRetry={refetch}
+      />
 
-      <Pagination total={128} pageSize={25} />
+      {/* 
+        TODO: Fix pagination total count
+        Current: data.length represents filtered results only
+        Solution: API should return { data: Product[], totalCount: number } 
+        where totalCount is the total number of products before filtering
+      */}
+      <Pagination total={data.length} pageSize={25} />
     </div>
   );
 }

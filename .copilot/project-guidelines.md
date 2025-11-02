@@ -58,10 +58,32 @@ interface ButtonProps {
 packages/design-system/src/
 ├── primitives/          # Basic building blocks (Button, Input, Badge)
 ├── layout/             # Layout components (Grid, Stack, Container)
-├── data/               # Data display (Table, List, Pagination)
+├── data/               # Data display and filtering
+│   ├── Table/          # Modular table components
+│   │   ├── Table.tsx           # Main table (149 lines)
+│   │   ├── TableHeader.tsx     # Header rendering
+│   │   ├── TableRow.tsx        # Row rendering
+│   │   ├── TableActions.tsx    # Action buttons
+│   │   ├── TableSkeleton.tsx   # Loading skeleton
+│   │   ├── LoadingOverlay.tsx  # Data refresh overlay
+│   │   └── types.ts           # Table interfaces
+│   ├── FilterGroup.tsx         # Filter container
+│   ├── FiltersForm.tsx         # Filter form wrapper
+│   ├── TextFilter.tsx          # Text input filter
+│   ├── NumberFilter.tsx        # Number input filter
+│   ├── SelectFilter.tsx        # Select dropdown filter
+│   ├── FilterActions.tsx       # Apply/Clear buttons
+│   ├── Pagination.tsx          # Data pagination
+│   └── types.ts               # Shared filter types
 ├── overlays/           # Modals, Tooltips, Dropdowns
-├── feedback/           # Loading, Progress, Alerts
-├── forms/              # Form-specific components
+├── feedback/           # Loading, Progress, Alerts, States
+│   ├── EmptyState.tsx          # Empty data display
+│   ├── ErrorState.tsx          # Error handling
+│   ├── Loading.tsx             # Loading indicators
+│   └── ...
+├── icons/              # SVG icon components
+│   ├── TableIcons.tsx          # Table action icons
+│   └── index.ts               # Icon exports
 ├── navigation/         # Navigation components
 ├── theme/              # Theme provider and utilities
 ├── utils/              # Helper functions and hooks
@@ -257,169 +279,132 @@ type TypographyType =
 - **Automatic**: Dark/light themes work without extra complexity
 - **Clean**: One helper function handles all variant transformations
 
-### Generic Table Component
-**Rule**: Table components must be generic and configurable, not hardcoded for specific data schemas
+## Data Management Patterns
+
+### Generic Filtering System
+**Rule**: Use strongly-typed, configurable filtering components with TanStack Query integration
+
+**Architecture**: Generic filter hooks + stateless components + typed configurations
 
 ```typescript
-// ✅ Good - generic table with column definitions
-interface TableColumn<T> {
-  key: keyof T;
-  label: string;
-  render?: (value: any, row: T) => React.ReactNode;
-  sortable?: boolean;
-  width?: string;
+// Filter configuration pattern
+interface ProductFilters {
+  search: string;
+  category: 'electronics' | 'clothing' | 'books';
+  price: number;
+  status: 'active' | 'inactive';
 }
 
-interface TableProps<T> {
-  data: T[];
-  columns: TableColumn<T>[];
-  onSort?: (key: keyof T, direction: 'asc' | 'desc') => void;
-  onRowClick?: (row: T) => void;
-  loading?: boolean;
-  emptyMessage?: string;
-}
-
-// Usage in admin app
-const productColumns: TableColumn<Product>[] = [
-  { key: 'id', label: 'ID', width: '100px' },
-  { key: 'name', label: 'Name', sortable: true },
-  { 
-    key: 'status', 
-    label: 'Status',
-    render: (status) => <Badge intent={getStatusIntent(status)}>{status}</Badge>
+const productFilterConfig: FilterConfig<ProductFilters> = {
+  search: {
+    name: 'search',
+    label: 'Search Products',
+    type: 'text',
+    placeholder: 'Name, SKU, description...'
   },
+  category: {
+    name: 'category',
+    label: 'Category',
+    type: 'select',
+    placeholder: 'All Categories',
+    options: [
+      { label: 'Electronics', value: 'electronics' },
+      { label: 'Clothing', value: 'clothing' }
+    ]
+  }
+};
+```
+
+**Filter Components**:
+```typescript
+// Generic filter hook usage
+const {
+  filters,
+  pendingFilters,
+  updateFilter,
+  applyFilters,
+  clearFilters,
+  isApplying
+} = useFilters(initialFilters, productFilterConfig);
+
+// TanStack Query integration
+const { data, isLoading, isFetching, error } = useProducts(filters);
+
+// Stateless filter components
+<FiltersForm onSubmit={applyFilters} onReset={clearFilters}>
+  <FilterGroup title="Product Filters">
+    <TextFilter
+      value={pendingFilters.search}
+      onChange={(value) => updateFilter('search', value)}
+      placeholder="Search products..."
+    />
+    <SelectFilter
+      value={pendingFilters.category}
+      onChange={(value) => updateFilter('category', value)}
+      options={categoryOptions}
+    />
+  </FilterGroup>
+  
+  <FilterActions
+    onApply={applyFilters}
+    onClear={clearFilters}
+    isLoading={isApplying}
+  />
+</FiltersForm>
+```
+
+**Key Principles**:
+- **Apply Button Pattern**: Manual filter application instead of debounce
+- **Stateless Components**: No internal state in design system components
+- **Strong Typing**: Generic types enforce configuration compatibility
+- **Configurable Texts**: All labels, placeholders via props
+- **Loading States**: Proper loading/error handling for filters and data
+
+### Enhanced Table Architecture
+**Rule**: Modular table components with focused responsibilities under 200 lines each
+
+**Component Structure**:
+```typescript
+// Main Table component (149 lines) - orchestrates sub-components
+<Table
+  data={data}
+  columns={columns}
+  actions={actions}
+  isLoading={isLoading}
+  isFetching={isFetching}
+  error={error}
+  actionsHeaderText="Actions"
+/>
+
+// Sub-components handle specific concerns
+- TableHeader: Column headers with proper alignment
+- TableRow: Individual row rendering with actions
+- TableActions: Action button group with consistent spacing
+- TableSkeleton: Loading state matching actual table structure
+- LoadingOverlay: Data refresh overlay
+- EmptyState/ErrorState: Feedback states
+```
+
+**Icon System**:
+```typescript
+// SVG icons from lucide-react for consistency
+import { ViewIcon, EditIcon, DeleteIcon } from "@nevo/design-system";
+
+const actions: TableAction<Product>[] = [
   {
-    key: 'tags',
-    label: 'Tags', 
-    render: (tags) => tags.map(tag => <TagBadge key={tag}>{tag}</TagBadge>)
+    icon: <ViewIcon />,
+    label: "View Product",
+    intent: "neutral",
+    variant: "ghost"
   }
 ];
-
-// ❌ Bad - hardcoded product schema in Table component
-<Table rows={products} /> // Hardcoded columns inside Table
 ```
 
-### Component Composition & File Structure
-**Rule**: Split large components into smaller, focused components with proper file organization
-
-**Core Principles**:
-- **Single Responsibility**: Each component should have one clear purpose
-- **Maintainable Size**: Keep components under 200 lines when possible
-- **Reusable Sub-components**: Extract reusable parts into separate components
-- **Clear File Organization**: Use folders with index files for complex components
-
-**File Organization Patterns**:
-```typescript
-// ✅ Good - Simple component (single file)
-packages/design-system/src/primitives/Button.tsx
-
-// ✅ Good - Complex component (folder structure)
-packages/design-system/src/data/Table/
-├── index.ts              // Main exports
-├── Table.tsx             // Main Table component
-├── TableHeader.tsx       // Table header logic
-├── TableRow.tsx          // Individual row component
-├── TableCell.tsx         // Cell rendering logic
-└── types.ts              // Shared interfaces
-
-// Export pattern in index.ts
-export { Table } from './Table';
-export { TableHeader } from './TableHeader';
-export { TableRow } from './TableRow';
-export type { TableProps, TableColumn } from './types';
-```
-
-**Component Splitting Guidelines**:
-```typescript
-// ❌ Bad - Large monolithic component
-function ProductsList() {
-  // 300+ lines of JSX with inline components
-  const renderFilters = () => (
-    <div className="grid md:grid-cols-4 gap-3">
-      <Input label="Szukaj" placeholder="Nazwa, SKU..." />
-      <Select label="Kategoria" options={categoryOptions} />
-      <Select label="Status" options={statusOptions} />
-      <Button intent="primary">Zastosuj</Button>
-    </div>
-  );
-
-  const renderActions = () => (
-    <div className="flex gap-2">
-      <Button intent="primary">Dodaj produkt</Button>
-      <Button variant="outline">Export</Button>
-      <Button intent="neutral" variant="ghost">Settings</Button>
-    </div>
-  );
-
-  return (
-    <div>
-      {renderFilters()}
-      {renderActions()}
-      {/* 200+ more lines... */}
-    </div>
-  );
-}
-
-// ✅ Good - Split into focused components
-// components/ProductsFilters.tsx
-function ProductsFilters({ onFilter }: ProductsFiltersProps) {
-  return (
-    <Card>
-      <div className="grid md:grid-cols-4 gap-3">
-        <Input label="Search" placeholder="Name, SKU..." />
-        <Select label="Category" options={categoryOptions} />
-        <Select label="Status" options={statusOptions} />
-        <Button intent="primary" onClick={onFilter}>Apply</Button>
-      </div>
-    </Card>
-  );
-}
-
-// components/ProductsActions.tsx
-function ProductsActions({ onAdd, onExport }: ProductsActionsProps) {
-  return (
-    <div className="flex gap-2">
-      <Button intent="primary" onClick={onAdd}>Add Product</Button>
-      <Button variant="outline" onClick={onExport}>Export</Button>
-      <Button intent="neutral" variant="ghost">Settings</Button>
-    </div>
-  );
-}
-
-// pages/ProductsList.tsx - Clean main component
-function ProductsList() {
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <Typography type="section-title">Products</Typography>
-        <ProductsActions onAdd={handleAdd} onExport={handleExport} />
-      </div>
-      
-      <ProductsFilters onFilter={handleFilter} />
-      
-      <Card className="p-0 overflow-hidden">
-        <Table data={data} columns={columns} actions={actions} />
-      </Card>
-      
-      <Pagination total={128} pageSize={25} />
-    </div>
-  );
-}
-```
-
-**When to Extract Sub-components**:
-- **Always**: When component exceeds 200 lines
-- **Always**: When inline component has 3+ props or complex logic
-- **Consider**: When component logic can be reused elsewhere
-- **Consider**: When component has distinct responsibility
-- **Avoid**: Over-extraction for trivial components (1-2 lines JSX)
-
-**Folder Structure Decision Tree**:
-```
-Component has 1 file + simple types? → Single .tsx file
-Component has 2-3 related files? → Folder with index.ts
-Component has 4+ files or sub-components? → Folder with organized structure
-```
+**Loading States Pattern**:
+- **Skeleton**: Initial loading (no data available)
+- **Overlay**: Data refresh (existing data with loading indicator)
+- **Empty State**: No data with configurable message/icon
+- **Error State**: Error handling with retry option
 
 ### Constant Definitions
 **Rule**: All constants must be defined outside components to prevent re-renders

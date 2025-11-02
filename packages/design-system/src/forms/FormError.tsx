@@ -1,6 +1,6 @@
 import React from "react";
 import { clsx } from "clsx";
-import { useTheme } from "../theme/ThemeProvider";
+import { useTheme } from "../theme";
 import { AlertCircle } from "lucide-react";
 
 export interface FormErrorProps {

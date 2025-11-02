@@ -4,7 +4,7 @@ import {
   useTheme,
   ComponentIntent,
   getIntentStyle,
-} from "../theme/ThemeProvider";
+} from "../theme";
 import { X, AlertCircle, CheckCircle, AlertTriangle, Info } from "lucide-react";
 
 export interface AlertProps {

@@ -127,6 +127,9 @@ Thumbs.db
 # Vercel
 .vercel
 
+# Vite
+.vite
+
 # TypeScript
 *.tsbuildinfo
 
@@ -153,7 +156,7 @@ yarn.lock
 *.old
 
 # Compiled output
-lib/
-es/
-esm/
-types/
+*/dist/lib/
+*/dist/es/
+*/dist/esm/
+*/dist/types/

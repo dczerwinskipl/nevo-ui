@@ -6,15 +6,28 @@ import {
   TableColumn,
   TableAction,
   Badge,
+  ViewIcon,
+  EditIcon,
+  DeleteIcon,
 } from "@nevo/design-system";
 import { Product } from "../types/Product";
 import { getStatusIntent } from "../../../shared/constants/orderStatus";
 
 export interface ProductsTableProps {
   data: Product[];
+  isLoading?: boolean;
+  isFetching?: boolean;
+  error?: Error | null;
+  onRetry?: () => void;
 }
 
-export function ProductsTable({ data }: ProductsTableProps) {
+export function ProductsTable({
+  data,
+  isLoading = false,
+  isFetching = false,
+  error,
+  onRetry,
+}: ProductsTableProps) {
   const { tokens } = useTheme();
 
   const columns: TableColumn<Product>[] = [
@@ -81,21 +94,21 @@ export function ProductsTable({ data }: ProductsTableProps) {
 
   const actions: TableAction<Product>[] = [
     {
-      icon: <span>👁</span>,
+      icon: <ViewIcon />,
       label: "Podgląd",
       intent: "neutral",
       variant: "ghost",
       onClick: (product: Product) => console.log("View:", product),
     },
     {
-      icon: <span>✏️</span>,
+      icon: <EditIcon />,
       label: "Edytuj",
       intent: "neutral",
       variant: "ghost",
       onClick: (product: Product) => console.log("Edit:", product),
     },
     {
-      icon: <span>🗑</span>,
+      icon: <DeleteIcon />,
       label: "Usuń",
       intent: "error",
       variant: "ghost",
@@ -105,7 +118,17 @@ export function ProductsTable({ data }: ProductsTableProps) {
 
   return (
     <Card className="p-0 overflow-hidden">
-      <Table data={data} columns={columns} actions={actions} />
+      <Table
+        data={data}
+        columns={columns}
+        actions={actions}
+        isLoading={isLoading}
+        error={error}
+        onRetry={onRetry}
+        emptyTitle="No products found"
+        emptyDescription="Try adjusting your filters or search criteria"
+        fetchingMessage="Updating products..."
+      />
     </Card>
   );
 }

@@ -6,7 +6,7 @@ import {
   ComponentIntent,
   ComponentVariant,
   ComponentSize,
-} from "../theme/ThemeProvider";
+} from "../theme";
 
 // TODO: TASK-020 - Move sizeClasses map outside component to prevent recreation on each render
 
@@ -54,7 +54,10 @@ export const Button: React.FC<ButtonProps> = ({
         background: style.background,
         color: style.color,
         border: style.border,
-        boxShadow: variant === "solid" ? tokens.shadow.sm : "none",
+        boxShadow:
+          variant === "solid"
+            ? `0 1px 3px ${tokens.shadow.color}, 0 1px 2px ${tokens.shadow.color}`
+            : "none",
       }}
     >
       {loading ? "Loading..." : children}

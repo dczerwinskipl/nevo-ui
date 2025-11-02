@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useTheme, raisedStyle, Tokens } from "../theme/ThemeProvider";
+import { useTheme, raisedStyle, Tokens } from "../theme";
 import {
   LayoutGrid,
   Package,
@@ -88,7 +88,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             style={{
               background: tokens.card,
               borderRight: `1px solid ${tokens.border}`,
-              boxShadow: tokens.shadow.lg,
+              boxShadow: `0 10px 30px ${tokens.shadow.color}, 0 6px 10px ${tokens.shadow.color}`,
               color: tokens.text,
             }}
             onClick={(e) => e.stopPropagation()}
@@ -168,8 +168,8 @@ function NavList({
                 }`,
                 boxShadow:
                   isActive || isChildActive
-                    ? tokens.shadow.md
-                    : tokens.shadow.sm,
+                    ? `0 4px 8px ${tokens.shadow.color}, 0 2px 4px ${tokens.shadow.color}`
+                    : `0 1px 3px ${tokens.shadow.color}, 0 1px 2px ${tokens.shadow.color}`,
               }}
               onClick={() =>
                 hasChildren
@@ -209,7 +209,9 @@ function NavList({
                         border: `1px solid ${
                           subActive ? "rgba(109,106,255,.2)" : "transparent"
                         }`,
-                        boxShadow: subActive ? tokens.shadow.sm : "none",
+                        boxShadow: subActive
+                          ? `0 1px 3px ${tokens.shadow.color}, 0 1px 2px ${tokens.shadow.color}`
+                          : "none",
                       }}
                       onClick={() => onNavigate(c.key)}
                     >

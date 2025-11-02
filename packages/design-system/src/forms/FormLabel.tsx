@@ -1,6 +1,6 @@
 import React from "react";
 import { clsx } from "clsx";
-import { useTheme, ComponentIntent } from "../theme/ThemeProvider";
+import { useTheme, ComponentIntent } from "../theme";
 
 export interface FormLabelProps {
   htmlFor?: string;

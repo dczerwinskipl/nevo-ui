@@ -1,6 +1,6 @@
 import React from "react";
 import { clsx } from "clsx";
-import { useTheme, cardStyle } from "../theme/ThemeProvider";
+import { useTheme, cardStyle } from "../theme";
 
 // TODO: TASK-019 - Replace string interpolation with clsx utility for better className merging
 

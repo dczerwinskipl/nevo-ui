@@ -1,10 +1,6 @@
 import React from "react";
 import { clsx } from "clsx";
-import {
-  useTheme,
-  ComponentIntent,
-  getIntentStyle,
-} from "../theme/ThemeProvider";
+import { useTheme, ComponentIntent, getIntentStyle } from "../theme";
 import { X, AlertCircle, CheckCircle, AlertTriangle, Info } from "lucide-react";
 
 export interface ToastProps {
@@ -71,7 +67,7 @@ export function Toast({
         backgroundColor: style.background,
         borderColor: style.border,
         color: style.color,
-        boxShadow: tokens.shadow.lg,
+        boxShadow: `0 10px 30px ${tokens.shadow.color}, 0 6px 10px ${tokens.shadow.color}`,
       }}
       role="alert"
       aria-live="polite"
