@@ -19,6 +19,7 @@ interface FiltersFormProps<TFilters extends Record<string, FilterValue>> {
   isLoading?: boolean;
   isFetching?: boolean;
   isDirty?: boolean;
+  hasAppliedFilters?: boolean;
   applyLabel?: string;
   clearLabel?: string;
 }
@@ -32,6 +33,7 @@ export function FiltersForm<TFilters extends Record<string, FilterValue>>({
   isLoading = false,
   isFetching = false,
   isDirty = false,
+  hasAppliedFilters = false,
   applyLabel = "Apply",
   clearLabel = "Clear",
 }: FiltersFormProps<TFilters>) {
@@ -99,6 +101,7 @@ export function FiltersForm<TFilters extends Record<string, FilterValue>>({
           onClear={onClearFilters}
           isLoading={isFetching}
           disabled={!isDirty}
+          clearDisabled={!hasAppliedFilters}
           applyLabel={applyLabel}
           clearLabel={clearLabel}
         />

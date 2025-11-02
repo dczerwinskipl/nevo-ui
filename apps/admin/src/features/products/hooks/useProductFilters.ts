@@ -43,9 +43,14 @@ const productFilterConfig: FilterConfig<ProductFilters> = {
 };
 
 export function useProductFilters() {
-  const initial: ProductFilters = {};
+  // Define proper initial values that match form expectations
+  const initial: ProductFilters = {
+    search: '',
+    tag: '',
+    status: '',
+  };
 
-  const { filters, pendingFilters, updateFilter, applyFilters, clearFilters, isDirty } = useFilters(
+  const { filters, pendingFilters, updateFilter, applyFilters, clearFilters, isDirty, hasAppliedFilters } = useFilters(
     initial, 
     productFilterConfig
   );
@@ -63,6 +68,7 @@ export function useProductFilters() {
     applyFilters,
     clearFilters,
     isDirty,
+    hasAppliedFilters,
     // Loading states come from query, not filters
     isLoading,
     isFetching,

@@ -15,6 +15,7 @@ export interface ProductsFiltersProps {
   isLoading?: boolean;
   isFetching?: boolean;
   isDirty?: boolean;
+  hasAppliedFilters?: boolean;
 }
 
 export function ProductsFilters({
@@ -26,6 +27,7 @@ export function ProductsFilters({
   isLoading = false,
   isFetching = false,
   isDirty = false,
+  hasAppliedFilters = false,
 }: ProductsFiltersProps) {
   return (
     <Card>
@@ -38,6 +40,7 @@ export function ProductsFilters({
         isLoading={isLoading}
         isFetching={isFetching}
         isDirty={isDirty}
+        hasAppliedFilters={hasAppliedFilters}
         applyLabel="Apply"
         clearLabel="Clear"
       />

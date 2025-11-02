@@ -49,6 +49,18 @@ export function useFilters<TFilters extends Record<string, FilterValue>>(initial
     return dirty;
   }, [pending, applied, config]);
 
+  // Check if there are any applied filters (different from initial)
+  const hasAppliedFilters = useMemo(() => {
+    return (Object.keys(config) as Array<keyof TFilters>).some((k) => {
+      const appliedValue = applied[k];
+      const initialValue = initialFilters[k];
+      // Consider undefined and empty string as equivalent
+      const normalizedApplied = appliedValue === "" ? undefined : appliedValue;
+      const normalizedInitial = initialValue === "" ? undefined : initialValue;
+      return normalizedApplied !== normalizedInitial;
+    });
+  }, [applied, initialFilters, config]);
+
   const pendingFilters = pending;
 
   const fieldErrors = useMemo(() => {
@@ -67,6 +79,7 @@ export function useFilters<TFilters extends Record<string, FilterValue>>(initial
     applyFilters,
     clearFilters,
     isDirty,
+    hasAppliedFilters,
     fieldErrors,
   } as const;
 }

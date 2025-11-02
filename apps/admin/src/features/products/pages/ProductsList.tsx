@@ -18,6 +18,7 @@ export function ProductsList() {
     applyFilters,
     clearFilters,
     isDirty,
+    hasAppliedFilters,
     config,
   } = useProductFilters();
 
@@ -46,6 +47,7 @@ export function ProductsList() {
         isLoading={isLoading}
         isFetching={isFetching}
         isDirty={isDirty}
+        hasAppliedFilters={hasAppliedFilters}
       />
 
       {/* Pass data and state as props */}

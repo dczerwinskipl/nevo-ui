@@ -7,6 +7,7 @@ interface FilterActionsProps {
   onClear: () => void;
   isLoading?: boolean;
   disabled?: boolean;
+  clearDisabled?: boolean;
   applyLabel?: string;
   clearLabel?: string;
 }
@@ -16,6 +17,7 @@ export const FilterActions: React.FC<FilterActionsProps> = ({
   onClear,
   isLoading = false,
   disabled = false,
+  clearDisabled = false,
   applyLabel = "Apply",
   clearLabel = "Clear",
 }) => {
@@ -37,7 +39,7 @@ export const FilterActions: React.FC<FilterActionsProps> = ({
         variant="ghost"
         size="sm"
         onClick={onClear}
-        disabled={disabled}
+        disabled={clearDisabled}
       >
         {clearLabel}
       </Button>
