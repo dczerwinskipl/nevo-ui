@@ -1,0 +1,44 @@
+{
+  "folders": [
+    {
+      "name": "🏠 Root",
+      "path": "."
+    },
+    {
+      "name": "🎨 Design System", 
+      "path": "./packages/design-system"
+    },
+    {
+      "name": "⚡ Ecommerce Admin",
+      "path": "./apps/admin"
+    }
+  ],
+  "settings": {
+    "typescript.preferences.includePackageJsonAutoImports": "auto",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    },
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "files.associations": {
+      "*.css": "tailwindcss"
+    },
+    "emmet.includeLanguages": {
+      "javascript": "javascriptreact",
+      "typescript": "typescriptreact"
+    },
+    "tailwindCSS.experimental.classRegex": [
+      ["class:\\s*?[\"'`]([^\"'`]*).*?,[\"'`]", "([^\"'`]*)"],
+      ["className\\s*=\\s*[\"'`]([^\"'`]*)[\"'`]", "([^\"'`]*)"]
+    ]
+  },
+  "extensions": {
+    "recommendations": [
+      "bradlc.vscode-tailwindcss",
+      "esbenp.prettier-vscode", 
+      "ms-vscode.vscode-typescript-next",
+      "github.copilot",
+      "github.copilot-chat"
+    ]
+  }
+}
