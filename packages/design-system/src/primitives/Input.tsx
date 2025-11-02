@@ -2,11 +2,8 @@ import React, { useState } from "react";
 import { clsx } from "clsx";
 import {
   useTheme,
-  getIntentStyle,
   ComponentIntent,
-  ComponentVariant,
   ComponentSize,
-  Tokens,
   concaveStyle,
 } from "../theme";
 
@@ -74,7 +71,8 @@ export const Input: React.FC<InputProps> = ({
     ...baseStyle,
     borderColor: isFocused ? focusRingColor : borderColor,
     boxShadow: isFocused
-      ? `inset 2px 2px 4px ${tokens.intent.primary.bg}, inset -1px -1px 2px ${tokens.shadow.highlight}`
+      ? `inset 2px 2px 4px ${tokens.intent.primary.bg}, ` +
+        `inset -1px -1px 2px ${tokens.shadow.highlight}`
       : baseStyle.boxShadow || "",
     color: tokens.text,
   } as React.CSSProperties;

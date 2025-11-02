@@ -38,7 +38,9 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
           <div
             className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin"
             style={{
-              borderColor: `${tokens.primary.base} transparent ${tokens.primary.base} ${tokens.primary.base}`,
+              borderColor:
+                `${tokens.primary.base} transparent ` +
+                `${tokens.primary.base} ${tokens.primary.base}`,
             }}
           />
           <span className="text-sm font-medium">{message}</span>

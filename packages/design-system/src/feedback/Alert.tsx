@@ -1,10 +1,6 @@
 import React from "react";
 import { clsx } from "clsx";
-import {
-  useTheme,
-  ComponentIntent,
-  getIntentStyle,
-} from "../theme";
+import { useTheme, ComponentIntent, getIntentStyle } from "../theme";
 import { X, AlertCircle, CheckCircle, AlertTriangle, Info } from "lucide-react";
 
 export interface AlertProps {

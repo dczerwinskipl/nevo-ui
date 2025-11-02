@@ -13,9 +13,18 @@ export type { TypographyProps, TypographyType } from "./primitives/Typography";
 export * from "./primitives/Spinner";
 export * from "./navigation/Topbar";
 export * from "./navigation/Sidebar";
-export type { NavigationItem, NavigationChild, SidebarProps } from "./navigation/Sidebar";
+export type {
+  NavigationItem,
+  NavigationChild,
+  SidebarProps,
+} from "./navigation/Sidebar";
 export * from "./data/Table";
-export type { TableProps, TableColumn, TableAction, CellRenderer } from "./data/Table";
+export type {
+  TableProps,
+  TableColumn,
+  TableAction,
+  CellRenderer,
+} from "./data/Table";
 export * from "./data/Pagination";
 export * from "./data";
 export * from "./overlays/Modal";

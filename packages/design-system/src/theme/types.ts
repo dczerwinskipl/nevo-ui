@@ -44,7 +44,7 @@ export type Tokens = {
     info: { bg: string; border: string; text: string };
     neutral: { bg: string; border: string; text: string };
   };
-  
+
   // Semantic state colors - simplified
   states: {
     success: string;

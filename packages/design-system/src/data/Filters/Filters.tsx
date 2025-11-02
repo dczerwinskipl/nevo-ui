@@ -29,7 +29,6 @@ export function Filters<TFilters extends Record<string, FilterValue>>({
   onUpdateFilter,
   onApplyFilters,
   onClearFilters,
-  isLoading = false,
   isFetching = false,
   isDirty = false,
   hasAppliedFilters = false,

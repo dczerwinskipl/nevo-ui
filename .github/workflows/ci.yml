@@ -1,0 +1,143 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "packages/design-system/**"
+      - ".github/workflows/**"
+  push:
+    branches: [main, develop]
+    paths:
+      - "packages/design-system/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Quality checks job
+  quality:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: TypeScript Check
+        run: pnpm --filter @nevo/design-system run typecheck
+
+      - name: Lint Check
+        run: pnpm --filter @nevo/design-system run lint
+
+  # Unit tests job
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: pnpm --filter @nevo/design-system run test:ci
+
+  # Build job
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [quality, test]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build package
+        run: pnpm --filter @nevo/design-system run build
+
+      - name: Check build output
+        run: |
+          if [ ! -d "packages/design-system/dist" ]; then
+            echo "Build failed: dist directory not found"
+            exit 1
+          fi
+          if [ ! -f "packages/design-system/dist/index.js" ]; then
+            echo "Build failed: index.js not found"
+            exit 1
+          fi
+          if [ ! -f "packages/design-system/dist/index.d.ts" ]; then
+            echo "Build failed: index.d.ts not found"
+            exit 1
+          fi
+
+  # Summary job - required for branch protection
+  ci-success:
+    name: CI Success
+    runs-on: ubuntu-latest
+    needs: [quality, test, build]
+    if: always()
+
+    steps:
+      - name: Check job results
+        run: |
+          if [[ "${{ needs.quality.result }}" != "success" ]]; then
+            echo "Quality checks failed"
+            exit 1
+          fi
+          if [[ "${{ needs.test.result }}" != "success" ]]; then
+            echo "Tests failed"
+            exit 1
+          fi
+          if [[ "${{ needs.build.result }}" != "success" ]]; then
+            echo "Build failed"
+            exit 1
+          fi
+          echo "All checks passed! ✅"

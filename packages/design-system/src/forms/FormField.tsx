@@ -1,6 +1,6 @@
 import React from "react";
 import { clsx } from "clsx";
-import { useTheme, ComponentIntent } from "../theme";
+import { useTheme } from "../theme";
 
 export interface FormFieldProps {
   label?: string;
@@ -9,7 +9,6 @@ export interface FormFieldProps {
   required?: boolean;
   children: React.ReactNode;
   className?: string;
-  intent?: ComponentIntent;
 }
 
 export function FormField({
@@ -19,7 +18,6 @@ export function FormField({
   required = false,
   children,
   className,
-  intent = "neutral",
 }: FormFieldProps) {
   const { tokens } = useTheme();
 

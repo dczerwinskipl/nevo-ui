@@ -1,4 +1,4 @@
-import type { Tokens } from './types';
+import type { Tokens } from "./types";
 
 export const tokens = {
   dark: {
@@ -51,14 +51,14 @@ export const tokens = {
     },
     states: {
       success: "#22c55e",
-      warning: "#f59e0b", 
+      warning: "#f59e0b",
       error: "#ef4444",
       info: "#3b82f6",
       disabled: "#64748b",
       loading: "#6d6aff",
     },
   } satisfies Tokens,
-  
+
   light: {
     page: "#f8fafc", // lightest background
     card: "#ffffff", // pure white for cards
@@ -110,7 +110,7 @@ export const tokens = {
     states: {
       success: "#22c55e",
       warning: "#f59e0b",
-      error: "#ef4444", 
+      error: "#ef4444",
       info: "#3b82f6",
       disabled: "#94a3b8",
       loading: "#6d6aff",

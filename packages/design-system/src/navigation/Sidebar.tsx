@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useTheme, raisedStyle, Tokens } from "../theme";
+import { useTheme, Tokens } from "../theme";
 import {
   LayoutGrid,
   Package,
@@ -81,8 +81,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <>
       {/* Mobile Sidebar Overlay */}
       {open && (
-        <div className="fixed inset-0 z-50 md:hidden" onClick={onClose}>
-          <div className="absolute inset-0 bg-black/50" />
+        <div className="fixed inset-0 z-50 md:hidden">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/50 w-full h-full cursor-default border-none p-0"
+            onClick={onClose}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                onClose?.();
+              }
+            }}
+            aria-label="Close navigation menu"
+            tabIndex={0}
+          />
           <div
             className="absolute inset-y-0 left-0 w-72 max-w-[85vw] overflow-hidden"
             style={{
@@ -91,7 +102,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               boxShadow: `0 10px 30px ${tokens.shadow.color}, 0 6px 10px ${tokens.shadow.color}`,
               color: tokens.text,
             }}
-            onClick={(e) => e.stopPropagation()}
+            onClickCapture={(e) => e.stopPropagation()}
           >
             <div className="p-4 h-full overflow-y-auto">
               <NavList
@@ -149,7 +160,7 @@ function NavList({
         const isActive = route === s.key;
         const isChildActive =
           hasChildren &&
-          s.children!.some((c: NavigationChild) => c.key === route);
+          s.children?.some((c: NavigationChild) => c.key === route);
 
         return (
           <div key={s.key}>
@@ -195,7 +206,7 @@ function NavList({
                 className="mt-1 ml-6 pl-3 space-y-1 border-l"
                 style={{ borderColor: tokens.border }}
               >
-                {s.children!.map((c: NavigationChild) => {
+                {s.children?.map((c: NavigationChild) => {
                   const subActive = route === c.key;
                   return (
                     <button

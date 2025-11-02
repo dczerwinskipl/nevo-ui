@@ -89,8 +89,8 @@ export function Progress({
               size === "sm"
                 ? "text-xs"
                 : size === "md"
-                ? "text-sm"
-                : "text-base"
+                  ? "text-sm"
+                  : "text-base"
             )}
             style={{ color: tokens.text }}
           >

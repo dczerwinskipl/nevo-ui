@@ -12,8 +12,8 @@
     "exactOptionalPropertyTypes": true,
     "baseUrl": ".",
     "paths": {
-      "@ui/*": ["packages/ui/src/*"],
-      "@ui": ["packages/ui/src/index.ts"]
+      "@ui/*": ["packages/design-system/src/*"],
+      "@ui": ["packages/design-system/src/index.ts"]
     }
   }
 }

@@ -3,10 +3,8 @@ import { clsx } from "clsx";
 import {
   useTheme,
   ComponentIntent,
-  ComponentVariant,
   ComponentSize,
   getIntentStyle,
-  Tokens,
   concaveStyle,
 } from "../theme";
 import { ChevronDown } from "lucide-react";
