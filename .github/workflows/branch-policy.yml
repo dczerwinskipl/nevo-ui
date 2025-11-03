@@ -1,0 +1,54 @@
+name: Branch Policy
+
+on:
+    push:
+        branches:
+            - "**"
+    pull_request:
+        branches:
+            - "**"
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    validate:
+        name: Branch Policy
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+
+        steps:
+            - name: Check branch naming on push
+              if: github.event_name == 'push'
+              run: |
+                  BRANCH="${GITHUB_REF_NAME}"
+                  if [[ "$BRANCH" == "main" || "$BRANCH" == features/* || "$BRANCH" == bugfix/* ]]; then
+                    echo "✅ Branch name is valid: $BRANCH"
+                    exit 0
+                  fi
+                  echo "❌ Invalid branch name: $BRANCH"
+                  echo "Allowed patterns: main, features/*, bugfix/*"
+                  exit 1
+
+            - name: Check PR target policy
+              if: github.event_name == 'pull_request'
+              run: |
+                  TARGET="${{ github.event.pull_request.base.ref }}"
+                  SOURCE="${{ github.event.pull_request.head.ref }}"
+
+                  # Only validate if target is main
+                  if [[ "$TARGET" != "main" ]]; then
+                    echo "✅ PR not targeting main - no restrictions: $SOURCE -> $TARGET"
+                    exit 0
+                  fi
+
+                  # Validate merges TO main
+                  if [[ "$SOURCE" == features/* || "$SOURCE" == bugfix/* ]]; then
+                    echo "✅ PR policy valid: $SOURCE -> $TARGET"
+                    exit 0
+                  fi
+
+                  echo "❌ Invalid PR direction: $SOURCE -> $TARGET"
+                  echo "Only features/* and bugfix/* branches can merge to main"
+                  exit 1
