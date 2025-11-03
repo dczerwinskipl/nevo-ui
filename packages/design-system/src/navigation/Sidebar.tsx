@@ -22,16 +22,13 @@ const NAVIGATION_SECTIONS: NavigationItem[] = [
     key: "products",
     label: "Produkty",
     icon: <Package className="w-4 h-4" />,
-    children: [
-      { key: "products", label: "Lista" },
-      { key: "product-edit", label: "Edycja" },
-    ],
+    children: [{ key: "products", label: "Lista" }],
   },
   {
-    key: "order",
+    key: "orders",
     label: "Zamówienia",
     icon: <ShoppingCart className="w-4 h-4" />,
-    children: [{ key: "order", label: "Szczegóły" }],
+    children: [{ key: "orders", label: "Szczegóły" }],
   },
   { key: "users", label: "Użytkownicy", icon: <User className="w-4 h-4" /> },
 ] as const;
@@ -74,7 +71,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const { tokens } = useTheme();
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({
     products: true,
-    order: true,
+    orders: true,
   });
 
   return (
@@ -102,7 +99,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
               boxShadow: `0 10px 30px ${tokens.shadow.color}, 0 6px 10px ${tokens.shadow.color}`,
               color: tokens.text,
             }}
-            onClickCapture={(e) => e.stopPropagation()}
           >
             <div className="p-4 h-full overflow-y-auto">
               <NavList
@@ -165,7 +161,7 @@ function NavList({
         return (
           <div key={s.key}>
             <button
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-[1.02]"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 md:hover:scale-[1.02] touch-manipulation"
               style={{
                 background:
                   isActive || isChildActive
@@ -187,6 +183,10 @@ function NavList({
                   ? setOpenMap({ ...openMap, [s.key]: !openMap[s.key] })
                   : onNavigate(s.key)
               }
+              onTouchStart={(e) => {
+                // Prevent any potential touch conflicts
+                e.stopPropagation();
+              }}
             >
               <span className="opacity-80">{s.icon}</span>
               <span className="flex-1 text-left">{s.label}</span>
@@ -211,7 +211,7 @@ function NavList({
                   return (
                     <button
                       key={c.key}
-                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 hover:scale-[1.02]"
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 md:hover:scale-[1.02] touch-manipulation"
                       style={{
                         background: subActive
                           ? "rgba(109,106,255,.12)"
@@ -225,6 +225,10 @@ function NavList({
                           : "none",
                       }}
                       onClick={() => onNavigate(c.key)}
+                      onTouchStart={(e) => {
+                        // Prevent any potential touch conflicts
+                        e.stopPropagation();
+                      }}
                     >
                       <div
                         className="w-1.5 h-1.5 rounded-full"
