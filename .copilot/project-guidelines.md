@@ -26,6 +26,43 @@ This document defines the architectural principles and best practices for the nE
 - Git commit messages and PR descriptions
 - API documentation and schemas
 
+### Specification Management
+
+#### Task Specifications Location
+
+**Rule**: All task specifications must be placed in `spec/<epic-number>-<epic-name>/` folder.
+
+**File Naming Convention**: `<task-number>-<task-name>.md`
+
+**Examples**:
+
+- `spec/000-devops/001-ci-cd-tests.md`
+- `spec/000-devops/002-repository-governance.md`
+- `spec/000-devops/003-cloudflare-preview-deployments.md`
+- `spec/001-ui-components/001-button-component.md`
+
+#### Branch Naming Convention
+
+**Rule**: Branch names must follow the pattern `features/<epic>/<task>-<description>`
+
+**Examples**:
+
+- `features/000-devops/001-ci-cd-tests`
+- `features/000-devops/002-repository-governance`
+- `features/000-devops/003-cloudflare-preview-deployments`
+- `features/001-ui-components/001-button-component`
+
+#### Specification Template
+
+Each specification should include:
+
+- Epic and task identification
+- Overview and objectives
+- Technical requirements
+- Implementation tasks
+- Success criteria
+- Testing strategy
+
 **Examples**:
 
 ```typescript
