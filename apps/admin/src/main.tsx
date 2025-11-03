@@ -4,10 +4,7 @@ import App from "./App";
 import "./styles.css";
 
 async function enableMocking() {
-  if (
-    import.meta.env.MODE === "development" ||
-    import.meta.env.MODE === "preview"
-  ) {
+  if (import.meta.env.VITE_ENABLE_MOCKS === "true") {
     const { setupMocks } = await import("@nevo/api-mocks/browser");
     const { handlers } = await import("./mocks");
 

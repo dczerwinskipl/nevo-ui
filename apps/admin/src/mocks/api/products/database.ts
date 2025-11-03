@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { createInMemoryDatabase, BaseEntity, PaginatedResponse } from '../../shared/InMemoryDatabase';
+import { createInMemoryDatabase, BaseEntity, PaginatedResponse } from '@nevo/api-mocks';
 
 export interface Product extends BaseEntity {
   name: string;
