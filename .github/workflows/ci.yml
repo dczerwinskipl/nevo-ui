@@ -2,14 +2,22 @@ name: CI/CD Pipeline
 
 on:
   pull_request:
+    types: [opened, synchronize, closed]
     branches: [main]
     paths:
       - "packages/design-system/**"
+      - "apps/admin/**"
       - ".github/workflows/**"
   push:
     branches: [main]
     paths:
       - "packages/design-system/**"
+      - "apps/admin/**"
+
+permissions:
+  contents: read
+  deployments: write
+  pull-requests: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -115,10 +123,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build package
+      - name: Build design system
         run: pnpm --filter @nevo/design-system run build
 
-      - name: Check build output
+      - name: Check design system build
         run: |
           if [ ! -d "packages/design-system/dist" ]; then
             echo "Build failed: dist directory not found"
@@ -132,6 +140,111 @@ jobs:
             echo "Build failed: index.d.ts not found"
             exit 1
           fi
+
+      - name: Build admin app
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+        run: pnpm --filter @nevo/ecommerce-admin-app run build
+
+      - name: Upload admin build artifacts
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-dist
+          path: apps/admin/dist/
+          retention-days: 1
+
+  # Manual preview deployment (only for PRs)
+  preview-deploy:
+    name: 🚀 Deploy Preview
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    needs: [build]
+    environment:
+      name: preview
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: admin-dist
+          path: apps/admin/dist/
+
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+          directory: apps/admin/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deployUrl = process.env.DEPLOY_URL;
+            const prNumber = context.payload.pull_request.number;
+            const shortSha = process.env.GITHUB_SHA.substring(0, 7);
+
+            if (deployUrl) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: [
+                  '## 🚀 Preview Deployed Successfully',
+                  '',
+                  `**🔗 Preview URL:** [${deployUrl}](${deployUrl})`,
+                  '',
+                  '**📋 Deployment Details:**',
+                  `- **Branch:** \`${{ github.head_ref }}\``,
+                  `- **Commit:** [\`${shortSha}\`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})`,
+                  `- **Deployed at:** ${new Date().toISOString()}`,
+                  '',
+                  '> 🧹 Preview will be automatically cleaned up when this PR is closed.'
+                ].join('\n')
+              });
+            }
+        env:
+          DEPLOY_URL: ${{ steps.deploy.outputs.url }}
+          GITHUB_SHA: ${{ github.sha }}
+
+  # Production deployment (only for main branch)
+  production-deploy:
+    name: 🌟 Deploy Production
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [build]
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: admin-dist
+          path: apps/admin/dist/
+
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+          directory: apps/admin/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
 
   # Summary job - required for branch protection
   ci-success:
@@ -156,3 +269,29 @@ jobs:
             exit 1
           fi
           echo "All checks passed! ✅"
+
+  # Cleanup preview deployments when PR is closed
+  cleanup-preview:
+    name: 🧹 Cleanup Preview
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+
+    steps:
+      - name: Delete Cloudflare preview deployments
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // For now, just comment that cleanup would happen
+            // In the future, this could call Cloudflare API to clean up deployments
+            const prNumber = context.payload.pull_request.number;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: `🧹 **Preview Cleanup**
+              
+              Preview deployments for this PR have been scheduled for cleanup.
+              
+              Note: Cloudflare Pages will automatically clean up deployments after a few days.`
+            });

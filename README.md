@@ -7,6 +7,7 @@ Modern React admin interface with comprehensive table filtering system and modul
 - `apps/admin`: Vite React app using `@nevo/design-system` → `@nevo/ecommerce-admin-app`
 
 ## Quick Start
+
 1. Install pnpm: https://pnpm.io
 2. `pnpm install`
 3. `pnpm dev` to run development servers in parallel
@@ -15,10 +16,11 @@ Modern React admin interface with comprehensive table filtering system and modul
 ## Architecture Overview
 
 ### Design System (`packages/design-system`)
+
 ```
 src/
 ├── primitives/     # Button, Input, Select, Badge, Card, Typography
-├── layout/         # Grid, Stack, Container components  
+├── layout/         # Grid, Stack, Container components
 ├── navigation/     # Topbar, Sidebar navigation
 ├── data/          # Data display and filtering system
 │   ├── Table/      # Modular table components (149 lines main component)
@@ -42,6 +44,7 @@ src/
 ```
 
 ### Admin App (`apps/admin`)
+
 ```
 src/
 ├── features/      # Vertical slices (products, dashboard, orders, users)
@@ -61,28 +64,14 @@ src/
 ## Key Features
 
 ### Enhanced Data Management
+
 - **Generic Filtering System**: Strongly-typed filters with TanStack Query integration
 - **Modular Table Architecture**: Components split by responsibility (<200 lines each)
 - **Loading State Management**: Skeleton, overlay, empty, and error states
 - **Apply/Clear Pattern**: Manual filter application with proper loading indicators
 
-### Design System Features
-- **Intent-based API**: Consistent `intent` and `variant` props across components
-- **SVG Icon System**: Cross-platform consistent icons using lucide-react
-- **Theme system**: Dark/light mode with 3-tier surfaces (page/card/raised)
-- **Semantic tokens**: Unified color system with component-specific tokens
-- **Mobile-first**: Responsive design with 44px touch targets
-- **TypeScript**: Strict typing with proper interfaces and generics
-- **Accessibility**: ARIA attributes and keyboard navigation
-
-### Architecture Highlights
-- **Component Splitting**: Main Table component reduced from 240+ to 149 lines
-- **Strong Typing**: Generic interfaces with compile-time validation
-- **Stateless Components**: Design system components with no internal state
-- **TanStack Query**: Efficient data fetching with caching and filter parameters
-- **Configurable Texts**: All labels and messages passed via props (i18n-ready)
-
 ## Development Commands
+
 ```bash
 # Install dependencies
 pnpm install
@@ -100,16 +89,3 @@ pnpm --filter @nevo/ecommerce-admin-app build
 # Run tests (when available)
 pnpm test
 ```
-
-## Implementation Status
-- ✅ **Epic 001-001**: Complete table filtering system with generic components
-- ✅ **Modular Architecture**: Table components split by responsibility
-- ✅ **SVG Icon System**: Cross-platform consistent icons
-- ✅ **Loading States**: Comprehensive loading, empty, and error handling
-- ✅ **Strong Typing**: Generic interfaces with compile-time validation
-
-## Theme System
-- Dark and light mode with automatic switching
-- 3-tier background system (page/card/raised) with subtle gradients and highlights
-- Colors inspired by indigo/violet palette with cyan accents
-- Unified elevation system (concave, raised, card styles)
