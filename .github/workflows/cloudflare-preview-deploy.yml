@@ -120,18 +120,18 @@ jobs:
                         });
                       }
 
-  # Main deployment job
-  deploy:
-    name: Deploy Preview
-    runs-on: ubuntu-latest
-    if: |
-      (github.event_name == 'workflow_dispatch') ||
-      (github.event_name == 'issue_comment' && needs.check-comment.outputs.should_deploy == 'true')
-    needs: [check-comment]
-    env:
-      PR_NUMBER: ${{ github.event.inputs.pr_number || needs.check-comment.outputs.pr_number }}
-    
-    steps:
+    # Main deployment job
+    deploy:
+        name: Deploy Preview
+        runs-on: ubuntu-latest
+        if: |
+            (github.event_name == 'workflow_dispatch') ||
+            (github.event_name == 'issue_comment' && needs.check-comment.outputs.should_deploy == 'true')
+        needs: [check-comment]
+        env:
+            PR_NUMBER: ${{ github.event.inputs.pr_number || needs.check-comment.outputs.pr_number }}
+
+        steps:
             - name: Checkout repository
               uses: actions/checkout@v4
               with:
