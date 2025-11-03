@@ -190,23 +190,30 @@ jobs:
           script: |
             const deployUrl = process.env.DEPLOY_URL;
             const prNumber = context.payload.pull_request.number;
+            const shortSha = process.env.GITHUB_SHA.substring(0, 7);
 
             if (deployUrl) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: prNumber,
-                body: `🚀 **Preview Deployed Successfully**
-                
-                **Preview URL:** ${deployUrl}
-                **Branch:** \`${{ github.head_ref }}\`
-                **Commit:** \`${{ github.sha }}\`
-                
-                > Preview will be automatically cleaned up when this PR is closed.`
+                body: [
+                  '## 🚀 Preview Deployed Successfully',
+                  '',
+                  `**🔗 Preview URL:** [${deployUrl}](${deployUrl})`,
+                  '',
+                  '**📋 Deployment Details:**',
+                  `- **Branch:** \`${{ github.head_ref }}\``,
+                  `- **Commit:** [\`${shortSha}\`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})`,
+                  `- **Deployed at:** ${new Date().toISOString()}`,
+                  '',
+                  '> 🧹 Preview will be automatically cleaned up when this PR is closed.'
+                ].join('\n')
               });
             }
         env:
           DEPLOY_URL: ${{ steps.deploy.outputs.url }}
+          GITHUB_SHA: ${{ github.sha }}
 
   # Production deployment (only for main branch)
   production-deploy:

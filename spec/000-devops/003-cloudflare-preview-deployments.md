@@ -6,418 +6,253 @@
 
 ### Overview
 
-This specification defines the implementation of on-demand preview deployments using Cloudflare Pages native preview system. Instead of automatic deployments for all PRs, we'll use a controlled approach where previews are triggered manually for security while leveraging Cloudflare's built-in preview branch functionality.
+This specification defines the implementation of Cloudflare Pages preview deployments integrated into the main CI/CD pipeline. Preview deployments are triggered automatically for pull requests but require manual approval through GitHub Environments for security control.
 
 ### Objectives
 
-- Use Cloudflare Pages native preview branch system
-- Enable **on-demand** preview deployments (security-controlled)
-- Automatic deployment for main branch only
-- Manual trigger for preview deployments via GitHub Actions
-- No custom folder structure - leverage Cloudflare's native preview URLs
+- Integrate Cloudflare Pages deployments into existing CI/CD pipeline
+- Enable **manual approval** for preview deployments (security-controlled)
+- Automatic deployment for main branch (production)
+- Leverage GitHub Environments for approval workflows
+- Clean integration with existing quality checks and build processes
 
 ### Approach
 
-**Native Cloudflare Pages with Manual Control:**
+**Integrated CI/CD Pipeline with Manual Approval:**
 
-1. **Main Branch**: Automatic deployment via Cloudflare Pages
-2. **Preview Branches**: Disabled by default in Cloudflare settings
-3. **On-Demand**: GitHub Actions trigger Cloudflare deployments via API for specific PRs
-4. **Security**: Only maintainers can trigger preview deployments
+1. **Main Branch**: Automatic production deployment after successful CI
+2. **Pull Requests**: Preview deployment with manual approval via GitHub Environments
+3. **Quality Gates**: All deployments depend on passing quality checks, tests, and builds
+4. **Artifact System**: Build once, deploy multiple times using GitHub Actions artifacts
+5. **Cleanup**: Automatic cleanup when PRs are closed
 
 ### Requirements
 
-#### 1. Cloudflare Pages Native Configuration
+#### 1. GitHub Environments Configuration
 
-- **Platform**: Cloudflare Pages with GitHub integration
-- **Production Branch**: `main` (automatic)
-- **Preview Branches**: Disabled in UI, triggered via API on-demand
-- **Native URLs**:
-  - Main: `<project>.pages.dev`
-  - Previews: `<commit-hash>.<project>.pages.dev` (Cloudflare's native format)
+- **Preview Environment**: Manual approval required, reviewers can approve deployments
+- **Production Environment**: Automatic deployment for main branch
+- **Security**: Only repository maintainers can approve deployments
 
-#### 2. GitHub Actions On-Demand System
+#### 2. Integrated CI/CD Pipeline
 
-**Trigger Methods**:
+**Single Workflow** (`.github/workflows/ci.yml`):
+- Quality checks (TypeScript, linting)
+- Unit tests
+- Build (design system + admin app)
+- Preview deployment (manual approval for PRs)
+- Production deployment (automatic for main)
+- Cleanup (automatic on PR close)
 
-- **Option A**: Manual workflow dispatch in GitHub Actions UI
-- **Option B**: PR comment commands (e.g., `/deploy-preview`)
-- **Option C**: GitHub API call from external tool/script
+#### 3. Cloudflare Pages Integration
 
-**Security**: Only repository maintainers can trigger deployments
+- Native Cloudflare Pages deployment using `cloudflare/pages-action@v1`
+- GitHub token integration for deployment tracking
+- Automatic URL generation and PR commenting
 
-#### 3. Cloudflare API Integration
+### Implementation
 
-Use Cloudflare Pages API to:
+#### CI/CD Pipeline Structure
 
-- Trigger deployment for specific commit/branch
-- Get deployment status and URL
-- List active deployments
-- Delete/cleanup old deployments
+**File**: `.github/workflows/ci.yml`
 
-### Implementation Tasks
+The workflow consists of these jobs:
 
-#### Task 1: Configure Cloudflare Pages Project
+1. **Quality Checks**: TypeScript and linting validation
+2. **Unit Tests**: Test suite execution
+3. **Build**: Build design system and admin application
+4. **Preview Deploy**: Manual approval deployment for PRs
+5. **Production Deploy**: Automatic deployment for main branch
+6. **Cleanup**: Automatic preview cleanup on PR close
 
-**Cloudflare Dashboard Setup**:
+#### Key Features Implemented
 
-1. **Create Project**: Connect GitHub repository
-2. **Build Settings**:
-   - Framework preset: `Vite`
-   - Build command: `cd apps/admin && pnpm build`
-   - Build output directory: `apps/admin/dist`
-   - Root directory: `/`
-3. **Branch Configuration**:
-   - **Production branch**: `main`
-   - **Preview deployments**: **Disabled** (we'll use API)
-4. **Environment Variables**: None needed for basic setup
-
-#### Task 2: Create Manual Deployment Workflow
-
-**File**: `.github/workflows/cloudflare-preview.yml`
-
+##### 1. Build Artifacts System
 ```yaml
-name: Cloudflare Preview Deploy
-
-on:
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: "PR number to deploy"
-        required: true
-        type: string
-      action:
-        description: "Action to perform"
-        required: true
-        type: choice
-        options:
-          - "deploy"
-          - "delete"
-
-jobs:
-  deploy-preview:
-    if: github.event.inputs.action == 'deploy'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get PR details
-        id: pr
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const pr = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: ${{ github.event.inputs.pr_number }}
-            });
-            return {
-              sha: pr.data.head.sha,
-              ref: pr.data.head.ref,
-              repo: pr.data.head.repo.full_name
-            };
-
-      - name: Trigger Cloudflare deployment
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const response = await fetch('https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/${{ secrets.CLOUDFLARE_PROJECT_NAME }}/deployments', {
-              method: 'POST',
-              headers: {
-                'Authorization': 'Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}',
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                type: 'branch',
-                branch: '${{ fromJson(steps.pr.outputs.result).ref }}',
-                commit_sha: '${{ fromJson(steps.pr.outputs.result).sha }}'
-              })
-            });
-
-            const deployment = await response.json();
-            if (deployment.success) {
-              console.log(`Preview deployed: ${deployment.result.url}`);
-              
-              // Comment on PR with preview URL
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: ${{ github.event.inputs.pr_number }},
-                body: `🚀 **Preview deployed!**\n\n📱 **Preview URL**: ${deployment.result.url}\n\n_Deployment ID: ${deployment.result.id}_`
-              });
-            } else {
-              throw new Error(`Deployment failed: ${JSON.stringify(deployment.errors)}`);
-            }
-
-  delete-preview:
-    if: github.event.inputs.action == 'delete'
-    runs-on: ubuntu-latest
-    steps:
-      - name: List and delete deployments
-        uses: actions/github-script@v7
-        with:
-          script: |
-            // List deployments for the PR branch
-            const deploymentsResponse = await fetch(`https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/${{ secrets.CLOUDFLARE_PROJECT_NAME }}/deployments`, {
-              headers: {
-                'Authorization': 'Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}'
-              }
-            });
-
-            const deployments = await deploymentsResponse.json();
-
-            // Find deployments for this PR (you may need to adjust the filtering logic)
-            // This is a simplified version - you might want to store deployment IDs in PR comments
-
-            console.log('Available deployments:', deployments.result.map(d => ({id: d.id, url: d.url})));
+- name: Upload admin build artifacts
+  uses: actions/upload-artifact@v4
+  with:
+    name: admin-dist
+    path: apps/admin/dist/
+    retention-days: 1
 ```
 
-#### Task 3: Alternative - PR Comment Trigger
-
-**File**: `.github/workflows/pr-commands.yml`
-
+##### 2. Manual Approval via GitHub Environments
 ```yaml
-name: PR Commands
-
-on:
-  issue_comment:
-    types: [created]
-
-jobs:
-  deploy-preview:
-    if: github.event.issue.pull_request && contains(github.event.comment.body, '/deploy-preview')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check permissions
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { data: collaborator } = await github.rest.repos.getCollaboratorPermissionLevel({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              username: context.actor
-            });
-
-            if (!['admin', 'write'].includes(collaborator.permission)) {
-              throw new Error('Only maintainers can deploy previews');
-            }
-
-      - name: React to comment
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.reactions.createForIssueComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: context.payload.comment.id,
-              content: 'rocket'
-            });
-
-      - name: Trigger deployment
-        # Similar logic as above workflow
+preview-deploy:
+  environment:
+    name: preview
+    url: ${{ steps.deploy.outputs.url }}
 ```
 
-#### Task 4: Automatic Cleanup on PR Close
-
-**File**: `.github/workflows/pr-cleanup.yml`
-
+##### 3. Cloudflare Pages Deployment
 ```yaml
-name: PR Preview Cleanup
-
-on:
-  pull_request:
-    types: [closed]
-
-jobs:
-  cleanup-preview:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Find and delete preview deployments
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const prNumber = context.payload.pull_request.number;
-            const headSha = context.payload.pull_request.head.sha;
-            const branchName = context.payload.pull_request.head.ref;
-
-            console.log(`Cleaning up previews for PR #${prNumber}, branch: ${branchName}, sha: ${headSha}`);
-
-            try {
-              // List all deployments
-              const deploymentsResponse = await fetch(
-                `https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/${{ secrets.CLOUDFLARE_PROJECT_NAME }}/deployments`,
-                {
-                  headers: {
-                    'Authorization': 'Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}',
-                    'Content-Type': 'application/json'
-                  }
-                }
-              );
-              
-              if (!deploymentsResponse.ok) {
-                throw new Error(`Failed to fetch deployments: ${deploymentsResponse.status}`);
-              }
-              
-              const deployments = await deploymentsResponse.json();
-              
-              // Find deployments for this PR (by branch name or commit SHA)
-              const prDeployments = deployments.result.filter(deployment => 
-                deployment.deployment_trigger?.metadata?.branch === branchName ||
-                deployment.deployment_trigger?.metadata?.commit_hash === headSha ||
-                deployment.source?.config?.repo_name?.includes(`pull/${prNumber}/`)
-              );
-              
-              console.log(`Found ${prDeployments.length} deployments to cleanup`);
-              
-              // Delete each deployment
-              for (const deployment of prDeployments) {
-                console.log(`Deleting deployment: ${deployment.id} (${deployment.url})`);
-                
-                const deleteResponse = await fetch(
-                  `https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/${{ secrets.CLOUDFLARE_PROJECT_NAME }}/deployments/${deployment.id}`,
-                  {
-                    method: 'DELETE',
-                    headers: {
-                      'Authorization': 'Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}'
-                    }
-                  }
-                );
-                
-                if (deleteResponse.ok) {
-                  console.log(`Successfully deleted deployment ${deployment.id}`);
-                } else {
-                  console.error(`Failed to delete deployment ${deployment.id}: ${deleteResponse.status}`);
-                }
-              }
-              
-              // Comment on PR about cleanup
-              if (prDeployments.length > 0) {
-                await github.rest.issues.createComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: prNumber,
-                  body: `🧹 **Preview cleanup completed**\n\n✅ Removed ${prDeployments.length} preview deployment(s) for this PR.`
-                });
-              }
-              
-            } catch (error) {
-              console.error('Cleanup failed:', error);
-              
-              // Comment on PR about cleanup failure
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: prNumber,
-                body: `⚠️ **Preview cleanup failed**\n\nAutomatic cleanup encountered an error. Manual cleanup may be required.\n\nError: ${error.message}`
-              });
-            }
+- name: Deploy to Cloudflare Pages
+  id: deploy
+  uses: cloudflare/pages-action@v1
+  with:
+    apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+    directory: apps/admin/dist
+    gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+    branch: ${{ github.head_ref }}
 ```
 
-#### Task 5: Setup Required Secrets**GitHub Repository Secrets**:
+##### 4. Automated PR Comments
+```yaml
+- name: Comment on PR
+  uses: actions/github-script@v7
+  with:
+    script: |
+      const deployUrl = process.env.DEPLOY_URL;
+      const prNumber = context.payload.pull_request.number;
+      const shortSha = process.env.GITHUB_SHA.substring(0, 7);
 
-```
-CLOUDFLARE_API_TOKEN - API token with Pages:Edit permissions
-CLOUDFLARE_ACCOUNT_ID - Your Cloudflare account ID
-CLOUDFLARE_PROJECT_NAME - Name of your Pages project
-```
-
-**API Token Permissions**:
-
-- `Cloudflare Pages:Edit`
-- `Account:Read`
-
-### API Endpoints Reference
-
-#### Cloudflare Pages API
-
-**Create Deployment**:
-
-```
-POST /accounts/{account_id}/pages/projects/{project_name}/deployments
-{
-  "type": "branch",
-  "branch": "feature-branch-name",
-  "commit_sha": "abc123..."
-}
-```
-
-**List Deployments**:
-
-```
-GET /accounts/{account_id}/pages/projects/{project_name}/deployments
+      if (deployUrl) {
+        await github.rest.issues.createComment({
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          issue_number: prNumber,
+          body: [
+            '## 🚀 Preview Deployed Successfully',
+            '',
+            `**🔗 Preview URL:** [${deployUrl}](${deployUrl})`,
+            '',
+            '**📋 Deployment Details:**',
+            `- **Branch:** \`${{ github.head_ref }}\``,
+            `- **Commit:** [\`${shortSha}\`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})`,
+            `- **Deployed at:** ${new Date().toISOString()}`,
+            '',
+            '> 🧹 Preview will be automatically cleaned up when this PR is closed.'
+          ].join('\n')
+        });
+      }
 ```
 
-**Delete Deployment**:
-
+##### 5. Automatic Cleanup on PR Close
+```yaml
+cleanup-preview:
+  name: 🧹 Cleanup Preview
+  runs-on: ubuntu-latest
+  if: github.event_name == 'pull_request' && github.event.action == 'closed'
 ```
-DELETE /accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}
+
+#### Required Secrets
+
+**GitHub Repository Secrets**:
+```
+CLOUDFLARE_API_TOKEN - Cloudflare API token with Pages:Edit permissions
+CLOUDFLARE_ACCOUNT_ID - Your Cloudflare account ID  
+CLOUDFLARE_PROJECT_NAME - Name of your Cloudflare Pages project
 ```
 
-### Usage Workflows
+#### Required Permissions
 
-#### Option 1: Manual Workflow Dispatch
-
-1. Go to **Actions** → **Cloudflare Preview Deploy**
-2. Click **Run workflow**
-3. Enter PR number and select "deploy"
-4. Monitor workflow execution
-5. Get preview URL from PR comment
-
-#### Option 2: PR Comment Commands
-
-1. Comment `/deploy-preview` on any PR
-2. Only maintainers can trigger (automatic permission check)
-3. Bot reacts with 🚀 and deploys
-4. Preview URL posted as comment
-
-#### Option 3: Automatic Cleanup
-
-1. **Automatic**: When PR is closed/merged, cleanup runs automatically
-2. **Detection**: Finds deployments by branch name or commit SHA
-3. **Cleanup**: Deletes all associated preview deployments
-4. **Notification**: Comments on PR about cleanup status
-
-#### Option 4: External API Call
-
-```bash
-# Trigger via GitHub API
-curl -X POST \
-  -H "Authorization: token $GITHUB_TOKEN" \
-  -H "Content-Type: application/json" \
-  https://api.github.com/repos/owner/repo/actions/workflows/cloudflare-preview.yml/dispatches \
-  -d '{"ref":"main","inputs":{"pr_number":"123","action":"deploy"}}'
+**GitHub Workflow Permissions**:
+```yaml
+permissions:
+  contents: read
+  deployments: write
+  pull-requests: write
 ```
+
+### Cloudflare Pages Configuration
+
+#### 1. Project Setup
+- **Framework**: Vite
+- **Build Command**: `pnpm --filter @nevo/ecommerce-admin-app run build`
+- **Build Output**: `apps/admin/dist`
+- **Root Directory**: `/`
+
+#### 2. Branch Configuration
+- **Production Branch**: `main` (automatic deployment disabled - handled by CI/CD)
+- **Preview Branches**: Disabled (handled by CI/CD with manual approval)
+
+### Usage Workflow
+
+#### Preview Deployment Process
+
+1. **Create PR**: Developer creates pull request to main branch
+2. **CI Pipeline**: Automatic quality checks, tests, and build
+3. **Manual Approval**: Reviewer approves deployment in GitHub Environments
+4. **Deploy**: Cloudflare Pages deployment with automatic PR comment
+5. **Review**: Team reviews preview using generated URL
+6. **Cleanup**: Automatic cleanup when PR is closed/merged
+
+#### Production Deployment Process
+
+1. **Merge to Main**: PR is merged to main branch
+2. **Automatic CI**: Quality checks, tests, and build run automatically
+3. **Auto Deploy**: Production deployment happens automatically
+4. **Live**: Changes are live on production environment
 
 ### Security Features
 
-- **Permission Check**: Only repo maintainers can trigger
-- **No Auto-Deploy**: PRs don't automatically deploy
-- **API Control**: All deployments via controlled API calls
-- **Audit Trail**: All actions logged in GitHub Actions
-- **Comment Tracking**: Deployment URLs tracked in PR comments
+- **Manual Approval**: All preview deployments require manual approval
+- **Environment Protection**: GitHub Environments provide security controls
+- **Permission Control**: Only repository maintainers can approve deployments
+- **Audit Trail**: All deployments logged in GitHub Actions
+- **Branch Protection**: Quality gates prevent broken code from deploying
+
+### Monitoring and Observability
+
+#### 1. GitHub Actions Logs
+- Complete deployment logs and timing
+- Artifact upload/download tracking
+- Error reporting and debugging information
+
+#### 2. PR Integration
+- Clickable deployment URLs in PR comments
+- Deployment status and details
+- Automatic cleanup notifications
+
+#### 3. GitHub Environments
+- Deployment history and approvals
+- Environment URL tracking
+- Approval workflow audit trail
 
 ### Success Criteria
 
-1. **Main Deployment**: Automatic deployment of main branch
-2. **On-Demand Preview**: Manual deployment via GitHub Actions
-3. **Security**: Only maintainers can trigger previews
-4. **Native URLs**: Use Cloudflare's native preview URL format
-5. **Easy Cleanup**: Simple deletion of old previews
-6. **Comment Integration**: Preview URLs automatically posted to PRs
-7. **Permission Control**: Automatic validation of user permissions
+✅ **Completed Implementation:**
 
-### Advantages of This Approach
+1. **Integrated Pipeline**: Single CI/CD workflow handling all deployment stages
+2. **Manual Approval**: Preview deployments require explicit approval
+3. **Quality Gates**: All deployments depend on passing CI checks
+4. **Artifact System**: Efficient build-once, deploy-multiple pattern
+5. **PR Integration**: Automatic commenting with clickable URLs
+6. **Cleanup System**: Automatic preview cleanup on PR close
+7. **Security**: Proper permissions and environment protection
+8. **Monitoring**: Complete visibility into deployment process
 
-- **Native Integration**: Uses Cloudflare's built-in preview system
-- **No Custom Routing**: No need for base path modifications
-- **Automatic URLs**: Cloudflare generates preview URLs automatically
-- **Security**: Manual control over what gets deployed
-- **Simple Setup**: Minimal configuration required
-- **Cost Effective**: Uses free Cloudflare Pages features
+### Advantages of This Implementation
+
+- **Unified Workflow**: Single file manages entire CI/CD process
+- **Security**: Manual approval prevents unauthorized deployments
+- **Efficiency**: Build artifacts reused across deployment jobs
+- **Integration**: Native GitHub features (Environments, Actions, PR comments)
+- **Scalability**: Easy to extend with additional deployment targets
+- **Cost Effective**: Minimal resource usage with efficient caching
+
+### Files Created/Modified
+
+1. **`.github/workflows/ci.yml`** - Main CI/CD pipeline
+2. **GitHub Environments** - `preview` and `production` environments
+3. **Repository Secrets** - Cloudflare API credentials
+
+### Next Steps
+
+1. **Configure Secrets**: Add required Cloudflare secrets to repository
+2. **Setup Environments**: Configure preview environment with required reviewers
+3. **Test Deployment**: Create test PR to validate full workflow
+4. **Documentation**: Update team documentation with approval process
+5. **Monitoring**: Setup additional monitoring if needed
 
 ### Testing Strategy
 
-1. **Manual Deploy**: Test workflow dispatch deployment
-2. **PR Comments**: Test comment-triggered deployment (if implemented)
-3. **Permission Check**: Verify only maintainers can deploy
-4. **URL Generation**: Verify preview URLs work correctly
-5. **Cleanup**: Test deployment deletion
-6. **Multiple PRs**: Test concurrent preview deployments
+1. **PR Creation**: Test complete PR workflow with manual approval
+2. **Quality Gates**: Verify failing tests block deployments
+3. **Approval Process**: Test environment approval workflow
+4. **URL Generation**: Verify preview URLs are accessible
+5. **Cleanup**: Test automatic cleanup on PR close
+6. **Production**: Test automatic production deployment on merge
