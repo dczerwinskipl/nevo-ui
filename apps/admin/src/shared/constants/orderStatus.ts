@@ -4,10 +4,9 @@ import type { BadgeIntent } from "@nevo/design-system";
  * Maps business order statuses to semantic intent colors
  */
 export const ORDER_STATUS_INTENT_MAP: Record<string, BadgeIntent> = {
-  'Zrealizowane': 'success',
-  'W drodze': 'info', 
-  'W przygotowaniu': 'warning',
-  'Anulowane': 'error'
+  'active': 'success',
+  'inactive': 'error', 
+  'draft': 'warning'
 } as const;
 
 /**

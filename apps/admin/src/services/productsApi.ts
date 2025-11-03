@@ -1,42 +1,36 @@
-import { getMockProducts } from '../features/products/services/mockData';
+import { apiClient } from '../shared/api/client';
 import type { Product } from '../features/products/types/Product';
 
 export interface ProductsQueryParams {
   search?: string;
-  tag?: string;
-  price?: number;
+  maxPrice?: number;
   status?: string;
+  tag?: string;
+  sortBy?: keyof Product;
+  sortOrder?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
 }
 
-// Simple in-memory filterer using existing mock data.
-// Simulates network latency with a Promise + setTimeout.
-export async function fetchProducts(params: ProductsQueryParams = {}, delay = 300): Promise<Product[]> {
-  const all = getMockProducts();
+export interface ProductsResponse {
+  data: Product[];
+  totalCount: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
 
-  const filtered = all.filter((p) => {
-    if (params.search && params.search.trim() !== '') {
-      const s = params.search.toLowerCase();
-      if (!p.name.toLowerCase().includes(s) && !p.id.toLowerCase().includes(s)) return false;
-    }
-
-    if (params.status && params.status !== '') {
-      if (p.status.toLowerCase() !== String(params.status).toLowerCase()) return false;
-    }
-
-    if (params.price !== undefined && typeof params.price === 'number' && params.price > 0) {
-      const max = params.price;
-      if (Number(p.price) > max) return false;
-    }
-
-    // tag filtering - check if product has the specified tag
-    if (params.tag && params.tag !== '') {
-      if (!p.tags.includes(params.tag)) return false;
-    }
-
-    return true;
+// New HTTP-based API client function (replaces simple in-memory filtering)
+// MSW will intercept these calls in development/preview environments
+export async function fetchProducts(params: ProductsQueryParams = {}): Promise<ProductsResponse> {
+  const response = await apiClient.get<ProductsResponse>('/products', { 
+    params: {
+      ...params,
+      page: params.page || 1,
+      limit: params.limit || 10
+    } 
   });
-
-  return new Promise<Product[]>((resolve) => setTimeout(() => resolve(filtered), delay));
+  return response.data;
 }
 
 export default { fetchProducts };

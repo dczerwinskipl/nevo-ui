@@ -1,18 +1,17 @@
-export type ProductStatus =
-  | 'completed'
-  | 'in_transit'
-  | 'preparing'
-  | 'cancelled'
-  | string;
+export type ProductStatus = 'active' | 'inactive' | 'draft';
 
 export interface Product {
   id: string;
   name: string;
+  description: string;
+  price: number;
   status: ProductStatus;
-  tags: string[];
-  price: string; // formatted price as string (e.g. "199.00")
+  category: string;
+  sku: string;
   stock: number;
-  updated: string; // ISO date or human readable
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type ProductFilters = {

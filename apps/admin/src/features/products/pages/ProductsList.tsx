@@ -9,6 +9,7 @@ export function ProductsList() {
   // Container component uses the hook and manages all state
   const {
     data,
+    pagination,
     isLoading,
     isFetching,
     error,
@@ -65,7 +66,7 @@ export function ProductsList() {
         Solution: API should return { data: Product[], totalCount: number } 
         where totalCount is the total number of products before filtering
       */}
-      <Pagination total={data.length} pageSize={25} />
+      <Pagination total={pagination.totalCount} pageSize={pagination.limit} />
     </div>
   );
 }
