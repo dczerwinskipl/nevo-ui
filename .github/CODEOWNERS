@@ -1,0 +1,16 @@
+# Global owner for entire repository
+
+- @dczerwinskipl
+
+# Specific ownership patterns (all require dczerwinskipl approval)
+
+/packages/ @dczerwinskipl
+/apps/ @dczerwinskipl
+/.github/ @dczerwinskipl
+/spec/ @dczerwinskipl
+/docs/ @dczerwinskipl
+\*.md @dczerwinskipl
+/package.json @dczerwinskipl
+/pnpm-workspace.yaml @dczerwinskipl
+/turbo.json @dczerwinskipl
+/tsconfig.json @dczerwinskipl
