@@ -44,12 +44,13 @@ This specification defines repository governance policies including branch prote
 - **Purpose**: Validate branch naming conventions and pull request directions
 - **Requirements**:
   - Validate branch names follow convention: `main`, `features/*`, `bugfix/*`
-  - Validate pull request directions:
+  - Validate pull request directions TO `main` only:
     - `features/*` → `main` ✅
     - `bugfix/*` → `main` ✅
-    - All other directions ❌
+    - All other branches → `main` ❌
+  - Allow all other merge directions without restrictions (for conflict resolution and dependencies)
   - Use English language for all messages
-  - Fail the check if policies are violated
+  - Fail the check only if unauthorized merges TO `main` are attempted
 
 #### 4. Enhanced CI/CD Integration
 
@@ -102,16 +103,19 @@ This specification defines repository governance policies including branch prote
 Create `.github/workflows/branch-policy.yml` with:
 
 - Branch naming validation for pushes
-- Pull request direction validation
+- Pull request direction validation ONLY for merges TO `main`
+- Allow all other merge directions (main → features, features → features, etc.)
 - English error messages
 - Support for `main`, `features/*`, `bugfix/*` only
+- No CI/CD requirements for non-main merges
 
 #### Task 3: Update CI/CD Pipeline
 
-- Add branch policy as a required check for all pull requests
-- Ensure proper dependency chain: branch-policy → ci-pipeline → merge
+- Add branch policy as a required check ONLY for pull requests TO `main`
+- Ensure proper dependency chain for main: branch-policy → ci-pipeline → merge
 - Update status reporting for branch protection requirements
-- Make CI/CD pipeline mandatory for pull request approval
+- Make CI/CD pipeline mandatory ONLY for pull request approval to `main`
+- Allow direct merges between non-main branches without CI/CD requirements
 
 #### Task 4: Configure Branch Creation Restrictions
 
@@ -152,18 +156,24 @@ release/<version>        # Release branches
 ### Pull Request Direction Policy
 
 ```
-✅ Currently Allowed:
+🎯 ONLY RESTRICT merges TO main:
+✅ Allowed TO main:
 features/* → main
 bugfix/* → main
 
-❌ Not allowed:
-main → features/*
-features/* → features/*
-Any other combinations
+❌ Not allowed TO main:
+develop → main
+random-branch → main
+hotfix/* → main (until we add hotfix support)
 
-🔮 Future Allowed:
+🔄 ALWAYS ALLOWED (for conflict resolution & dependencies):
+main → features/*        # Merge latest main to resolve conflicts
+features/* → features/*   # Feature dependency merges
+main → bugfix/*          # Merge latest main to bug fix branches
+Any other direction not targeting main
+
+🔮 Future TO main:
 hotfix/* → main
-hotfix/* → release/*
 release/* → main
 ```
 
@@ -215,14 +225,17 @@ release/* → main
    - Test valid names: `main`, `features/000-devops/test`, `bugfix/fix-issue`
    - Test invalid names: `develop`, `feature-branch`, `fix/something`
 2. **Pull request direction validation:**
-   - Test allowed: `features/test → main`, `bugfix/test → main`
-   - Test disallowed: `main → features/test`, `features/a → features/b`
+   - Test allowed TO main: `features/test → main`, `bugfix/test → main`
+   - Test disallowed TO main: `develop → main`, `random-branch → main`
+   - Test always allowed: `main → features/test`, `features/a → features/b`
+   - Verify no restrictions on non-main target branches
 3. **CODEOWNERS enforcement:**
    - Verify dczerwinskipl approval required for all changes
    - Test with pull requests from different contributors
 4. **CI/CD pipeline integration:**
-   - Ensure branch policy runs before CI/CD
-   - Verify CI/CD failures block pull request merging
+   - Ensure branch policy runs before CI/CD for main-targeted PRs
+   - Verify CI/CD failures block pull request merging to main
+   - Confirm no CI/CD requirements for non-main merges
    - Test with various file changes (packages, workflows, docs)
 5. **Branch creation restrictions:**
    - Attempt to create branches with invalid names
