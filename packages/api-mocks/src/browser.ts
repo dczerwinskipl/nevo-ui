@@ -5,7 +5,13 @@ export function setupMocks() {
   
   return {
     start: () => worker.start({
-      onUnhandledRequest: 'bypass'
+      onUnhandledRequest: 'bypass',
+      serviceWorker: {
+        url: '/mockServiceWorker.js',
+        options: {
+          scope: '/'
+        }
+      }
     }),
     stop: () => worker.stop(),
     use: worker.use.bind(worker)
