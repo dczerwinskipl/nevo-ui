@@ -1,0 +1,196 @@
+name: Cloudflare Preview Cleanup
+
+on:
+    pull_request:
+        types: [closed]
+        branches: [main]
+
+concurrency:
+    group: cloudflare-cleanup-${{ github.event.pull_request.number }}
+    cancel-in-progress: false
+
+jobs:
+    cleanup:
+        name: Cleanup Preview Deployments
+        runs-on: ubuntu-latest
+        if: github.event.pull_request.merged == true || github.event.pull_request.state == 'closed'
+
+        steps:
+            - name: Get PR details
+              id: pr
+              run: |
+                  echo "branch=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
+                  echo "sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+                  echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+
+            - name: Find and delete Cloudflare deployments
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      const fetch = require('node-fetch');
+
+                      const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+                      const projectName = process.env.CLOUDFLARE_PROJECT_NAME;
+                      const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+                      const branch = process.env.BRANCH;
+                      const sha = process.env.SHA;
+                      const prNumber = process.env.PR_NUMBER;
+
+                      console.log(`Cleaning up deployments for PR #${prNumber}, branch: ${branch}, SHA: ${sha}`);
+
+                      try {
+                        // Get all deployments for the project
+                        const response = await fetch(
+                          `https://api.cloudflare.com/client/v4/accounts/${accountId}/pages/projects/${projectName}/deployments`,
+                          {
+                            headers: {
+                              'Authorization': `Bearer ${apiToken}`,
+                              'Content-Type': 'application/json'
+                            }
+                          }
+                        );
+                        
+                        const data = await response.json();
+                        
+                        if (!data.success) {
+                          throw new Error(`Failed to get deployments: ${JSON.stringify(data.errors)}`);
+                        }
+                        
+                        console.log(`Found ${data.result.length} total deployments`);
+                        
+                        // Find deployments for this branch/PR
+                        const targetDeployments = data.result.filter(deployment => {
+                          // Check multiple potential sources for branch/SHA matching
+                          const deploymentBranch = 
+                            deployment.deployment_trigger?.metadata?.branch ||
+                            deployment.source?.metadata?.branch ||
+                            deployment.latest_stage?.name;
+                          
+                          const deploymentSha = 
+                            deployment.deployment_trigger?.metadata?.commit_hash ||
+                            deployment.source?.metadata?.commit_hash;
+                          
+                          // Match by branch name or commit SHA
+                          const branchMatch = deploymentBranch === branch;
+                          const shaMatch = deploymentSha === sha;
+                          
+                          // Also check if deployment URL contains PR reference
+                          const urlMatch = deployment.url && (
+                            deployment.url.includes(`pr-${prNumber}`) ||
+                            deployment.url.includes(`pull-${prNumber}`) ||
+                            deployment.url.includes(branch.toLowerCase().replace(/[^a-z0-9]/g, '-'))
+                          );
+                          
+                          return branchMatch || shaMatch || urlMatch;
+                        });
+                        
+                        console.log(`Found ${targetDeployments.length} deployments to clean up`);
+                        
+                        const deletedDeployments = [];
+                        const failedDeployments = [];
+                        
+                        // Delete each matching deployment
+                        for (const deployment of targetDeployments) {
+                          try {
+                            console.log(`Deleting deployment ${deployment.id} (${deployment.url})`);
+                            
+                            const deleteResponse = await fetch(
+                              `https://api.cloudflare.com/client/v4/accounts/${accountId}/pages/projects/${projectName}/deployments/${deployment.id}`,
+                              {
+                                method: 'DELETE',
+                                headers: {
+                                  'Authorization': `Bearer ${apiToken}`,
+                                  'Content-Type': 'application/json'
+                                }
+                              }
+                            );
+                            
+                            const deleteData = await deleteResponse.json();
+                            
+                            if (deleteData.success) {
+                              console.log(`✅ Successfully deleted deployment ${deployment.id}`);
+                              deletedDeployments.push({
+                                id: deployment.id,
+                                url: deployment.url
+                              });
+                            } else {
+                              console.log(`❌ Failed to delete deployment ${deployment.id}: ${JSON.stringify(deleteData.errors)}`);
+                              failedDeployments.push({
+                                id: deployment.id,
+                                url: deployment.url,
+                                error: deleteData.errors
+                              });
+                            }
+                          } catch (error) {
+                            console.log(`❌ Error deleting deployment ${deployment.id}: ${error.message}`);
+                            failedDeployments.push({
+                              id: deployment.id,
+                              url: deployment.url,
+                              error: error.message
+                            });
+                          }
+                        }
+                        
+                        // Comment on PR with cleanup results
+                        let commentBody = `🧹 **Preview Cleanup Complete**\n\n`;
+                        
+                        if (deletedDeployments.length > 0) {
+                          commentBody += `✅ **Deleted ${deletedDeployments.length} preview deployment(s):**\n`;
+                          deletedDeployments.forEach(d => {
+                            commentBody += `- ${d.url}\n`;
+                          });
+                          commentBody += `\n`;
+                        }
+                        
+                        if (failedDeployments.length > 0) {
+                          commentBody += `❌ **Failed to delete ${failedDeployments.length} deployment(s):**\n`;
+                          failedDeployments.forEach(d => {
+                            commentBody += `- ${d.url} (${d.error})\n`;
+                          });
+                          commentBody += `\n`;
+                        }
+                        
+                        if (deletedDeployments.length === 0 && failedDeployments.length === 0) {
+                          commentBody += `ℹ️ No preview deployments found for this PR.\n\n`;
+                        }
+                        
+                        commentBody += `**Branch:** \`${branch}\`\n`;
+                        commentBody += `**Commit:** \`${sha}\``;
+                        
+                        await github.rest.issues.createComment({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          issue_number: parseInt(prNumber),
+                          body: commentBody
+                        });
+                        
+                        console.log(`Posted cleanup results to PR #${prNumber}`);
+                        
+                      } catch (error) {
+                        console.error(`Cleanup failed: ${error.message}`);
+                        
+                        // Comment on PR about cleanup failure
+                        await github.rest.issues.createComment({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          issue_number: parseInt(prNumber),
+                          body: `❌ **Preview Cleanup Failed**
+                          
+                          There was an error cleaning up preview deployments for this PR.
+                          
+                          **Error:** ${error.message}
+                          **Branch:** \`${branch}\`
+                          **Commit:** \`${sha}\`
+                          
+                          Please check the workflow logs or manually clean up any remaining deployments.`
+                        });
+                        
+                        throw error;
+                      }
+              env:
+                  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+                  CLOUDFLARE_PROJECT_NAME: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+                  BRANCH: ${{ steps.pr.outputs.branch }}
+                  SHA: ${{ steps.pr.outputs.sha }}
+                  PR_NUMBER: ${{ steps.pr.outputs.pr_number }}

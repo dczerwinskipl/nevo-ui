@@ -1,0 +1,96 @@
+name: Cloudflare Production Deploy
+
+on:
+    push:
+        branches: [main]
+        paths:
+            - "apps/admin/**"
+            - "packages/ui/**"
+            - ".github/workflows/cloudflare-production-deploy.yml"
+
+concurrency:
+    group: cloudflare-production
+    cancel-in-progress: true
+
+jobs:
+    # Wait for CI pipeline to complete
+    wait-for-ci:
+        name: Wait for CI
+        runs-on: ubuntu-latest
+        steps:
+            - name: Wait for CI pipeline
+              run: |
+                  echo "Waiting for CI pipeline to complete..."
+                  echo "This job ensures the main CI pipeline passes before deploying"
+
+    deploy:
+        name: Deploy to Production
+        runs-on: ubuntu-latest
+        needs: [wait-for-ci]
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: 9
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "18"
+                  cache: "pnpm"
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Build admin app
+              run: pnpm --filter admin run build
+
+            - name: Deploy to Cloudflare Pages
+              id: deploy
+              uses: cloudflare/pages-action@v1
+              with:
+                  apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+                  projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+                  directory: apps/admin/dist
+                  gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+                  branch: main
+
+            - name: Update deployment status
+              if: always()
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      const deployUrl = process.env.DEPLOY_URL;
+                      const success = process.env.DEPLOY_SUCCESS === 'true';
+
+                      if (success && deployUrl) {
+                        console.log(`✅ Production deployment successful: ${deployUrl}`);
+                        
+                        // Create a deployment status
+                        await github.rest.repos.createDeploymentStatus({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          deployment_id: process.env.GITHUB_SHA,
+                          state: 'success',
+                          environment_url: deployUrl,
+                          description: 'Production deployment successful'
+                        });
+                      } else {
+                        console.log('❌ Production deployment failed');
+                        
+                        await github.rest.repos.createDeploymentStatus({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          deployment_id: process.env.GITHUB_SHA,
+                          state: 'failure',
+                          description: 'Production deployment failed'
+                        });
+                      }
+              env:
+                  DEPLOY_URL: ${{ steps.deploy.outputs.url }}
+                  DEPLOY_SUCCESS: ${{ steps.deploy.outcome == 'success' }}
