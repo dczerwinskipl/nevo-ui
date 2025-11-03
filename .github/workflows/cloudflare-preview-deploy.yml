@@ -40,6 +40,8 @@ jobs:
                       const comment = context.payload.comment.body.trim();
                       const author = context.payload.comment.user.login;
 
+                      console.log(`Comment: "${comment}" by ${author}`);
+
                       // Check if comment is a deploy command
                       if (!comment.startsWith('/deploy-preview')) {
                         console.log('Not a deploy command');
@@ -52,12 +54,16 @@ jobs:
                         return;
                       }
 
+                      console.log(`Processing deploy command for PR #${context.payload.issue.number}`);
+
                       // Get PR details
                       const { data: pr } = await github.rest.pulls.get({
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         pull_number: context.payload.issue.number
                       });
+
+                      console.log(`PR details: ${pr.title} (${pr.state})`);
 
                       // Check if author has write permissions (maintainer)
                       try {
@@ -67,9 +73,13 @@ jobs:
                           username: author
                         });
                         
+                        console.log(`User ${author} has permission: ${permission.permission}`);
+                        
                         const hasPermission = ['admin', 'maintain', 'write'].includes(permission.permission);
                         
                         if (!hasPermission) {
+                          console.log(`Permission denied for ${author}`);
+                          
                           await github.rest.reactions.createForIssueComment({
                             owner: context.repo.owner,
                             repo: context.repo.repo,
@@ -86,6 +96,8 @@ jobs:
                           
                           return;
                         }
+                        
+                        console.log(`Permission granted for ${author}, starting deployment`);
                         
                         // React with rocket to indicate deployment started
                         await github.rest.reactions.createForIssueComment({
