@@ -1,9 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import type { Product, ProductFilters } from '../features/products/types/Product';
-import { fetchProducts, type ProductsQueryParams } from '../services/productsApi';
-
-// API simulation delay constant
-const API_SIMULATION_DELAY_MS = 2000;
+import { fetchProducts, type ProductsQueryParams, type ProductsResponse } from '../services/productsApi';
 
 export function useProducts(filters: ProductFilters = {}) {
   // Transform ProductFilters to ProductsQueryParams
@@ -16,7 +13,7 @@ export function useProducts(filters: ProductFilters = {}) {
     apiParams.tag = filters.tag;
   }
   if (filters.price !== undefined) {
-    apiParams.price = filters.price;
+    apiParams.maxPrice = filters.price;
   }
   if (filters.status) {
     apiParams.status = filters.status;
@@ -30,15 +27,18 @@ export function useProducts(filters: ProductFilters = {}) {
     refetch,
   } = useQuery({
     queryKey: ['products', apiParams],
-    queryFn: async () => {
-      const result = await fetchProducts(apiParams, API_SIMULATION_DELAY_MS);
-      return result;
-    },
+    queryFn: () => fetchProducts(apiParams),
     staleTime: 1 * 60 * 1000, // 1 minute
   });
 
   return {
-    data: data ?? [],
+    data: data?.data ?? [],
+    pagination: {
+      totalCount: data?.totalCount ?? 0,
+      page: data?.page ?? 1,
+      limit: data?.limit ?? 10,
+      totalPages: data?.totalPages ?? 0
+    },
     isLoading,
     isFetching,
     error,

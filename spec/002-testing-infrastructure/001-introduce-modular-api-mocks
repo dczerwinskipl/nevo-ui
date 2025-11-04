@@ -1,0 +1,886 @@
+# 001 - Modular API Mock System (Products Showcase)
+
+## Epic: 002-testing-infrastructure
+
+## Task: 001-introduce-modular-api-mocks
+
+### Overview
+
+This specification defines the implementation of a modular **API mock system** based on **MSW (Mock Service Worker)** for local development, Cloudflare preview deployments, Storybook, and automated testing environments.  
+The goal is to provide a unified and predictable way to simulate backend APIs without requiring a running backend service.
+
+The system will **replace** the existing simple mock approach (`mockData.ts`) with a proper HTTP-intercepting solution that supports realistic API scenarios, error handling, and pagination.
+
+The first implementation will focus on the **Products** domain as a showcase and proof of concept, using the existing `Product` type and `ProductsQueryParams` interface.
+
+### Architecture Decision
+
+Based on the existing codebase analysis, we will create **two separate packages**:
+
+1. **`@nevo/api-client`** - Axios-based API client with auth support (future-ready)
+2. **`@nevo/api-mocks`** - MSW-based mock system for development/preview/testing
+
+This separation allows:
+
+- **Clean API layer**: Real HTTP calls with proper error handling
+- **Development flexibility**: Switch between mock and real backend
+- **Authentication ready**: Built-in support for future auth implementation
+- **Environment-specific**: Different behavior for DEV/QA/PREVIEW/PROD
+
+### Objectives
+
+- Replace simple `mockData.ts` with HTTP-realistic mock system
+- Create reusable API client foundation with auth support
+- Enable full front-end development without backend dependencies
+- Ensure bundle optimization (mocks only in development/preview builds)
+- Provide consistent mock data and controllable scenarios (success, empty, errors, rate-limiting, etc.)
+- Prepare foundation for future domains beyond Products (e.g., Orders, Users)
+
+---
+
+### Approach
+
+The system replaces the current `fetchProducts` function with a proper HTTP-based API client that can be intercepted by MSW for development/preview builds or connect to real backend URLs in production.
+
+**Two-Package Architecture:**
+
+1. **`@nevo/api-client`**: Axios-based HTTP client with:
+   - Environment-aware base URLs (DEV/QA/PREVIEW/PROD)
+   - Built-in auth support (ready for future implementation)
+   - Standardized error handling and response formatting
+   - TypeScript interfaces for all API contracts
+
+2. **`@nevo/api-mocks`**: MSW-based mock system with:
+   - Modular handlers per resource (products, orders, users)
+   - Realistic HTTP responses with proper status codes
+   - Scenario management for testing different states
+   - Automatic exclusion from production builds
+
+The existing `fetchProducts` function will be replaced with `apiClient.products.list()` that makes real HTTP calls to `/api/products` - MSW intercepts these calls in development environments.
+
+---
+
+### Requirements
+
+#### 1. Package Structure
+
+```
+/packages/api-client
+  /shared
+    client.ts            # Axios instance with interceptors
+    errors.ts            # Error handling and types
+    types.ts             # Common API response types
+  index.ts               # Main API client exports
+
+/packages/api-mocks
+  /foundation
+    scenarios.ts         # global scenario management
+    withScenarios.ts     # HOC for scenario handling
+    errors.ts            # HTTP error response generators
+    utils.ts             # pagination, query parsing, delay simulation
+  index.browser.ts       # setupWorker() for browser
+  index.node.ts          # setupServer() for Node/test
+  index.ts               # shared exports
+
+/apps/admin/src/mocks
+  /products
+    database.ts          # product dataset and CRUD logic (using existing Product type)
+    handlers.ts          # MSW request handlers for /api/products
+    types.ts             # Product, ProductsQueryParams interfaces
+  index.ts               # admin app specific handlers registration
+```
+
+#### 2. Existing Types Integration
+
+Using the existing types from the codebase (these will stay in admin app):
+
+```typescript
+// apps/admin/src/mocks/products/types.ts
+interface Product {
+  id: string; // PRG-1001 format
+  name: string; // "Produkt 1"
+  status: ProductStatus;
+  tags: string[]; // ['audio', 'premium']
+  price: string; // "199.00" format
+  stock: number;
+  updated: string; // "2025-10-10" format
+}
+
+type ProductStatus =
+  | "Zrealizowane"
+  | "W drodze"
+  | "W przygotowaniu"
+  | "Anulowane";
+
+interface ProductsQueryParams {
+  search?: string;
+  tag?: string;
+  price?: number;
+  status?: string;
+  // New additions for proper API:
+  page?: number;
+  limit?: number;
+  sortBy?: "name" | "price" | "updated";
+  sortOrder?: "asc" | "desc";
+}
+```
+
+#### 3. API Response Format
+
+Standardized response format for consistency:
+
+```typescript
+// Success responses
+interface ApiResponse<T> {
+  data: T;
+  success: true;
+}
+
+interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  };
+  success: true;
+}
+
+// Error responses
+interface ApiError {
+  success: false;
+  error: {
+    code: string;
+    message: string;
+    details?: Record<string, string[]>; // Field-level validation errors
+  };
+}
+```
+
+#### 4. Environment Configuration
+
+```typescript
+// Environment-aware API client
+const API_BASE_URLS = {
+  development: "/api", // MSW intercepted
+  preview: "/api", // MSW intercepted
+  qa: "https://api-qa.nevo.com",
+  production: "https://api.nevo.com",
+};
+
+// Build-time environment detection
+const isDevelopment = import.meta.env.DEV;
+const isPreview = import.meta.env.VITE_ENV === "preview";
+const shouldUseMocks = isDevelopment || isPreview;
+```
+
+#### 5. Integration Points
+
+| Environment            | Build Type | Mock Inclusion | API Base URL      | Description                                |
+| ---------------------- | ---------- | -------------- | ----------------- | ------------------------------------------ |
+| **Local development**  | DEV        | ✅ Included    | `/api`            | MSW browser worker intercepts API calls    |
+| **Cloudflare preview** | PREVIEW    | ✅ Included    | `/api`            | MSW browser worker simulates backend       |
+| **QA environment**     | QA         | ❌ Excluded    | `api-qa.nevo.com` | Real backend calls for integration testing |
+| **Production**         | PROD       | ❌ Excluded    | `api.nevo.com`    | Real backend calls for live environment    |
+| **Vitest**             | TEST       | ✅ Included    | `/api`            | MSW node server for automated testing      |
+
+#### 6. Bundle Optimization
+
+Mocks are automatically excluded from production builds using Vite's tree-shaking:
+
+```typescript
+// In main.tsx - this entire block gets tree-shaken in production
+if (import.meta.env.DEV || import.meta.env.VITE_ENV === "preview") {
+  const { worker } = await import("@nevo/api-mocks/browser");
+  await worker.start();
+}
+```
+
+#### 7. Scenarios Support
+
+Each handler supports controlled simulation via scenario management. Current active scenario affects all API responses.
+
+Example scenarios:
+
+- `success` (default) - Normal responses with realistic data
+- `empty` - Empty result sets (no products found)
+- `loading-slow` - Delayed responses (2-5 seconds)
+- `rate-limit` - HTTP 429 with retry-after headers
+- `server-error` - HTTP 500 with error details
+- `validation-error` - HTTP 422 with field-level errors
+- `network-error` - Simulated network failures
+
+Scenario control methods:
+
+```typescript
+// Global scenario management
+import { scenarios } from "@nevo/api-mocks";
+
+scenarios.set("rate-limit");
+scenarios.current(); // -> 'rate-limit'
+scenarios.reset(); // -> back to 'success'
+scenarios.list(); // -> ['success', 'empty', 'rate-limit', ...]
+
+// Development console access
+window.__mockScenarios = scenarios;
+```
+
+---
+
+### Implementation Plan
+
+#### Step 1: Create the `@nevo/api-client` package
+
+- Add new workspace package `/packages/api-client`
+- Include Axios as dependency
+- Implement base client with environment-aware configuration
+- Keep it generic - no domain-specific APIs (that stays in apps)
+
+```typescript
+// @nevo/api-client/shared/client.ts
+import axios from "axios";
+
+const API_BASE_URLS = {
+  development: "/api",
+  preview: "/api",
+  qa: "https://api-qa.nevo.com",
+  production: "https://api.nevo.com",
+};
+
+const getBaseURL = () => {
+  if (import.meta.env.DEV) return API_BASE_URLS.development;
+  if (import.meta.env.VITE_ENV === "preview") return API_BASE_URLS.preview;
+  if (import.meta.env.VITE_ENV === "qa") return API_BASE_URLS.qa;
+  return API_BASE_URLS.production;
+};
+
+export const apiClient = axios.create({
+  baseURL: getBaseURL(),
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// Auth interceptors (future)
+// Error handling interceptors
+```
+
+#### Step 2: Create the `@nevo/api-mocks` package
+
+- Add new workspace package `/packages/api-mocks`
+- Include MSW as dependency
+- Implement `foundation` layer with scenario HOC
+
+```typescript
+// @nevo/api-mocks/foundation/withScenarios.ts
+import { HttpResponse } from "msw";
+import { getCurrentScenario, simulateDelay } from "./scenarios";
+import { generateErrorResponse } from "./errors";
+
+export function withScenarios<T extends any[]>(
+  handler: (...args: T) => Promise<HttpResponse>
+) {
+  return async (...args: T): Promise<HttpResponse> => {
+    const scenario = getCurrentScenario();
+
+    // Handle common scenarios
+    switch (scenario) {
+      case "server-error":
+        await simulateDelay(500);
+        return HttpResponse.json(
+          generateErrorResponse("INTERNAL_ERROR", "Internal server error"),
+          { status: 500 }
+        );
+
+      case "rate-limit":
+        return HttpResponse.json(
+          generateErrorResponse("RATE_LIMIT", "Too many requests"),
+          { status: 429, headers: { "Retry-After": "60" } }
+        );
+
+      case "loading-slow":
+        await simulateDelay(3000);
+        break; // Continue to handler
+
+      case "network-error":
+        return HttpResponse.error();
+
+      default:
+        await simulateDelay(300);
+        break; // Continue to handler
+    }
+
+    // Execute the actual handler
+    return handler(...args);
+  };
+}
+```
+
+#### Step 3: Implement admin app specific mocks
+
+Create Products handlers in admin app using the foundation:
+
+```typescript
+// apps/admin/src/mocks/products/database.ts
+import { Product, ProductStatus } from "./types";
+
+const PRODUCT_STATUSES: ProductStatus[] = [
+  "Zrealizowane",
+  "W drodze",
+  "W przygotowaniu",
+  "Anulowane",
+];
+
+const PRODUCT_TAGS = [
+  "audio",
+  "premium",
+  "bestseller",
+  "nevo",
+  "nowość",
+] as const;
+
+export class ProductsDatabase {
+  private products: Product[] = [];
+
+  seed(count: number = 50): void {
+    this.products = Array.from({ length: count }).map((_, i) => ({
+      id: `PRG-${1000 + i}`,
+      name: `Produkt ${i + 1}`,
+      status: PRODUCT_STATUSES[i % PRODUCT_STATUSES.length]!,
+      tags: [
+        PRODUCT_TAGS[i % PRODUCT_TAGS.length]!,
+        PRODUCT_TAGS[(i + 2) % PRODUCT_TAGS.length]!,
+      ].slice(0, 2),
+      price: (199 + i * 15).toFixed(2),
+      stock: 50 - i * 2,
+      updated: `2025-10-${10 + (i % 20)}`,
+    }));
+  }
+
+  list(params: ProductsQueryParams): { data: Product[]; total: number } {
+    // Existing filter logic from fetchProducts (unchanged)
+    // Add sorting and pagination logic
+  }
+
+  get(id: string): Product | null {
+    return this.products.find((p) => p.id === id) || null;
+  }
+
+  create(product: Partial<Product>): Product {
+    const newProduct: Product = {
+      id: `PRG-${Date.now()}`,
+      name: product.name || "New Product",
+      status: product.status || "W przygotowaniu",
+      tags: product.tags || [],
+      price: product.price || "0.00",
+      stock: product.stock || 0,
+      updated: new Date().toISOString().split("T")[0],
+    };
+    this.products.push(newProduct);
+    return newProduct;
+  }
+
+  update(id: string, changes: Partial<Product>): Product | null {
+    const index = this.products.findIndex((p) => p.id === id);
+    if (index === -1) return null;
+
+    this.products[index] = { ...this.products[index], ...changes };
+    return this.products[index];
+  }
+}
+```
+
+```typescript
+// apps/admin/src/mocks/products/handlers.ts
+import { http, HttpResponse } from "msw";
+import { withScenarios } from "@nevo/api-mocks/foundation/withScenarios";
+import { getCurrentScenario } from "@nevo/api-mocks";
+import { ProductsDatabase } from "./database";
+import {
+  createListHandler,
+  createGetHandler,
+  createPostHandler,
+  createPatchHandler,
+} from "../utils/handlers";
+
+const db = new ProductsDatabase();
+db.seed();
+
+// Reusable handlers using admin-specific utilities
+const getProductsHandler = withScenarios(
+  createListHandler(db, {
+    emptyScenario: "empty",
+    responseKey: "data",
+  })
+);
+
+const getProductHandler = withScenarios(
+  createGetHandler(db, {
+    notFoundMessage: "Product not found",
+  })
+);
+
+const createProductHandler = withScenarios(createPostHandler(db));
+
+const updateProductHandler = withScenarios(
+  createPatchHandler(db, {
+    notFoundMessage: "Product not found",
+  })
+);
+
+export const productsHandlers = [
+  http.get("/api/products", getProductsHandler),
+  http.get("/api/products/:id", getProductHandler),
+  http.post("/api/products", createProductHandler),
+  http.patch("/api/products/:id", updateProductHandler),
+];
+```
+
+Create admin-specific handler utilities:
+
+```typescript
+// apps/admin/src/mocks/utils/handlers.ts
+import { HttpResponse } from "msw";
+import { getCurrentScenario } from "@nevo/api-mocks";
+
+interface ListOptions {
+  emptyScenario?: string;
+  responseKey?: string;
+}
+
+interface CrudOptions {
+  notFoundMessage?: string;
+}
+
+export function createListHandler<T, P>(
+  database: { list(params: P): { data: T[]; total: number } },
+  options: ListOptions = {}
+) {
+  return async ({ request }: { request: Request }) => {
+    const scenario = getCurrentScenario();
+    const { emptyScenario = "empty", responseKey = "data" } = options;
+
+    // Handle empty scenario
+    if (scenario === emptyScenario) {
+      return HttpResponse.json({
+        [responseKey]: [],
+        pagination: { page: 1, limit: 10, total: 0, pages: 0 },
+        success: true,
+      });
+    }
+
+    // Parse URL and extract query parameters
+    const url = new URL(request.url);
+    const queryParams = Object.fromEntries(url.searchParams) as P;
+
+    // Get data from database
+    const { data, total } = database.list(queryParams);
+
+    // Extract pagination parameters
+    const page = parseInt(url.searchParams.get("page") || "1");
+    const limit = parseInt(url.searchParams.get("limit") || "10");
+    const pages = Math.ceil(total / limit);
+
+    return HttpResponse.json({
+      [responseKey]: data,
+      pagination: { page, limit, total, pages },
+      success: true,
+    });
+  };
+}
+
+export function createGetHandler<T>(
+  database: { get(id: string): T | null },
+  options: CrudOptions = {}
+) {
+  return async ({ params }: { params: Record<string, string> }) => {
+    const { notFoundMessage = "Resource not found" } = options;
+    const item = database.get(params.id);
+
+    if (!item) {
+      return HttpResponse.json(
+        {
+          success: false,
+          error: { code: "NOT_FOUND", message: notFoundMessage },
+        },
+        { status: 404 }
+      );
+    }
+
+    return HttpResponse.json({ data: item, success: true });
+  };
+}
+
+export function createPostHandler<T>(database: {
+  create(data: Partial<T>): T;
+}) {
+  return async ({ request }: { request: Request }) => {
+    const body = await request.json();
+    const item = database.create(body);
+    return HttpResponse.json({ data: item, success: true }, { status: 201 });
+  };
+}
+
+export function createPatchHandler<T>(
+  database: { update(id: string, changes: Partial<T>): T | null },
+  options: CrudOptions = {}
+) {
+  return async ({
+    params,
+    request,
+  }: {
+    params: Record<string, string>;
+    request: Request;
+  }) => {
+    const { notFoundMessage = "Resource not found" } = options;
+    const body = await request.json();
+    const item = database.update(params.id, body);
+
+    if (!item) {
+      return HttpResponse.json(
+        {
+          success: false,
+          error: { code: "NOT_FOUND", message: notFoundMessage },
+        },
+        { status: 404 }
+      );
+    }
+
+    return HttpResponse.json({ data: item, success: true });
+  };
+}
+```
+
+Update the database interface to work with URLSearchParams directly:
+
+````typescript
+// apps/admin/src/mocks/products/database.ts
+import { Product, ProductStatus, ProductsQueryParams } from "./types";
+
+const PRODUCT_STATUSES: ProductStatus[] = [
+  "Zrealizowane", "W drodze", "W przygotowaniu", "Anulowane"
+];
+
+const PRODUCT_TAGS = ["audio", "premium", "bestseller", "nevo", "nowość"] as const;
+
+export class ProductsDatabase {
+  private products: Product[] = [];
+
+  seed(count: number = 50): void {
+    this.products = Array.from({ length: count }).map((_, i) => ({
+      id: `PRG-${1000 + i}`,
+      name: `Produkt ${i + 1}`,
+      status: PRODUCT_STATUSES[i % PRODUCT_STATUSES.length]!,
+      tags: [
+        PRODUCT_TAGS[i % PRODUCT_TAGS.length]!,
+        PRODUCT_TAGS[(i + 2) % PRODUCT_TAGS.length]!
+      ].slice(0, 2),
+      price: (199 + i * 15).toFixed(2),
+      stock: 50 - i * 2,
+      updated: `2025-10-${10 + (i % 20)}`,
+    }));
+  }
+
+  list(queryParams: ProductsQueryParams): { data: Product[], total: number } {
+    let filtered = this.products.filter(product => {
+      // Existing filter logic from fetchProducts (unchanged)
+      if (queryParams.search && queryParams.search.trim() !== "") {
+        const s = queryParams.search.toLowerCase();
+        if (!product.name.toLowerCase().includes(s) && !product.id.toLowerCase().includes(s)) return false;
+      }
+
+      if (queryParams.status && queryParams.status !== "") {
+        if (product.status.toLowerCase() !== String(queryParams.status).toLowerCase()) return false;
+      }
+
+      if (queryParams.price !== undefined && typeof queryParams.price === "number" && queryParams.price > 0) {
+        if (Number(product.price) > queryParams.price) return false;
+      }
+
+      if (queryParams.tag && queryParams.tag !== "") {
+        if (!product.tags.includes(queryParams.tag)) return false;
+      }
+
+      return true;
+    });
+
+    // Add sorting
+    if (queryParams.sortBy) {
+      filtered.sort((a, b) => {
+        const aVal = a[queryParams.sortBy!];
+        const bVal = b[queryParams.sortBy!];
+        const order = queryParams.sortOrder === "desc" ? -1 : 1;
+        return aVal < bVal ? -order : aVal > bVal ? order : 0;
+      });
+    }
+
+    // Handle pagination at database level
+    const page = parseInt(String(queryParams.page || "1"));
+    const limit = parseInt(String(queryParams.limit || "10"));
+    const start = (page - 1) * limit;
+    const paginated = filtered.slice(start, start + limit);
+
+    return { data: paginated, total: filtered.length };
+  }
+
+  get(id: string): Product | null {
+    return this.products.find(p => p.id === id) || null;
+  }
+
+  create(product: Partial<Product>): Product {
+    const newProduct: Product = {
+      id: `PRG-${Date.now()}`,
+      name: product.name || "New Product",
+      status: product.status || "W przygotowaniu",
+      tags: product.tags || [],
+      price: product.price || "0.00",
+      stock: product.stock || 0,
+      updated: new Date().toISOString().split("T")[0],
+    };
+    this.products.push(newProduct);
+    return newProduct;
+  }
+
+  update(id: string, changes: Partial<Product>): Product | null {
+    const index = this.products.findIndex(p => p.id === id);
+    if (index === -1) return null;
+
+    this.products[index] = { ...this.products[index], ...changes };
+    return this.products[index];
+  }
+}
+
+#### Step 4: Replace existing fetch function
+
+Update the existing `productsApi.ts` to use the new API client:
+
+```typescript
+// apps/admin/src/services/productsApi.ts (UPDATED)
+import { apiClient } from "@nevo/api-client";
+import type { Product, ProductsQueryParams } from "../mocks/products/types";
+
+// Replace the existing fetchProducts function
+export async function fetchProducts(
+  params: ProductsQueryParams = {}
+): Promise<Product[]> {
+  const response = await apiClient.get("/products", { params });
+  return response.data.data; // Extract data from paginated response
+}
+
+export default { fetchProducts };
+````
+
+#### Step 5: Bootstrap MSW in development
+
+Update `apps/admin/src/main.tsx`:
+
+```typescript
+async function enableMocksIfNeeded() {
+  const isDev = import.meta.env.DEV;
+  const isPreview = import.meta.env.VITE_ENV === "preview";
+
+  if (isDev || isPreview) {
+    const { worker } = await import("@nevo/api-mocks/browser");
+    const { productsHandlers } = await import("./mocks/products/handlers");
+
+    await worker.start({
+      serviceWorker: { url: "/mockServiceWorker.js" },
+      onUnhandledRequest: "warn",
+    });
+
+    // Register admin app specific handlers
+    worker.use(...productsHandlers);
+
+    // Expose scenario controls in development
+    if (isDev) {
+      const { scenarios } = await import("@nevo/api-mocks");
+      (window as any).__mockScenarios = scenarios;
+    }
+  }
+}
+
+await enableMocksIfNeeded();
+```
+
+#### Step 6: Testing integration
+
+```typescript
+// vitest.config.ts
+import { beforeAll, afterEach, afterAll } from "vitest";
+import { setupServer } from "msw/node";
+import { productsHandlers } from "./apps/admin/src/mocks/products/handlers";
+
+const server = setupServer(...productsHandlers);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+```
+
+---
+
+### Success Criteria
+
+✅ **Completed Implementation:**
+
+1. **Two-package architecture**: Generic `@nevo/api-client` and reusable `@nevo/api-mocks` foundation
+2. **Admin app showcase**: Products mocks demonstrating how to use the foundation
+3. **HOC pattern**: Reusable scenario handling via `withScenarios` HOC
+4. **Bundle optimization**: Mocks automatically excluded from production builds
+5. **Environment awareness**: Different behavior for DEV/PREVIEW vs QA/PROD
+6. **Simple migration**: Only `fetchProducts` function needs updating
+7. **Future-ready**: Auth support and multiple environment URLs prepared
+8. **Developer experience**: Scenario controls via browser console
+9. **No code duplication**: Scenario logic centralized in foundation package
+
+### Migration Strategy
+
+The migration focuses on minimal changes:
+
+**Before (current)**:
+
+```typescript
+// Simple in-memory filtering with setTimeout
+export async function fetchProducts(
+  params: ProductsQueryParams = {},
+  delay = 300
+): Promise<Product[]> {
+  const all = getMockProducts();
+  const filtered = all.filter(/* filtering logic */);
+  return new Promise<Product[]>((resolve) =>
+    setTimeout(() => resolve(filtered), delay)
+  );
+}
+```
+
+**After (new system)**:
+
+```typescript
+// Real HTTP calls (intercepted by MSW in dev/preview)
+export async function fetchProducts(
+  params: ProductsQueryParams = {}
+): Promise<Product[]> {
+  const response = await apiClient.get("/products", { params });
+  return response.data.data; // Extract data from paginated response
+}
+```
+
+**UI Components**: No changes required - same `Product[]` interface
+**React Query hooks**: No changes required - same async function signature
+
+---
+
+### Package Responsibilities
+
+#### `@nevo/api-client` (Generic HTTP Client)
+
+- ✅ Environment-aware Axios instance
+- ✅ Base URL configuration for different environments
+- ✅ Common error handling and interceptors
+- ✅ Auth foundation (for future use)
+- ❌ No domain-specific APIs
+- ❌ No business logic
+
+#### `@nevo/api-mocks` (Reusable Foundation)
+
+- ✅ MSW browser/node setup utilities
+- ✅ Scenario management system
+- ✅ `withScenarios` HOC for handlers
+- ✅ Common error response generators
+- ✅ Utility functions (delay, pagination)
+- ❌ No domain-specific handlers
+- ❌ No business data models
+- ❌ No API-specific response formats
+
+#### `apps/admin` (Showcase Implementation)
+
+- ✅ Products-specific types, database, handlers
+- ✅ Admin-specific handler utilities (`createListHandler`, `createGetHandler`, etc.)
+- ✅ API response format definitions
+- ✅ Demonstrates how to use foundation packages
+- ✅ Real business logic and data models
+- ✅ Integration example for other developers
+
+### Handler Utilities Benefits
+
+The admin-specific handler utilities provide:
+
+1. **Eliminates repetition**: Standard CRUD operations without boilerplate
+2. **Consistent API format**: Standardized response structure across all endpoints
+3. **Flexible configuration**: Customizable options for different resources
+4. **Type safety**: Generic types ensure correct database interface usage
+5. **Easy to extend**: Add new handler types for complex operations
+
+---
+
+### Advantages of This Approach
+
+- **Realistic HTTP behavior**: Real status codes, headers, network timing
+- **Production-ready**: Same API client used for real backend
+- **Bundle efficient**: Zero runtime cost in production builds
+- **Developer friendly**: Easy scenario switching and debugging
+- **Migration friendly**: Minimal changes to existing code
+- **Scalable architecture**: Easy to add new API domains in admin app
+- **Auth ready**: Built-in foundation for authentication
+- **Environment flexible**: Easy switch between mock and real APIs
+- **No duplication**: Scenario logic centralized in HOC
+- **Reusable packages**: Foundation can be used in other projects
+
+---
+
+### Files Created/Modified
+
+#### New Packages:
+
+1. **`/packages/api-client`** - Generic HTTP client with environment awareness
+2. **`/packages/api-mocks`** - Reusable MSW foundation with scenario management
+
+#### Admin App Files:
+
+1. **`apps/admin/src/mocks/products/`** - Products-specific mocks (types, database, handlers)
+2. **`apps/admin/src/mocks/utils/handlers.ts`** - Reusable handler utilities for CRUD operations
+3. **`apps/admin/src/services/productsApi.ts`** - Replace with API client calls
+4. **`apps/admin/src/main.tsx`** - Add MSW bootstrap for dev/preview
+
+#### Removed Files:
+
+1. **`apps/admin/src/features/products/services/mockData.ts`** - REMOVE (replaced by database)
+
+#### Configuration:
+
+1. **`vitest.config.ts`** - MSW server setup for tests
+2. **`package.json`** - Add new workspace dependencies
+
+---
+
+### Next Steps for Implementation
+
+1. **Phase 1**: Create `@nevo/api-client` package (generic HTTP client)
+2. **Phase 2**: Create `@nevo/api-mocks` package (foundation with HOC)
+3. **Phase 3**: Create Products mocks in admin app using foundation
+4. **Phase 4**: Update `fetchProducts` to use new API client
+5. **Phase 5**: Remove old `mockData.ts` and test new system
+6. **Phase 6**: Add scenario controls and verify all states work
+
+### Future Extensions
+
+- **Authentication**: Add auth interceptors to `@nevo/api-client`
+- **Multiple environments**: Add QA/staging URL configuration
+- **Additional domains**: Orders, Users APIs in admin app using same foundation
+- **Other apps**: Use foundation packages in other workspace apps
+
+### Development Tools
+
+```typescript
+// Available in browser console during development
+window.__mockScenarios.set("rate-limit"); // Test rate limiting
+window.__mockScenarios.set("server-error"); // Test error handling
+window.__mockScenarios.set("empty"); // Test empty states
+window.__mockScenarios.set("loading-slow"); // Test loading states
+window.__mockScenarios.reset(); // Back to normal
+window.__mockScenarios.list(); // See all scenarios
+```
+
+This specification provides a clean separation between reusable foundation packages and domain-specific implementation, avoiding code duplication while maintaining flexibility for future extensions.

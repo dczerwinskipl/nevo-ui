@@ -56,10 +56,11 @@ export function useProductFilters() {
   );
 
   // Query hook manages its own loading states and receives applied filters directly
-  const { data, isLoading, isFetching, error, refetch } = useProducts(filters);
+  const { data, pagination, isLoading, isFetching, error, refetch } = useProducts(filters);
 
   return {
     data,
+    pagination,
     error,
     refetch,
     // Filter state and actions

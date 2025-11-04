@@ -141,6 +141,10 @@ jobs:
             exit 1
           fi
 
+      - name: Initialize MSW for admin app
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+        run: pnpm --filter @nevo/ecommerce-admin-app run msw:init
+
       - name: Build admin app
         if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: pnpm --filter @nevo/ecommerce-admin-app run build

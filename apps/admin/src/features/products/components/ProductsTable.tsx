@@ -43,6 +43,11 @@ export function ProductsTable({
       accessor: "name",
     },
     {
+      key: "category",
+      header: "Kategoria",
+      accessor: "category",
+    },
+    {
       key: "status",
       header: "Status",
       accessor: "status",
@@ -76,7 +81,7 @@ export function ProductsTable({
       key: "price",
       header: "Cena",
       accessor: "price",
-      render: (value: string) => `${value} zł`,
+      render: (value: number) => `${value.toFixed(2)} zł`,
       align: "right",
     },
     {
@@ -86,9 +91,10 @@ export function ProductsTable({
       align: "right",
     },
     {
-      key: "updated",
+      key: "updatedAt",
       header: "Ost. modyfikacja",
-      accessor: "updated",
+      accessor: "updatedAt",
+      render: (value: string) => new Date(value).toLocaleDateString("pl-PL"),
     },
   ];
 
