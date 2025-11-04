@@ -14,6 +14,11 @@
       "cache": false,
       "persistent": true
     },
-    "lint": {}
+    "lint": {},
+    "msw:init": {
+      "outputs": [
+        "public/mockServiceWorker.js"
+      ]
+    }
   }
 }

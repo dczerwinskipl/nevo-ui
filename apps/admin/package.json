@@ -4,10 +4,12 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "predev": "pnpm msw:init",
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "pnpm msw:init && tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "echo 'lint placeholder'"
+    "lint": "echo 'lint placeholder'",
+    "msw:init": "msw init public --save"
   },
   "dependencies": {
     "@faker-js/faker": "^10.1.0",
