@@ -8,8 +8,7 @@ async function enableMocking() {
     const { setupMocks } = await import("@nevo/api-mocks/browser");
     const { handlers } = await import("./mocks");
 
-    const mockService = setupMocks();
-    mockService.use(...handlers);
+    const mockService = setupMocks(handlers);
     return mockService.start();
   }
 }
