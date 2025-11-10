@@ -12,7 +12,8 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:jsx-a11y/recommended",
-    "prettier", // Must be last to override other configs
+    "prettier",
+    "plugin:storybook/recommended",
   ],
   ignorePatterns: ["dist", ".eslintrc.cjs", "*.config.js", "*.config.ts"],
   parser: "@typescript-eslint/parser",
@@ -80,6 +81,15 @@ module.exports = {
     },
   },
   overrides: [
+    // Storybook files
+    {
+      files: ["**/*.stories.*"],
+      rules: {
+        "storybook/no-uninstalled-addons": "off",
+        // Allow importing types from @storybook/react when using react-vite framework
+        "@typescript-eslint/consistent-type-imports": "off",
+      },
+    },
     // Test files specific rules
     {
       files: ["**/__tests__/**/*", "**/*.{test,spec}.*"],

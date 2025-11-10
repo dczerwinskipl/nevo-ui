@@ -8,8 +8,17 @@ const ThemeCtx = createContext<{
   tokens: Tokens;
 } | null>(null);
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [dark, setDark] = useState(true);
+// Export the context for use in Storybook
+export { ThemeCtx };
+
+export function ThemeProvider({
+  children,
+  initialDark = true,
+}: {
+  children: React.ReactNode;
+  initialDark?: boolean;
+}) {
+  const [dark, setDark] = useState(initialDark);
   const themeTokens = useMemo(
     () => (dark ? tokens.dark : tokens.light),
     [dark]

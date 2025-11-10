@@ -149,12 +149,24 @@ jobs:
         if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: pnpm --filter @nevo/ecommerce-admin-app run build
 
+      - name: Build Storybook
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+        run: pnpm --filter @nevo/design-system run storybook:build
+
       - name: Upload admin build artifacts
         if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: admin-dist
           path: apps/admin/dist/
+          retention-days: 1
+
+      - name: Upload Storybook build artifacts
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-dist
+          path: packages/design-system/storybook-static/
           retention-days: 1
 
   # Manual preview deployment (only for PRs)
@@ -177,7 +189,13 @@ jobs:
           name: admin-dist
           path: apps/admin/dist/
 
-      - name: Deploy to Cloudflare Pages
+      - name: Download Storybook artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: storybook-dist
+          path: packages/design-system/storybook-static/
+
+      - name: Deploy Admin to Cloudflare Pages
         id: deploy
         uses: cloudflare/pages-action@v1
         with:
@@ -188,15 +206,27 @@ jobs:
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.head_ref }}
 
+      - name: Deploy Storybook to Cloudflare Pages
+        id: deploy-storybook
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: nevo-ui-storybook
+          directory: packages/design-system/storybook-static
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}
+
       - name: Comment on PR
         uses: actions/github-script@v7
         with:
           script: |
             const deployUrl = process.env.DEPLOY_URL;
+            const storybookUrl = process.env.STORYBOOK_URL;
             const prNumber = context.payload.pull_request.number;
             const shortSha = process.env.GITHUB_SHA.substring(0, 7);
 
-            if (deployUrl) {
+            if (deployUrl || storybookUrl) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -204,7 +234,8 @@ jobs:
                 body: [
                   '## 🚀 Preview Deployed Successfully',
                   '',
-                  `**🔗 Preview URL:** [${deployUrl}](${deployUrl})`,
+                  deployUrl ? `**🔗 Admin Preview:** [${deployUrl}](${deployUrl})` : '',
+                  storybookUrl ? `**📚 Storybook Preview:** [${storybookUrl}](${storybookUrl})` : '',
                   '',
                   '**📋 Deployment Details:**',
                   `- **Branch:** \`${{ github.head_ref }}\``,
@@ -217,6 +248,7 @@ jobs:
             }
         env:
           DEPLOY_URL: ${{ steps.deploy.outputs.url }}
+          STORYBOOK_URL: ${{ steps.deploy-storybook.outputs.url }}
           GITHUB_SHA: ${{ github.sha }}
 
   # Production deployment (only for main branch)
@@ -239,7 +271,13 @@ jobs:
           name: admin-dist
           path: apps/admin/dist/
 
-      - name: Deploy to Cloudflare Pages
+      - name: Download Storybook artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: storybook-dist
+          path: packages/design-system/storybook-static/
+
+      - name: Deploy Admin to Cloudflare Pages
         id: deploy
         uses: cloudflare/pages-action@v1
         with:
@@ -247,6 +285,17 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
           directory: apps/admin/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+
+      - name: Deploy Storybook to Cloudflare Pages
+        id: deploy-storybook
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: nevo-ui-storybook
+          directory: packages/design-system/storybook-static
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           branch: main
 
