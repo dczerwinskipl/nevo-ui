@@ -9,12 +9,14 @@
 This specification defines enhancements to the `@nevo/api-mocks` package to better support **Storybook** and **Playwright** testing workflows. The goal is to make scenario switching more flexible and testable through programmatic APIs, not just localStorage.
 
 This is a **follow-up specification** to:
+
 - **002-storybook-design-system.md**: Needs scenario controls in Storybook toolbar
 - **003-playwright-admin-app.md**: Needs programmatic scenario APIs for test automation
 
 ### Current State
 
 The existing `@nevo/api-mocks` package provides:
+
 - ✅ Scenario management via `ScenarioManager` class
 - ✅ localStorage persistence for scenario state
 - ✅ `withScenarios` HOC for MSW handlers
@@ -45,14 +47,14 @@ The existing `@nevo/api-mocks` package provides:
 
 ```typescript
 // Before (localStorage only)
-localStorage.setItem('mock-scenario', 'rate-limit');
+localStorage.setItem("mock-scenario", "rate-limit");
 
 // After (programmatic API)
-import { scenarios } from '@nevo/api-mocks';
-scenarios.set('rate-limit');
+import { scenarios } from "@nevo/api-mocks";
+scenarios.set("rate-limit");
 
 // Also available in window (for Playwright)
-window.setMockScenario('rate-limit');
+window.setMockScenario("rate-limit");
 ```
 
 ### Storybook Integration
@@ -67,11 +69,11 @@ window.setMockScenario('rate-limit');
 
 ```typescript
 // Playwright helper
-import { setScenario } from '@nevo/api-mocks/playwright';
+import { setScenario } from "@nevo/api-mocks/playwright";
 
-test('rate limit handling', async ({ page }) => {
-  await setScenario(page, 'rate-limit');
-  await page.goto('/products');
+test("rate limit handling", async ({ page }) => {
+  await setScenario(page, "rate-limit");
+  await page.goto("/products");
   // Test rate limit UI
 });
 ```
@@ -87,43 +89,45 @@ test('rate limit handling', async ({ page }) => {
 Add global window API and event dispatching:
 
 ```typescript
-type Scenario = 
-  | 'success'
-  | 'empty' 
-  | 'loading-slow'
-  | 'rate-limit'
-  | 'server-error'
-  | 'validation-error'
-  | 'network-error';
+type Scenario =
+  | "success"
+  | "empty"
+  | "loading-slow"
+  | "rate-limit"
+  | "server-error"
+  | "validation-error"
+  | "network-error";
 
 export type { Scenario };
 
 class ScenarioManager {
-  private currentScenario: Scenario = 'success';
+  private currentScenario: Scenario = "success";
   private listeners: Set<(scenario: Scenario) => void> = new Set();
 
   set(scenario: Scenario): void {
     const previous = this.currentScenario;
     this.currentScenario = scenario;
-    
+
     // Store in localStorage for persistence
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('mock-scenario', scenario);
-      
+    if (typeof window !== "undefined") {
+      localStorage.setItem("mock-scenario", scenario);
+
       // Dispatch custom event for UI updates
-      window.dispatchEvent(new CustomEvent('mock-scenario-change', {
-        detail: { scenario, previous }
-      }));
+      window.dispatchEvent(
+        new CustomEvent("mock-scenario-change", {
+          detail: { scenario, previous },
+        })
+      );
     }
-    
+
     // Notify listeners
-    this.listeners.forEach(listener => listener(scenario));
+    this.listeners.forEach((listener) => listener(scenario));
   }
 
   current(): Scenario {
     // Check localStorage first for persistence
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('mock-scenario') as Scenario;
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("mock-scenario") as Scenario;
       if (stored && this.isValidScenario(stored)) {
         this.currentScenario = stored;
       }
@@ -132,18 +136,18 @@ class ScenarioManager {
   }
 
   reset(): void {
-    this.set('success');
+    this.set("success");
   }
 
   list(): Scenario[] {
     return [
-      'success',
-      'empty',
-      'loading-slow', 
-      'rate-limit',
-      'server-error',
-      'validation-error',
-      'network-error'
+      "success",
+      "empty",
+      "loading-slow",
+      "rate-limit",
+      "server-error",
+      "validation-error",
+      "network-error",
     ];
   }
 
@@ -160,8 +164,9 @@ class ScenarioManager {
 export const scenarios = new ScenarioManager();
 
 // Global window API (for Storybook/Playwright)
-if (typeof window !== 'undefined') {
-  (window as any).setMockScenario = (scenario: Scenario) => scenarios.set(scenario);
+if (typeof window !== "undefined") {
+  (window as any).setMockScenario = (scenario: Scenario) =>
+    scenarios.set(scenario);
   (window as any).getMockScenario = () => scenarios.current();
   (window as any).resetMockScenario = () => scenarios.reset();
   (window as any).listMockScenarios = () => scenarios.list();
@@ -172,7 +177,7 @@ export function getCurrentScenario(): Scenario {
 }
 
 export function simulateDelay(ms: number = 300): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 ```
 
@@ -181,15 +186,18 @@ export function simulateDelay(ms: number = 300): Promise<void> {
 #### `packages/api-mocks/src/playwright.ts` (NEW)
 
 ```typescript
-import type { Page } from '@playwright/test';
-import type { Scenario } from './foundation/scenarios';
+import type { Page } from "@playwright/test";
+import type { Scenario } from "./foundation/scenarios";
 
 /**
  * Playwright helper to set mock scenario
  * @param page - Playwright page object
  * @param scenario - Scenario to activate
  */
-export async function setScenario(page: Page, scenario: Scenario): Promise<void> {
+export async function setScenario(
+  page: Page,
+  scenario: Scenario
+): Promise<void> {
   await page.evaluate((s) => {
     (window as any).setMockScenario(s);
   }, scenario);
@@ -216,7 +224,10 @@ export async function resetScenario(page: Page): Promise<void> {
 /**
  * Wait for scenario to be applied (waits for network idle)
  */
-export async function waitForScenario(page: Page, scenario: Scenario): Promise<void> {
+export async function waitForScenario(
+  page: Page,
+  scenario: Scenario
+): Promise<void> {
   await setScenario(page, scenario);
   // Wait a bit for scenario to take effect
   await page.waitForTimeout(100);
@@ -247,7 +258,7 @@ export const MockScenarioToolbar = () => {
   const handleScenarioChange = useCallback((scenario: Scenario) => {
     // Update Storybook global state
     updateGlobals({ [PARAM_KEY]: scenario });
-    
+
     // Update scenario manager
     scenarios.set(scenario);
   }, [updateGlobals]);
@@ -309,10 +320,14 @@ Add new export paths:
 #### `packages/api-mocks/src/index.ts`
 
 ```typescript
-export { scenarios, getCurrentScenario, simulateDelay } from './foundation/scenarios';
-export type { Scenario } from './foundation/scenarios';
-export { withScenarios } from './foundation/withScenarios';
-export { generateErrorResponse } from './foundation/errors';
+export {
+  scenarios,
+  getCurrentScenario,
+  simulateDelay,
+} from "./foundation/scenarios";
+export type { Scenario } from "./foundation/scenarios";
+export { withScenarios } from "./foundation/withScenarios";
+export { generateErrorResponse } from "./foundation/errors";
 ```
 
 ### 6. Documentation
@@ -327,17 +342,17 @@ Add new sections:
 ### Playwright
 
 ```typescript
-import { test, expect } from '@playwright/test';
-import { setScenario, resetScenario } from '@nevo/api-mocks/playwright';
+import { test, expect } from "@playwright/test";
+import { setScenario, resetScenario } from "@nevo/api-mocks/playwright";
 
 test.beforeEach(async ({ page }) => {
   await resetScenario(page);
 });
 
-test('handles rate limiting', async ({ page }) => {
-  await setScenario(page, 'rate-limit');
-  await page.goto('/products');
-  
+test("handles rate limiting", async ({ page }) => {
+  await setScenario(page, "rate-limit");
+  await page.goto("/products");
+
   await expect(page.getByText(/rate limit/i)).toBeVisible();
 });
 ```
@@ -346,22 +361,22 @@ test('handles rate limiting', async ({ page }) => {
 
 ```typescript
 // .storybook/preview.tsx
-import { withMockScenario } from '@nevo/api-mocks/storybook';
+import { withMockScenario } from "@nevo/api-mocks/storybook";
 
 export const decorators = [withMockScenario];
 
 export const globalTypes = {
   mockScenario: {
-    description: 'API Mock Scenario',
-    defaultValue: 'success',
+    description: "API Mock Scenario",
+    defaultValue: "success",
     toolbar: {
-      title: 'Mock Scenario',
+      title: "Mock Scenario",
       items: [
-        { value: 'success', title: 'Success' },
-        { value: 'empty', title: 'Empty' },
-        { value: 'loading-slow', title: 'Slow Loading' },
-        { value: 'rate-limit', title: 'Rate Limit' },
-        { value: 'server-error', title: 'Server Error' },
+        { value: "success", title: "Success" },
+        { value: "empty", title: "Empty" },
+        { value: "loading-slow", title: "Slow Loading" },
+        { value: "rate-limit", title: "Rate Limit" },
+        { value: "server-error", title: "Server Error" },
       ],
       dynamicTitle: true,
     },
@@ -372,17 +387,17 @@ export const globalTypes = {
 ### Programmatic API
 
 ```typescript
-import { scenarios } from '@nevo/api-mocks';
+import { scenarios } from "@nevo/api-mocks";
 
 // Set scenario
-scenarios.set('rate-limit');
+scenarios.set("rate-limit");
 
 // Get current scenario
 const current = scenarios.current(); // 'rate-limit'
 
 // Subscribe to changes
 const unsubscribe = scenarios.subscribe((scenario) => {
-  console.log('Scenario changed to:', scenario);
+  console.log("Scenario changed to:", scenario);
 });
 
 // Reset to success
@@ -397,6 +412,7 @@ scenarios.reset();
 ### Phase 1: Core API Enhancements (45 min)
 
 #### Task 1.1: Enhance ScenarioManager Class
+
 - [ ] Open `packages/api-mocks/src/foundation/scenarios.ts`
 - [ ] Add `listeners` Set to track subscribers
 - [ ] Add `subscribe()` method for reactive updates
@@ -405,6 +421,7 @@ scenarios.reset();
 - [ ] Export `Scenario` type
 
 #### Task 1.2: Add Window Global API
+
 - [ ] Add `window.setMockScenario()` function
 - [ ] Add `window.getMockScenario()` function
 - [ ] Add `window.resetMockScenario()` function
@@ -412,11 +429,13 @@ scenarios.reset();
 - [ ] Add TypeScript declarations for window extensions
 
 #### Task 1.3: Update Exports
+
 - [ ] Update `packages/api-mocks/src/index.ts` to export Scenario type
 - [ ] Export scenarios instance
 - [ ] Ensure backward compatibility
 
 #### Task 1.4: Test Core Changes
+
 - [ ] Create test file `scenarios.test.ts`
 - [ ] Test scenario setting and getting
 - [ ] Test subscription mechanism
@@ -428,6 +447,7 @@ scenarios.reset();
 ### Phase 2: Playwright Integration (30 min)
 
 #### Task 2.1: Create Playwright Helper Module
+
 - [ ] Create `packages/api-mocks/src/playwright.ts`
 - [ ] Implement `setScenario(page, scenario)` helper
 - [ ] Implement `getScenario(page)` helper
@@ -436,15 +456,18 @@ scenarios.reset();
 - [ ] Add JSDoc documentation
 
 #### Task 2.2: Add TypeScript Types
+
 - [ ] Add Playwright types as peer dependency (optional)
 - [ ] Add proper type definitions for all helpers
 - [ ] Export types from playwright module
 
 #### Task 2.3: Update Package Exports
+
 - [ ] Add `"./playwright": "./src/playwright.ts"` to package.json exports
 - [ ] Verify export works in TypeScript projects
 
 #### Task 2.4: Create Playwright Examples
+
 - [ ] Add example test in README showing scenario usage
 - [ ] Document beforeEach pattern for resetting scenarios
 - [ ] Document common test patterns
@@ -454,33 +477,39 @@ scenarios.reset();
 ### Phase 3: Storybook Integration (60 min)
 
 #### Task 3.1: Create Storybook Decorator
+
 - [ ] Create `packages/api-mocks/src/storybook/` directory
 - [ ] Create `decorator.tsx` with `withMockScenario` decorator
 - [ ] Implement scenario syncing with Storybook globals
 - [ ] Add React hooks for scenario management
 
 #### Task 3.2: Create Toolbar Configuration
+
 - [ ] Create `addon.ts` for toolbar configuration (optional full addon)
 - [ ] OR document how to use Storybook's built-in toolbar
 - [ ] Define scenario items for toolbar dropdown
 
 #### Task 3.3: Create Storybook Index
+
 - [ ] Create `packages/api-mocks/src/storybook/index.ts`
 - [ ] Export decorator
 - [ ] Export toolbar config (if applicable)
 - [ ] Add TypeScript types
 
 #### Task 3.4: Add Package Export
+
 - [ ] Add `"./storybook": "./src/storybook/index.ts"` to package.json
 - [ ] Verify Storybook can import the decorator
 
 #### Task 3.5: Create Storybook Documentation
+
 - [ ] Add Storybook section to README
 - [ ] Show how to add decorator to `.storybook/preview.tsx`
 - [ ] Show how to configure globalTypes for toolbar
 - [ ] Add example story using scenario switching
 
 #### Task 3.6: Create Example Story
+
 - [ ] Create example story showing scenario switching
 - [ ] Demonstrate error states, loading states, etc.
 - [ ] Add to README as reference
@@ -490,6 +519,7 @@ scenarios.reset();
 ### Phase 4: Documentation & Examples (30 min)
 
 #### Task 4.1: Update Main README
+
 - [ ] Add "Testing Integration" section
 - [ ] Add Playwright usage examples
 - [ ] Add Storybook usage examples
@@ -497,6 +527,7 @@ scenarios.reset();
 - [ ] Update quick start guide
 
 #### Task 4.2: Create Testing Patterns Guide
+
 - [ ] Document common testing scenarios
 - [ ] Show how to test error handling
 - [ ] Show how to test loading states
@@ -504,11 +535,13 @@ scenarios.reset();
 - [ ] Document best practices
 
 #### Task 4.3: Add TypeScript Examples
+
 - [ ] Ensure all examples are TypeScript
 - [ ] Show proper type imports
 - [ ] Demonstrate type safety
 
 #### Task 4.4: Create Migration Guide
+
 - [ ] Document changes from v1 (if applicable)
 - [ ] Show backward compatibility
 - [ ] Highlight new features
@@ -518,6 +551,7 @@ scenarios.reset();
 ### Phase 5: Testing & Verification (40 min)
 
 #### Task 5.1: Test Playwright Integration
+
 - [ ] Create test app with Playwright
 - [ ] Import `@nevo/api-mocks/playwright`
 - [ ] Test `setScenario()` helper
@@ -525,6 +559,7 @@ scenarios.reset();
 - [ ] Test with multiple scenarios
 
 #### Task 5.2: Test Storybook Integration
+
 - [ ] Add decorator to Storybook instance
 - [ ] Configure toolbar in preview.tsx
 - [ ] Verify toolbar appears in Storybook UI
@@ -532,17 +567,20 @@ scenarios.reset();
 - [ ] Verify stories update when scenario changes
 
 #### Task 5.3: Test Programmatic API
+
 - [ ] Test `scenarios.set()` in browser
 - [ ] Test `scenarios.subscribe()` reactivity
 - [ ] Test window global functions
 - [ ] Verify localStorage persistence
 
 #### Task 5.4: Test Type Safety
+
 - [ ] Verify TypeScript types work correctly
 - [ ] Test IDE autocomplete for scenarios
 - [ ] Verify type errors for invalid scenarios
 
 #### Task 5.5: Integration Testing
+
 - [ ] Test with actual design-system Storybook (from spec 002)
 - [ ] Test with actual admin Playwright tests (from spec 003)
 - [ ] Verify no breaking changes to existing code
@@ -552,21 +590,25 @@ scenarios.reset();
 ### Phase 6: Polish & Release (20 min)
 
 #### Task 6.1: Code Review
+
 - [ ] Review all new code for quality
 - [ ] Ensure consistent code style
 - [ ] Add missing JSDoc comments
 - [ ] Remove console.logs and debug code
 
 #### Task 6.2: Update Changelog
+
 - [ ] Document new features
 - [ ] Document breaking changes (if any)
 - [ ] Add migration notes
 
 #### Task 6.3: Version Bump
+
 - [ ] Update package version (minor bump)
 - [ ] Update dependencies if needed
 
 #### Task 6.4: Final Verification
+
 - [ ] Run all package tests
 - [ ] Verify build succeeds
 - [ ] Test in design-system package
@@ -629,11 +671,13 @@ scenarios.set('success'); // ✅ OK
 **Approach**: Use Storybook's built-in `globalTypes` toolbar instead of building a full addon.
 
 **Pros**:
+
 - Simpler implementation
 - No addon registration needed
 - Uses standard Storybook API
 
 **Cons**:
+
 - Less customization (fine for v1)
 
 ### Testing Philosophy

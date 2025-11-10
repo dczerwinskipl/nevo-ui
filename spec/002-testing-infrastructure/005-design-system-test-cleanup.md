@@ -9,12 +9,14 @@
 This specification defines a comprehensive **test cleanup and improvement** initiative for the `@nevo/design-system` package based on findings from Storybook implementation and accessibility testing.
 
 This is a **follow-up specification** to:
+
 - **002-storybook-design-system.md**: Will reveal visual inconsistencies and a11y issues
 - Existing Jest unit tests that may need updates or consolidation
 
 ### Context
 
 After implementing Storybook with a11y testing, we expect to discover:
+
 - Accessibility violations (color contrast, ARIA labels, keyboard navigation)
 - Visual inconsistencies across components
 - Missing or redundant test coverage
@@ -121,6 +123,7 @@ Based on the current codebase analysis, we anticipate:
 ### Phase 1: Discovery & Audit (2 hours)
 
 #### Task 1.1: Run Storybook A11y Audit
+
 - [ ] Start Storybook: `pnpm storybook` from design-system
 - [ ] Open a11y panel for Button stories
 - [ ] Document all violations found
@@ -129,6 +132,7 @@ Based on the current codebase analysis, we anticipate:
 - [ ] Create spreadsheet tracking violations
 
 #### Task 1.2: Audit All Components
+
 - [ ] List all components in `src/` directory
 - [ ] Check which have Storybook stories
 - [ ] Check which have Jest tests
@@ -137,12 +141,14 @@ Based on the current codebase analysis, we anticipate:
 - [ ] Create component coverage matrix
 
 #### Task 1.3: Identify Test Strategy Gaps
+
 - [ ] Review existing Jest tests for patterns
 - [ ] Identify what should be unit tested vs visual tested
 - [ ] Document current test coverage percentage
 - [ ] Identify redundant tests (testing same thing in multiple ways)
 
 #### Task 1.4: Create Prioritized Fix List
+
 - [ ] Group findings by category (a11y, testing, docs)
 - [ ] Prioritize by severity and effort
 - [ ] Create GitHub issues for each fix (or task checklist)
@@ -153,9 +159,16 @@ Based on the current codebase analysis, we anticipate:
 ### Phase 2: Critical Accessibility Fixes (3-4 hours)
 
 #### Task 2.1: Fix Button Component A11y Issues
+
 - [ ] Add ARIA live region for loading state
   ```tsx
-  {loading && <span className="sr-only" role="status">Loading...</span>}
+  {
+    loading && (
+      <span className="sr-only" role="status">
+        Loading...
+      </span>
+    );
+  }
   ```
 - [ ] Ensure all icon-only buttons have aria-label
 - [ ] Verify color contrast meets WCAG AA
@@ -163,6 +176,7 @@ Based on the current codebase analysis, we anticipate:
 - [ ] Update Button.stories.tsx with a11y examples
 
 #### Task 2.2: Fix Alert Component A11y Issues
+
 - [ ] Verify color contrast for all intent variants
 - [ ] Improve dismiss button accessibility
   ```tsx
@@ -173,9 +187,13 @@ Based on the current codebase analysis, we anticipate:
 - [ ] Update Alert.stories.tsx
 
 #### Task 2.3: Fix Input Component A11y Issues
+
 - [ ] Add aria-invalid for error state
   ```tsx
-  <input aria-invalid={!!error} aria-describedby={error ? 'error-id' : undefined} />
+  <input
+    aria-invalid={!!error}
+    aria-describedby={error ? "error-id" : undefined}
+  />
   ```
 - [ ] Add aria-required for required fields
 - [ ] Associate labels properly (htmlFor/id)
@@ -183,6 +201,7 @@ Based on the current codebase analysis, we anticipate:
 - [ ] Test with screen reader
 
 #### Task 2.4: Fix Select Component A11y Issues
+
 - [ ] Ensure native select has proper labels
 - [ ] Add aria-describedby for helper text
 - [ ] Add aria-invalid for error state
@@ -190,6 +209,7 @@ Based on the current codebase analysis, we anticipate:
 - [ ] Consider custom select accessibility (if exists)
 
 #### Task 2.5: Fix Modal Component A11y Issues
+
 - [ ] Implement focus trap (focus stays in modal)
 - [ ] Add aria-modal="true"
 - [ ] Add aria-labelledby pointing to title
@@ -199,6 +219,7 @@ Based on the current codebase analysis, we anticipate:
 - [ ] Test with keyboard only
 
 #### Task 2.6: Fix Table Component A11y Issues
+
 - [ ] Add proper table markup (thead, tbody)
 - [ ] Add aria-sort for sortable columns
   ```tsx
@@ -215,6 +236,7 @@ Based on the current codebase analysis, we anticipate:
 #### Task 3.1: Create Storybook Stories for All Components
 
 **Primitives** (if missing):
+
 - [ ] Input.stories.tsx (all variants, states, validation)
 - [ ] Select.stories.tsx (options, error states, disabled)
 - [ ] Checkbox.stories.tsx (checked, indeterminate, disabled)
@@ -222,6 +244,7 @@ Based on the current codebase analysis, we anticipate:
 - [ ] Badge.stories.tsx (all intents, sizes)
 
 **Feedback** (if missing):
+
 - [ ] Alert.stories.tsx (already done, verify completeness)
 - [ ] EmptyState.stories.tsx (different messages, icons)
 - [ ] ErrorState.stories.tsx (different errors, retry)
@@ -229,15 +252,18 @@ Based on the current codebase analysis, we anticipate:
 - [ ] Skeleton.stories.tsx (different shapes)
 
 **Data**:
+
 - [ ] Table.stories.tsx (basic, sortable, paginated, empty)
 - [ ] Pagination.stories.tsx (different page counts, disabled states)
 
 **Overlays**:
+
 - [ ] Modal.stories.tsx (sizes, with/without footer, scrollable)
 - [ ] Drawer.stories.tsx (positions, sizes)
 - [ ] Tooltip.stories.tsx (positions, delays)
 
 **Navigation**:
+
 - [ ] Tabs.stories.tsx (different numbers, icons, disabled)
 - [ ] Breadcrumbs.stories.tsx (different depths, truncation)
 
@@ -253,12 +279,14 @@ Focus on **logic and interactions**, not visual rendering:
 - [ ] Pagination: page change logic, boundary cases
 
 #### Task 3.3: Remove Redundant Tests
+
 - [ ] Identify tests that duplicate Storybook visual testing
 - [ ] Remove snapshot tests (prefer Storybook for visual regression)
 - [ ] Keep behavior tests (logic, callbacks, state)
 - [ ] Update test philosophy documentation
 
 #### Task 3.4: Standardize Test Patterns
+
 - [ ] Create test utilities (renderWithTheme helper)
 - [ ] Standardize test structure (describe/it blocks)
 - [ ] Use Testing Library best practices (getByRole)
@@ -269,6 +297,7 @@ Focus on **logic and interactions**, not visual rendering:
 ### Phase 4: Component API Improvements (2-3 hours)
 
 #### Task 4.1: Improve Button API
+
 - [ ] Add `aria-label` prop for icon-only buttons
 - [ ] Add `isLoading` prop (alias for `loading` - more React-ish)
 - [ ] Consider `leftIcon` and `rightIcon` props
@@ -276,6 +305,7 @@ Focus on **logic and interactions**, not visual rendering:
 - [ ] Update documentation
 
 #### Task 4.2: Improve Input API
+
 - [ ] Add `error` prop (string or boolean)
 - [ ] Add `helperText` prop
 - [ ] Add `required` prop
@@ -283,6 +313,7 @@ Focus on **logic and interactions**, not visual rendering:
 - [ ] Update types and docs
 
 #### Task 4.3: Improve Modal API
+
 - [ ] Add `onClose` required prop
 - [ ] Add `closeOnEscape` boolean prop (default true)
 - [ ] Add `closeOnBackdropClick` boolean prop (default true)
@@ -290,12 +321,14 @@ Focus on **logic and interactions**, not visual rendering:
 - [ ] Add `returnFocus` boolean prop (default true)
 
 #### Task 4.4: Improve Table API
+
 - [ ] Add `aria-label` or `caption` prop
 - [ ] Improve sorting API (make more declarative)
 - [ ] Add keyboard navigation props
 - [ ] Document accessibility requirements
 
 #### Task 4.5: Update All Components
+
 - [ ] Ensure consistent prop naming across components
 - [ ] Add `className` support to all components (for custom styling)
 - [ ] Add `testId` prop (data-testid) where helpful
@@ -306,23 +339,25 @@ Focus on **logic and interactions**, not visual rendering:
 ### Phase 5: Documentation & Guidelines (2 hours)
 
 #### Task 5.1: Update Component JSDoc
+
 - [ ] Add detailed descriptions to all components
 - [ ] Document all props with examples
 - [ ] Add `@example` blocks showing usage
 - [ ] Add accessibility notes in JSDoc
 
 Example:
-```tsx
+
+````tsx
 /**
  * A versatile button component with accessibility built-in.
- * 
+ *
  * @example
  * ```tsx
  * <Button intent="primary" onClick={handleClick}>
  *   Click me
  * </Button>
  * ```
- * 
+ *
  * @example Icon-only button
  * ```tsx
  * <Button aria-label="Delete" intent="error">
@@ -330,9 +365,10 @@ Example:
  * </Button>
  * ```
  */
-```
+````
 
 #### Task 5.2: Create Accessibility Guidelines Document
+
 - [ ] Create `docs/accessibility-guidelines.md`
 - [ ] Document WCAG compliance level (AA)
 - [ ] List common a11y patterns used
@@ -341,6 +377,7 @@ Example:
 - [ ] Add testing checklist for developers
 
 #### Task 5.3: Update Testing Guidelines
+
 - [ ] Create `docs/testing-guidelines.md`
 - [ ] Explain when to use Jest vs Storybook
   - Jest: Logic, interactions, state management
@@ -349,6 +386,7 @@ Example:
 - [ ] Document testing utilities
 
 #### Task 5.4: Update Main README
+
 - [ ] Add "Accessibility" section
 - [ ] Add "Testing" section
 - [ ] Link to guidelines documents
@@ -359,6 +397,7 @@ Example:
 ### Phase 6: Verification & QA (1-2 hours)
 
 #### Task 6.1: Run Full A11y Audit
+
 - [ ] Open Storybook with all component stories
 - [ ] Run a11y checks on every story
 - [ ] Verify all critical violations fixed
@@ -366,6 +405,7 @@ Example:
 - [ ] Take before/after screenshots
 
 #### Task 6.2: Run Full Test Suite
+
 - [ ] Run Jest: `pnpm test`
 - [ ] Verify all tests pass
 - [ ] Check test coverage: `pnpm test:coverage`
@@ -373,6 +413,7 @@ Example:
 - [ ] Document coverage gaps (if acceptable)
 
 #### Task 6.3: Manual Testing
+
 - [ ] Test keyboard navigation on all components
 - [ ] Test with screen reader (NVDA/JAWS/VoiceOver)
 - [ ] Test in high contrast mode
@@ -380,6 +421,7 @@ Example:
 - [ ] Test with reduced motion preference
 
 #### Task 6.4: Browser Testing
+
 - [ ] Test in Chrome
 - [ ] Test in Firefox
 - [ ] Test in Safari
@@ -391,6 +433,7 @@ Example:
 ### Phase 7: Polish & Documentation (1 hour)
 
 #### Task 7.1: Create Summary Report
+
 - [ ] Document all changes made
 - [ ] List all a11y issues fixed
 - [ ] List all new tests added
@@ -398,17 +441,20 @@ Example:
 - [ ] Calculate metrics (violations reduced, coverage increased)
 
 #### Task 7.2: Update Changelog
+
 - [ ] Add "Accessibility Improvements" section
 - [ ] List breaking changes (if any)
 - [ ] Document new component APIs
 
 #### Task 7.3: Create PR/Commit
+
 - [ ] Organize commits logically
 - [ ] Write detailed commit messages
 - [ ] Update package version (patch or minor)
 - [ ] Create comprehensive PR description
 
 #### Task 7.4: Team Communication
+
 - [ ] Share summary report with team
 - [ ] Demo Storybook improvements
 - [ ] Discuss testing strategy
@@ -432,12 +478,14 @@ Example:
 ## Metrics to Track
 
 ### Before
+
 - Number of a11y violations: **TBD** (from Storybook audit)
 - Test coverage: **TBD%** (from current Jest coverage)
 - Components with stories: **1/30** (only Button initially)
 - Components with tests: **TBD/30**
 
 ### After (Goals)
+
 - Number of a11y violations: **0 critical, <5 minor**
 - Test coverage: **>80%**
 - Components with stories: **>20/30** (all major components)
@@ -448,7 +496,9 @@ Example:
 ## Testing Strategy
 
 ### Jest Unit Tests (Behavior)
+
 **What to test:**
+
 - Event handlers (onClick, onChange, onSubmit)
 - State management (controlled components)
 - Conditional rendering logic
@@ -456,12 +506,15 @@ Example:
 - Edge cases (null, undefined, empty arrays)
 
 **What NOT to test:**
+
 - Visual appearance (use Storybook)
 - CSS classes (implementation detail)
 - Exact text content (unless functional)
 
 ### Storybook Stories (Visual)
+
 **What to test:**
+
 - All component variants (intents, sizes, states)
 - Visual edge cases (long text, many items, empty)
 - Accessibility (via a11y addon)
@@ -469,6 +522,7 @@ Example:
 - Theme variations (if applicable)
 
 **What NOT to test:**
+
 - Business logic (use Jest)
 - API integration (use E2E)
 
@@ -477,6 +531,7 @@ Example:
 ## Common A11y Fixes Reference
 
 ### Color Contrast
+
 ```tsx
 // Before: contrast ratio 3:1 ❌
 color: '#999' on background: '#fff'
@@ -486,6 +541,7 @@ color: '#666' on background: '#fff'
 ```
 
 ### ARIA Labels
+
 ```tsx
 // Icon-only button
 <button aria-label="Delete item">
@@ -500,6 +556,7 @@ color: '#666' on background: '#fff'
 ```
 
 ### Form Inputs
+
 ```tsx
 <div>
   <label htmlFor="email">Email</label>
@@ -508,14 +565,19 @@ color: '#666' on background: '#fff'
     type="email"
     aria-required="true"
     aria-invalid={!!error}
-    aria-describedby={error ? 'email-error' : 'email-help'}
+    aria-describedby={error ? "email-error" : "email-help"}
   />
   {helperText && <span id="email-help">{helperText}</span>}
-  {error && <span id="email-error" role="alert">{error}</span>}
+  {error && (
+    <span id="email-error" role="alert">
+      {error}
+    </span>
+  )}
 </div>
 ```
 
 ### Modals
+
 ```tsx
 <div
   role="dialog"
@@ -529,6 +591,7 @@ color: '#666' on background: '#fff'
 ```
 
 ### Tables
+
 ```tsx
 <table aria-label="Products">
   <thead>
@@ -579,6 +642,7 @@ This spec is intentionally comprehensive but should be executed iteratively:
 ### Continuous Improvement
 
 After initial cleanup:
+
 - Add a11y checks to CI/CD (fail on violations)
 - Add Storybook stories as part of definition of done for new components
 - Regular a11y audits (quarterly)
@@ -586,6 +650,7 @@ After initial cleanup:
 ### Breaking Changes Policy
 
 If a11y fixes require breaking changes:
+
 1. Document clearly in changelog
 2. Provide migration guide
 3. Consider deprecation path

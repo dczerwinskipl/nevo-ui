@@ -160,3 +160,4 @@ yarn.lock
 */dist/es/
 */dist/esm/
 */dist/types/
+*storybook.log

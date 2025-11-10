@@ -9,6 +9,7 @@
 This specification defines the implementation of **Playwright** for end-to-end (E2E) testing of the `@nevo/ecommerce-admin-app`. Playwright will enable automated browser testing to verify critical user flows, interactions, and error handling.
 
 The initial implementation will focus on:
+
 1. **Products Page Navigation**: Verify user can navigate to products page
 2. **Product Filtering**: Test filter interactions and result verification
 3. **MSW Integration**: Use existing `@nevo/api-mocks` for predictable test scenarios
@@ -46,6 +47,7 @@ GET /api/products -> MSW handler returns mock data
 ```
 
 **Benefits**:
+
 - Predictable test data (no flaky tests from real API)
 - Test error scenarios (rate limits, server errors)
 - Faster test execution (no network delays)
@@ -87,54 +89,54 @@ GET /api/products -> MSW handler returns mock data
 #### `apps/admin/playwright.config.ts`
 
 ```typescript
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Playwright configuration for @nevo/ecommerce-admin-app
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
-  testDir: './e2e/tests',
-  
+  testDir: "./e2e/tests",
+
   /* Run tests in files in parallel */
   fullyParallel: true,
-  
+
   /* Fail the build on CI if you accidentally left test.only in the source code */
   forbidOnly: !!process.env.CI,
-  
+
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  
+
   /* Opt out of parallel tests on CI */
   workers: process.env.CI ? 1 : undefined,
-  
+
   /* Reporter to use */
   reporter: [
-    ['html', { outputFolder: 'playwright-report' }],
-    ['list'],
-    ...(process.env.CI ? [['github']] : []),
+    ["html", { outputFolder: "playwright-report" }],
+    ["list"],
+    ...(process.env.CI ? [["github"]] : []),
   ],
-  
+
   /* Shared settings for all the projects below */
   use: {
     /* Base URL to use in actions like `await page.goto('/')` */
-    baseURL: 'http://localhost:5173',
-    
+    baseURL: "http://localhost:5173",
+
     /* Collect trace when retrying the failed test */
-    trace: 'on-first-retry',
-    
+    trace: "on-first-retry",
+
     /* Screenshot on failure */
-    screenshot: 'only-on-failure',
-    
+    screenshot: "only-on-failure",
+
     /* Video on failure */
-    video: 'retain-on-failure',
+    video: "retain-on-failure",
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
     },
     // Uncomment to test in more browsers
     // {
@@ -149,11 +151,11 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'pnpm dev',
-    url: 'http://localhost:5173',
+    command: "pnpm dev",
+    url: "http://localhost:5173",
     reuseExistingServer: !process.env.CI,
-    stdout: 'ignore',
-    stderr: 'pipe',
+    stdout: "ignore",
+    stderr: "pipe",
   },
 });
 ```
@@ -163,8 +165,8 @@ export default defineConfig({
 #### `apps/admin/e2e/fixtures/msw.ts`
 
 ```typescript
-import { setupWorker } from 'msw/browser';
-import { handlers } from '../../src/mocks';
+import { setupWorker } from "msw/browser";
+import { handlers } from "../../src/mocks";
 
 /**
  * Setup MSW worker for Playwright tests
@@ -172,14 +174,14 @@ import { handlers } from '../../src/mocks';
  */
 export async function setupMSW() {
   const worker = setupWorker(...handlers);
-  
+
   await worker.start({
-    onUnhandledRequest: 'warn',
+    onUnhandledRequest: "warn",
     serviceWorker: {
-      url: '/mockServiceWorker.js',
+      url: "/mockServiceWorker.js",
     },
   });
-  
+
   return worker;
 }
 
@@ -187,8 +189,8 @@ export async function setupMSW() {
  * Helper to set scenario for tests
  */
 export async function setScenario(scenario: string) {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('mock-scenario', scenario);
+  if (typeof window !== "undefined") {
+    localStorage.setItem("mock-scenario", scenario);
   }
 }
 ```
@@ -196,7 +198,7 @@ export async function setScenario(scenario: string) {
 #### `apps/admin/e2e/fixtures/test.ts`
 
 ```typescript
-import { test as base } from '@playwright/test';
+import { test as base } from "@playwright/test";
 
 /**
  * Custom Playwright test fixture with MSW support
@@ -209,16 +211,16 @@ export const test = base.extend({
       // MSW is already initialized in the app via main.tsx
       // We just need to ensure service worker is ready
     });
-    
+
     // Wait for service worker to be ready
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+
     await use(page);
   },
 });
 
-export { expect } from '@playwright/test';
+export { expect } from "@playwright/test";
 ```
 
 ### 4. Products Page Tests
@@ -226,200 +228,208 @@ export { expect } from '@playwright/test';
 #### `apps/admin/e2e/tests/products.spec.ts`
 
 ```typescript
-import { test, expect } from '../fixtures/test';
+import { test, expect } from "../fixtures/test";
 
-test.describe('Products Page', () => {
+test.describe("Products Page", () => {
   test.beforeEach(async ({ page }) => {
     // Reset scenario to success before each test
     await page.evaluate(() => {
-      localStorage.setItem('mock-scenario', 'success');
+      localStorage.setItem("mock-scenario", "success");
     });
   });
 
-  test('should navigate to products page and display products table', async ({ page }) => {
+  test("should navigate to products page and display products table", async ({
+    page,
+  }) => {
     // Navigate to home
-    await page.goto('/');
-    
+    await page.goto("/");
+
     // Verify home page loads
     await expect(page).toHaveTitle(/Admin/i);
-    
+
     // Navigate to products page (adjust selector based on your routing)
     // Option 1: Direct navigation
-    await page.goto('/products');
-    
+    await page.goto("/products");
+
     // Option 2: Click navigation link (if exists)
     // await page.getByRole('link', { name: /products/i }).click();
-    
+
     // Wait for page to load
-    await page.waitForLoadState('networkidle');
-    
+    await page.waitForLoadState("networkidle");
+
     // Verify URL
     await expect(page).toHaveURL(/.*products/);
-    
+
     // Verify page heading
-    await expect(page.getByRole('heading', { name: /products/i })).toBeVisible();
-    
+    await expect(
+      page.getByRole("heading", { name: /products/i })
+    ).toBeVisible();
+
     // Verify table is rendered
-    await expect(page.getByRole('table')).toBeVisible();
-    
+    await expect(page.getByRole("table")).toBeVisible();
+
     // Verify table has data (at least one row)
-    const rows = page.getByRole('row');
+    const rows = page.getByRole("row");
     await expect(rows).toHaveCount(await rows.count());
     expect(await rows.count()).toBeGreaterThan(1); // Header + at least 1 data row
   });
 
-  test('should filter products by category', async ({ page }) => {
-    await page.goto('/products');
-    await page.waitForLoadState('networkidle');
-    
+  test("should filter products by category", async ({ page }) => {
+    await page.goto("/products");
+    await page.waitForLoadState("networkidle");
+
     // Wait for initial products to load
-    await expect(page.getByRole('table')).toBeVisible();
-    
+    await expect(page.getByRole("table")).toBeVisible();
+
     // Get initial row count
-    const initialRows = await page.getByRole('row').count();
-    
+    const initialRows = await page.getByRole("row").count();
+
     // Find and interact with category filter
     // Adjust selectors based on your actual implementation
-    const categoryFilter = page.getByLabel(/category/i).or(
-      page.getByPlaceholder(/category/i)
-    );
-    
+    const categoryFilter = page
+      .getByLabel(/category/i)
+      .or(page.getByPlaceholder(/category/i));
+
     await expect(categoryFilter).toBeVisible();
-    
+
     // Select a category (adjust value based on your data)
     await categoryFilter.click();
-    await categoryFilter.selectOption('Electronics'); // Or use fill() for text input
-    
+    await categoryFilter.selectOption("Electronics"); // Or use fill() for text input
+
     // Wait for filter to apply (you might have a debounce)
     await page.waitForTimeout(500);
-    
+
     // Verify filtered results
-    const filteredRows = await page.getByRole('row').count();
-    
+    const filteredRows = await page.getByRole("row").count();
+
     // Should have fewer rows (or at least not more)
     expect(filteredRows).toBeLessThanOrEqual(initialRows);
-    
+
     // Verify filtered products contain "Electronics" category
     // Adjust based on your table structure
-    const categoryCell = page.getByRole('cell', { name: /electronics/i }).first();
+    const categoryCell = page
+      .getByRole("cell", { name: /electronics/i })
+      .first();
     await expect(categoryCell).toBeVisible();
   });
 
-  test('should filter products by search text', async ({ page }) => {
-    await page.goto('/products');
-    await page.waitForLoadState('networkidle');
-    
+  test("should filter products by search text", async ({ page }) => {
+    await page.goto("/products");
+    await page.waitForLoadState("networkidle");
+
     // Find search input
-    const searchInput = page.getByRole('searchbox').or(
-      page.getByPlaceholder(/search/i)
-    );
-    
+    const searchInput = page
+      .getByRole("searchbox")
+      .or(page.getByPlaceholder(/search/i));
+
     await expect(searchInput).toBeVisible();
-    
+
     // Enter search term
-    await searchInput.fill('laptop');
-    
+    await searchInput.fill("laptop");
+
     // Wait for debounced search
     await page.waitForTimeout(500);
-    
+
     // Verify results contain search term
-    const tableContent = await page.getByRole('table').textContent();
-    expect(tableContent?.toLowerCase()).toContain('laptop');
-    
+    const tableContent = await page.getByRole("table").textContent();
+    expect(tableContent?.toLowerCase()).toContain("laptop");
+
     // Clear search
     await searchInput.clear();
     await page.waitForTimeout(500);
-    
+
     // Verify all products are shown again
-    const rows = await page.getByRole('row').count();
+    const rows = await page.getByRole("row").count();
     expect(rows).toBeGreaterThan(1);
   });
 
-  test('should display empty state when filters return no results', async ({ page }) => {
-    await page.goto('/products');
-    await page.waitForLoadState('networkidle');
-    
+  test("should display empty state when filters return no results", async ({
+    page,
+  }) => {
+    await page.goto("/products");
+    await page.waitForLoadState("networkidle");
+
     // Search for something that doesn't exist
-    const searchInput = page.getByRole('searchbox').or(
-      page.getByPlaceholder(/search/i)
-    );
-    
-    await searchInput.fill('xyznonexistent123');
+    const searchInput = page
+      .getByRole("searchbox")
+      .or(page.getByPlaceholder(/search/i));
+
+    await searchInput.fill("xyznonexistent123");
     await page.waitForTimeout(500);
-    
+
     // Verify empty state is shown
     // Adjust based on your EmptyState component
     await expect(page.getByText(/no products found/i)).toBeVisible();
-    
+
     // Or verify table has no data rows (just header)
-    const rows = await page.getByRole('row').count();
+    const rows = await page.getByRole("row").count();
     expect(rows).toBe(1); // Only header row
   });
 
-  test('should handle pagination', async ({ page }) => {
-    await page.goto('/products');
-    await page.waitForLoadState('networkidle');
-    
+  test("should handle pagination", async ({ page }) => {
+    await page.goto("/products");
+    await page.waitForLoadState("networkidle");
+
     // Wait for table to load
-    await expect(page.getByRole('table')).toBeVisible();
-    
+    await expect(page.getByRole("table")).toBeVisible();
+
     // Find pagination controls
-    const nextButton = page.getByRole('button', { name: /next/i });
-    const prevButton = page.getByRole('button', { name: /previous/i });
-    
+    const nextButton = page.getByRole("button", { name: /next/i });
+    const prevButton = page.getByRole("button", { name: /previous/i });
+
     // Verify previous is disabled on first page
     await expect(prevButton).toBeDisabled();
-    
+
     // Get first page product IDs
-    const firstPageContent = await page.getByRole('table').textContent();
-    
+    const firstPageContent = await page.getByRole("table").textContent();
+
     // Click next
     await nextButton.click();
-    await page.waitForLoadState('networkidle');
-    
+    await page.waitForLoadState("networkidle");
+
     // Verify content changed
-    const secondPageContent = await page.getByRole('table').textContent();
+    const secondPageContent = await page.getByRole("table").textContent();
     expect(secondPageContent).not.toBe(firstPageContent);
-    
+
     // Verify previous is now enabled
     await expect(prevButton).toBeEnabled();
-    
+
     // Go back to first page
     await prevButton.click();
-    await page.waitForLoadState('networkidle');
-    
+    await page.waitForLoadState("networkidle");
+
     // Verify we're back to original content
-    const backToFirstPage = await page.getByRole('table').textContent();
+    const backToFirstPage = await page.getByRole("table").textContent();
     expect(backToFirstPage).toBe(firstPageContent);
   });
 
-  test('should handle server error scenario', async ({ page }) => {
+  test("should handle server error scenario", async ({ page }) => {
     // Set error scenario
     await page.evaluate(() => {
-      localStorage.setItem('mock-scenario', 'server-error');
+      localStorage.setItem("mock-scenario", "server-error");
     });
-    
-    await page.goto('/products');
-    await page.waitForLoadState('networkidle');
-    
+
+    await page.goto("/products");
+    await page.waitForLoadState("networkidle");
+
     // Verify error state is shown
     await expect(page.getByText(/error/i)).toBeVisible();
     await expect(page.getByText(/something went wrong/i)).toBeVisible();
-    
+
     // Verify retry button exists
-    const retryButton = page.getByRole('button', { name: /retry/i });
+    const retryButton = page.getByRole("button", { name: /retry/i });
     await expect(retryButton).toBeVisible();
   });
 
-  test('should handle rate limit scenario', async ({ page }) => {
+  test("should handle rate limit scenario", async ({ page }) => {
     // Set rate limit scenario
     await page.evaluate(() => {
-      localStorage.setItem('mock-scenario', 'rate-limit');
+      localStorage.setItem("mock-scenario", "rate-limit");
     });
-    
-    await page.goto('/products');
-    await page.waitForLoadState('networkidle');
-    
+
+    await page.goto("/products");
+    await page.waitForLoadState("networkidle");
+
     // Verify rate limit message is shown
     await expect(page.getByText(/rate limit/i)).toBeVisible();
     await expect(page.getByText(/too many requests/i)).toBeVisible();
@@ -470,6 +480,7 @@ playwright/.cache/
 ### Phase 1: Installation & Configuration (20 min)
 
 #### Task 1.1: Install Playwright
+
 - [ ] Navigate to `apps/admin`
 - [ ] Run `pnpm add -D @playwright/test`
 - [ ] Run `pnpm exec playwright install` (installs browsers)
@@ -477,6 +488,7 @@ playwright/.cache/
 - [ ] Verify installation: `pnpm exec playwright --version`
 
 #### Task 1.2: Create Playwright Configuration
+
 - [ ] Create `apps/admin/playwright.config.ts`
 - [ ] Configure `testDir: './e2e/tests'`
 - [ ] Configure `baseURL: 'http://localhost:5173'` (Vite default)
@@ -486,17 +498,20 @@ playwright/.cache/
 - [ ] Configure browser projects (Chromium initially)
 
 #### Task 1.3: Create Directory Structure
+
 - [ ] Create `apps/admin/e2e/` directory
 - [ ] Create `apps/admin/e2e/fixtures/` directory
 - [ ] Create `apps/admin/e2e/tests/` directory
 
 #### Task 1.4: Setup MSW Fixtures
+
 - [ ] Create `e2e/fixtures/msw.ts` with MSW setup helper
 - [ ] Create `e2e/fixtures/test.ts` with custom Playwright test fixture
 - [ ] Ensure MSW service worker is initialized before tests
 - [ ] Add scenario helper functions
 
 #### Task 1.5: Update Package Scripts
+
 - [ ] Add `"test:e2e": "playwright test"` to package.json
 - [ ] Add `"test:e2e:ui": "playwright test --ui"` for interactive mode
 - [ ] Add `"test:e2e:headed": "playwright test --headed"` for debugging
@@ -504,6 +519,7 @@ playwright/.cache/
 - [ ] Add `"test:e2e:report": "playwright show-report"` for viewing results
 
 #### Task 1.6: Update .gitignore
+
 - [ ] Add `playwright-report/` to .gitignore
 - [ ] Add `test-results/` to .gitignore
 - [ ] Add `playwright/.cache/` to .gitignore
@@ -513,16 +529,19 @@ playwright/.cache/
 ### Phase 2: Products Navigation Test (30 min)
 
 #### Task 2.1: Create Products Test File
+
 - [ ] Create `e2e/tests/products.spec.ts`
 - [ ] Import custom test fixture: `import { test, expect } from '../fixtures/test'`
 - [ ] Create `test.describe('Products Page')` block
 
 #### Task 2.2: Setup Test Hooks
+
 - [ ] Add `test.beforeEach()` to reset scenario to 'success'
 - [ ] Clear localStorage in beforeEach
 - [ ] Navigate to base URL
 
 #### Task 2.3: Write Navigation Test
+
 - [ ] Create test: "should navigate to products page and display products table"
 - [ ] Navigate to home page: `await page.goto('/')`
 - [ ] Verify page title contains "Admin"
@@ -533,6 +552,7 @@ playwright/.cache/
 - [ ] Verify table has at least one data row
 
 #### Task 2.4: Run & Debug Navigation Test
+
 - [ ] Run test: `pnpm test:e2e products.spec.ts`
 - [ ] Verify test passes
 - [ ] If failures, run in headed mode: `pnpm test:e2e:headed`
@@ -544,6 +564,7 @@ playwright/.cache/
 ### Phase 3: Product Filtering Tests (45 min)
 
 #### Task 3.1: Write Category Filter Test
+
 - [ ] Create test: "should filter products by category"
 - [ ] Navigate to products page
 - [ ] Wait for table to be visible
@@ -555,6 +576,7 @@ playwright/.cache/
 - [ ] Verify filtered results contain "Electronics"
 
 #### Task 3.2: Write Search Filter Test
+
 - [ ] Create test: "should filter products by search text"
 - [ ] Navigate to products page
 - [ ] Locate search input
@@ -565,6 +587,7 @@ playwright/.cache/
 - [ ] Verify all products are shown again
 
 #### Task 3.3: Write Empty State Test
+
 - [ ] Create test: "should display empty state when filters return no results"
 - [ ] Navigate to products page
 - [ ] Enter search term that returns no results
@@ -572,6 +595,7 @@ playwright/.cache/
 - [ ] Verify message "No products found" is shown
 
 #### Task 3.4: Write Pagination Test
+
 - [ ] Create test: "should handle pagination"
 - [ ] Navigate to products page
 - [ ] Verify "Previous" button is disabled on first page
@@ -583,6 +607,7 @@ playwright/.cache/
 - [ ] Verify back to original content
 
 #### Task 3.5: Run & Debug Filter Tests
+
 - [ ] Run all filter tests: `pnpm test:e2e`
 - [ ] Verify all tests pass
 - [ ] If failures, use `--debug` mode to step through
@@ -594,6 +619,7 @@ playwright/.cache/
 ### Phase 4: Error Scenario Tests (30 min)
 
 #### Task 4.1: Write Server Error Test
+
 - [ ] Create test: "should handle server error scenario"
 - [ ] Set MSW scenario to 'server-error' via localStorage
 - [ ] Navigate to products page
@@ -602,6 +628,7 @@ playwright/.cache/
 - [ ] Verify "Retry" button exists
 
 #### Task 4.2: Write Rate Limit Test
+
 - [ ] Create test: "should handle rate limit scenario"
 - [ ] Set MSW scenario to 'rate-limit' via localStorage
 - [ ] Navigate to products page
@@ -609,11 +636,13 @@ playwright/.cache/
 - [ ] Verify appropriate retry information is shown
 
 #### Task 4.3: Test Scenario Switching
+
 - [ ] Verify localStorage scenario setting works
 - [ ] Test switching scenarios mid-test
 - [ ] Verify MSW picks up scenario changes
 
 #### Task 4.4: Run & Debug Error Tests
+
 - [ ] Run error scenario tests
 - [ ] Verify MSW intercepts requests correctly
 - [ ] Verify error states render as expected
@@ -624,6 +653,7 @@ playwright/.cache/
 ### Phase 5: CI/CD Integration (20 min)
 
 #### Task 5.1: Test CI Configuration
+
 - [ ] Set `CI=true` environment variable
 - [ ] Run tests: `CI=true pnpm test:e2e`
 - [ ] Verify tests run in headless mode
@@ -631,6 +661,7 @@ playwright/.cache/
 - [ ] Verify GitHub reporter is used
 
 #### Task 5.2: Verify Artifacts
+
 - [ ] Run tests to generate artifacts
 - [ ] Check `playwright-report/` for HTML report
 - [ ] Check `test-results/` for screenshots/videos
@@ -638,12 +669,14 @@ playwright/.cache/
 - [ ] Verify videos captured on failure
 
 #### Task 5.3: Optimize for CI Performance
+
 - [ ] Configure `workers: 1` on CI to avoid flakiness
 - [ ] Configure `fullyParallel: true` for local development
 - [ ] Test parallel execution locally
 - [ ] Ensure no test interdependencies
 
 #### Task 5.4: Add CI Script (Future)
+
 - [ ] Document CI integration steps for GitHub Actions
 - [ ] Suggest caching strategy for Playwright browsers
 - [ ] Recommend parallel execution strategy
@@ -653,6 +686,7 @@ playwright/.cache/
 ### Phase 6: Documentation & Cleanup (15 min)
 
 #### Task 6.1: Update README
+
 - [ ] Add "E2E Testing" section to `apps/admin/README.md`
 - [ ] Document how to run tests locally
 - [ ] Document how to debug failing tests
@@ -660,11 +694,13 @@ playwright/.cache/
 - [ ] Explain MSW integration
 
 #### Task 6.2: Add Code Comments
+
 - [ ] Comment Playwright config explaining each option
 - [ ] Comment test fixtures explaining MSW setup
 - [ ] Add JSDoc to helper functions
 
 #### Task 6.3: Create Testing Guidelines Document
+
 - [ ] Create `apps/admin/e2e/README.md`
 - [ ] Document test structure and patterns
 - [ ] Document selector strategies (prefer role-based)
@@ -672,6 +708,7 @@ playwright/.cache/
 - [ ] Document scenario testing patterns
 
 #### Task 6.4: Verify Everything Works
+
 - [ ] Run full test suite: `pnpm test:e2e`
 - [ ] Run in UI mode: `pnpm test:e2e:ui`
 - [ ] Verify all tests pass

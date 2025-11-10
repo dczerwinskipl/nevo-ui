@@ -9,6 +9,7 @@
 This specification defines the implementation of **Storybook** for the `@nevo/design-system` package to enable visual component testing, documentation, and accessibility (a11y) validation.
 
 Storybook will allow developers to:
+
 - Visually test components in isolation
 - Document component APIs and usage patterns
 - Test accessibility with automated a11y checks
@@ -41,11 +42,11 @@ The initial implementation will focus on the **Button** component as a showcase,
 
 ### Technology Stack
 
-- **Storybook 8.x**: Latest stable version with React support
+- **Storybook 8.x**: Latest stable version with React support and full addon ecosystem
 - **@storybook/react-vite**: Vite builder for fast HMR
 - **@storybook/addon-a11y**: Automated accessibility testing (axe-core)
 - **@storybook/addon-essentials**: Controls, Actions, Viewport, Docs
-- **@storybook/blocks**: Enhanced documentation features
+- **Note**: Storybook 10.x is available but not all addons are published yet, so we use 8.x
 
 ---
 
@@ -72,18 +73,18 @@ The initial implementation will focus on the **Button** component as a showcase,
 #### `.storybook/main.ts`
 
 ```typescript
-import type { StorybookConfig } from '@storybook/react-vite';
-import { mergeConfig } from 'vite';
+import type { StorybookConfig } from "@storybook/react-vite";
+import { mergeConfig } from "vite";
 
 const config: StorybookConfig = {
-  stories: ['../src/**/*.stories.@(js|jsx|ts|tsx|mdx)'],
+  stories: ["../src/**/*.stories.@(js|jsx|ts|tsx|mdx)"],
   addons: [
-    '@storybook/addon-essentials',
-    '@storybook/addon-a11y',
-    '@storybook/addon-interactions',
+    "@storybook/addon-essentials",
+    "@storybook/addon-a11y",
+    "@storybook/addon-interactions",
   ],
   framework: {
-    name: '@storybook/react-vite',
+    name: "@storybook/react-vite",
     options: {},
   },
   core: {
@@ -93,7 +94,7 @@ const config: StorybookConfig = {
     return mergeConfig(config, {
       // Ensure Tailwind CSS is processed
       css: {
-        postcss: './postcss.config.cjs',
+        postcss: "./postcss.config.cjs",
       },
     });
   },
@@ -376,16 +377,17 @@ Add scripts to `packages/design-system/package.json`:
 ```json
 {
   "devDependencies": {
-    "@storybook/react": "^8.0.0",
-    "@storybook/react-vite": "^8.0.0",
-    "@storybook/addon-essentials": "^8.0.0",
-    "@storybook/addon-a11y": "^8.0.0",
-    "@storybook/addon-interactions": "^8.0.0",
-    "@storybook/blocks": "^8.0.0",
-    "storybook": "^8.0.0"
+    "@storybook/react": "^8.6.14",
+    "@storybook/react-vite": "^8.6.14",
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/addon-a11y": "^8.6.14",
+    "@storybook/addon-interactions": "^8.6.14",
+    "storybook": "^8.6.14"
   }
 }
 ```
+
+**Note**: Using Storybook 8.x (not 10.x) because the full addon ecosystem is available and stable for v8.
 
 ### 6. Tailwind CSS Integration
 
@@ -404,11 +406,14 @@ If Tailwind styles are needed in Storybook, create `src/styles.css` (if not exis
 ### Phase 1: Installation & Configuration (30 min)
 
 #### Task 1.1: Install Storybook Dependencies
+
 - [ ] Navigate to `packages/design-system`
-- [ ] Run `pnpm add -D storybook @storybook/react @storybook/react-vite @storybook/addon-essentials @storybook/addon-a11y @storybook/addon-interactions @storybook/blocks`
+- [ ] Run `pnpm add -D storybook @storybook/react @storybook/react-vite @storybook/addon-essentials @storybook/addon-a11y @storybook/addon-interactions`
 - [ ] Verify installation in `package.json`
+- [ ] Note: `@storybook/blocks` is included in essentials addon in v10
 
 #### Task 1.2: Initialize Storybook Configuration
+
 - [ ] Run `pnpm dlx storybook@latest init --builder vite --type react` (this creates base config)
 - [ ] Review generated `.storybook/main.ts` and customize per spec
 - [ ] Update framework to use `@storybook/react-vite`
@@ -416,6 +421,7 @@ If Tailwind styles are needed in Storybook, create `src/styles.css` (if not exis
 - [ ] Configure `viteFinal` to support Tailwind CSS (postcss config)
 
 #### Task 1.3: Setup Preview Configuration
+
 - [ ] Create `.storybook/preview.tsx`
 - [ ] Import `ThemeProvider` from `../src/theme/ThemeProvider`
 - [ ] Add global decorator to wrap all stories with ThemeProvider
@@ -423,12 +429,14 @@ If Tailwind styles are needed in Storybook, create `src/styles.css` (if not exis
 - [ ] Add padding decorator for visual spacing
 
 #### Task 1.4: Setup Tailwind CSS Support
+
 - [ ] Check if `src/styles.css` exists with Tailwind directives
 - [ ] If not, create it with `@tailwind base; @tailwind components; @tailwind utilities;`
 - [ ] Import in `.storybook/preview.tsx`
 - [ ] Verify `postcss.config.cjs` exists in package root
 
 #### Task 1.5: Add NPM Scripts
+
 - [ ] Add `"storybook": "storybook dev -p 6006"` to `package.json` scripts
 - [ ] Add `"storybook:build": "storybook build"` for static build
 - [ ] Add `"storybook:test": "test-storybook"` for future interaction tests
@@ -438,12 +446,14 @@ If Tailwind styles are needed in Storybook, create `src/styles.css` (if not exis
 ### Phase 2: Button Component Stories (45 min)
 
 #### Task 2.1: Create Button Stories File
+
 - [ ] Create `packages/design-system/src/primitives/Button.stories.tsx`
 - [ ] Import necessary types from Storybook (`Meta`, `StoryObj`)
 - [ ] Import `Button` component and theme types
 - [ ] Setup meta configuration with title, component, parameters
 
 #### Task 2.2: Configure Story Controls
+
 - [ ] Add `argTypes` for `intent` (select control with all options)
 - [ ] Add `argTypes` for `variant` (select control with all options)
 - [ ] Add `argTypes` for `size` (select control with all options)
@@ -452,11 +462,13 @@ If Tailwind styles are needed in Storybook, create `src/styles.css` (if not exis
 - [ ] Add descriptions for each control
 
 #### Task 2.3: Create Basic Stories
+
 - [ ] Create `Primary` story with default args
 - [ ] Create `Interactive` story with all controls enabled
 - [ ] Add tags: `['autodocs']` for automatic documentation
 
 #### Task 2.4: Create Visual Showcase Stories
+
 - [ ] Create `AllIntents` story showcasing all intent variants in a row
 - [ ] Create `AllVariants` story showcasing all style variants
 - [ ] Create `AllSizes` story showcasing all size options
@@ -464,6 +476,7 @@ If Tailwind styles are needed in Storybook, create `src/styles.css` (if not exis
 - [ ] Create `LongText` story to test text overflow handling
 
 #### Task 2.5: Create Accessibility Test Stories
+
 - [ ] Create `AccessibilityTest` story with:
   - Button with `aria-label`
   - Disabled button with descriptive `title`
@@ -472,6 +485,7 @@ If Tailwind styles are needed in Storybook, create `src/styles.css` (if not exis
 - [ ] Add documentation describing what to look for in a11y panel
 
 #### Task 2.6: Create Advanced Stories
+
 - [ ] Create `WithIcon` story demonstrating icon + text combinations
 - [ ] Add MDX documentation blocks if needed (optional for v1)
 
@@ -480,12 +494,14 @@ If Tailwind styles are needed in Storybook, create `src/styles.css` (if not exis
 ### Phase 3: Testing & Verification (30 min)
 
 #### Task 3.1: Start Storybook Development Server
+
 - [ ] Run `pnpm storybook` from design-system directory
 - [ ] Verify Storybook opens at `http://localhost:6006`
 - [ ] Verify Button stories appear in sidebar under "Primitives/Button"
 - [ ] Check console for any errors or warnings
 
 #### Task 3.2: Test Visual Rendering
+
 - [ ] Navigate through all Button stories
 - [ ] Verify all intents render with correct colors
 - [ ] Verify all variants render correctly (solid, outline, ghost, subtle)
@@ -494,12 +510,14 @@ If Tailwind styles are needed in Storybook, create `src/styles.css` (if not exis
 - [ ] Test disabled state has reduced opacity and no hover effect
 
 #### Task 3.3: Test Interactive Controls
+
 - [ ] Open "Interactive" story
 - [ ] Toggle each control (intent, variant, size, loading, disabled)
 - [ ] Verify button updates in real-time
 - [ ] Verify combinations work correctly (e.g., loading + disabled)
 
 #### Task 3.4: Test Accessibility Panel
+
 - [ ] Open a11y panel (Accessibility tab at bottom)
 - [ ] Run accessibility checks on each story
 - [ ] Verify "AccessibilityTest" story shows results for:
@@ -509,11 +527,13 @@ If Tailwind styles are needed in Storybook, create `src/styles.css` (if not exis
 - [ ] Document any violations found
 
 #### Task 3.5: Test Theme Integration
+
 - [ ] Verify ThemeProvider is wrapping stories (check React DevTools)
 - [ ] Verify theme tokens are applied correctly to buttons
 - [ ] Test that theme-based colors work for all intents
 
 #### Task 3.6: Test Build Process
+
 - [ ] Run `pnpm storybook:build` from design-system directory
 - [ ] Verify static build completes successfully in `storybook-static/`
 - [ ] Open `storybook-static/index.html` in browser
@@ -525,6 +545,7 @@ If Tailwind styles are needed in Storybook, create `src/styles.css` (if not exis
 ### Phase 4: Documentation & Cleanup (20 min)
 
 #### Task 4.1: Add README Documentation
+
 - [ ] Create or update `packages/design-system/README.md`
 - [ ] Add "Storybook" section with:
   - How to run Storybook locally (`pnpm storybook`)
@@ -533,20 +554,24 @@ If Tailwind styles are needed in Storybook, create `src/styles.css` (if not exis
   - Link to Storybook best practices
 
 #### Task 4.2: Add .gitignore Entries
+
 - [ ] Add `storybook-static/` to `.gitignore` (if not present)
 - [ ] Verify `.storybook` folder is committed
 
 #### Task 4.3: Update Turbo Configuration (Optional)
+
 - [ ] Add `storybook:build` task to `turbo.json` if needed for CI/CD
 - [ ] Configure caching for Storybook builds
 
 #### Task 4.4: Document Findings
+
 - [ ] Create a summary of a11y issues found (if any)
 - [ ] List any component improvements needed (for spec 005)
 - [ ] Document any theme inconsistencies discovered
 - [ ] Note any missing ARIA attributes
 
 #### Task 4.5: Verify Monorepo Integration
+
 - [ ] Test running Storybook from root: `pnpm --filter @nevo/design-system storybook`
 - [ ] Verify Turbo can handle Storybook as a dev task
 - [ ] Confirm build works in CI environment (if CI is setup)
