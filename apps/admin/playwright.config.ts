@@ -63,8 +63,9 @@ export default defineConfig({
     command: "pnpm dev",
     url: "http://localhost:5173",
     reuseExistingServer: !process.env.CI,
-    stdout: "ignore",
-    stderr: "pipe",
+    cwd: ".", // Ensure we're in the admin app directory
+    stdout: "pipe", // Capture dev server output
+    stderr: "pipe", // Capture dev server errors
     timeout: 120000, // 2 minutes for dev server to start
   },
 });

@@ -124,6 +124,9 @@ jobs:
       - name: Build design system (required for E2E tests)
         run: pnpm --filter @nevo/design-system run build
 
+      - name: Initialize MSW for E2E tests
+        run: pnpm --filter @nevo/ecommerce-admin-app run msw:init
+
       - name: Install Playwright Browsers
         run: pnpm --filter @nevo/ecommerce-admin-app exec playwright install chromium --with-deps
 
