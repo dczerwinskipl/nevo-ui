@@ -121,6 +121,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build design system (required for E2E tests)
+        run: pnpm --filter @nevo/design-system run build
+
       - name: Install Playwright Browsers
         run: pnpm --filter @nevo/ecommerce-admin-app exec playwright install chromium --with-deps
 
