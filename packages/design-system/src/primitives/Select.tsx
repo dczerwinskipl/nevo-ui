@@ -4,7 +4,6 @@ import {
   useTheme,
   ComponentIntent,
   ComponentSize,
-  getIntentStyle,
   concaveStyle,
 } from "../theme";
 import { ChevronDown } from "lucide-react";
@@ -57,7 +56,7 @@ export const Select: React.FC<SelectProps> = ({
   clearLabel = "None",
 }) => {
   const { tokens } = useTheme();
-  const intentColors = getIntentStyle(tokens, intent, "subtle");
+  const intentColors = intent !== "neutral" ? tokens.intent[intent] : null;
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -69,7 +68,8 @@ export const Select: React.FC<SelectProps> = ({
       ? { background: tokens.raised, border: `1px solid ${tokens.border}` }
       : concaveStyle(tokens);
 
-  const focusRingColor = intentColors?.border || "rgba(109,106,255,0.3)";
+  const focusRingColor = intentColors?.border || tokens.intent.primary.border;
+  const borderColor = intentColors?.border || tokens.border;
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -120,10 +120,11 @@ export const Select: React.FC<SelectProps> = ({
           {
             ...baseStyle,
             color: tokens.text,
+            borderColor,
             "--tw-ring-color": focusRingColor,
-            ...(intent !== "neutral" && {
+            ...(intentColors && {
+              backgroundColor: intentColors.bg,
               borderColor: intentColors.border,
-              backgroundColor: intentColors.background,
             }),
           } as React.CSSProperties & { "--tw-ring-color": string }
         }
@@ -189,7 +190,7 @@ export const Select: React.FC<SelectProps> = ({
         <span
           className="text-xs"
           style={{
-            color: intent !== "neutral" ? intentColors.color : tokens.muted,
+            color: intentColors?.text || tokens.muted,
           }}
         >
           {helperText}

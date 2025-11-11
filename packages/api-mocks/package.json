@@ -5,7 +5,9 @@
   "exports": {
     ".": "./src/index.ts",
     "./browser": "./src/browser.ts",
-    "./node": "./src/node.ts"
+    "./node": "./src/node.ts",
+    "./playwright": "./src/playwright.ts",
+    "./storybook": "./src/storybook/index.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
