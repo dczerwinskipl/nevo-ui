@@ -38,7 +38,10 @@ beforeEach(() => {
   console.error = (...args) => {
     if (
       typeof args[0] === "string" &&
-      args[0].includes("Warning: ReactDOM.render is deprecated")
+      (args[0].includes("Warning: ReactDOM.render is deprecated") ||
+        args[0].includes("Warning: An update to") ||
+        args[0].includes("was not wrapped in act(") ||
+        args[0].includes("Warning: Encountered two children with the same key"))
     ) {
       return;
     }

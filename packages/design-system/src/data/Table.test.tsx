@@ -185,9 +185,17 @@ describe("Table", () => {
       renderTable({ columns: advancedColumns });
 
       // Should format dates using the accessor function
-      expect(screen.getByText("1/1/2023")).toBeInTheDocument();
-      expect(screen.getByText("2/1/2023")).toBeInTheDocument();
-      expect(screen.getByText("3/1/2023")).toBeInTheDocument();
+      // Testing locale-agnostic: just verify dates are formatted (any locale format is valid)
+      // We check if the formatted dates exist by looking for specific dates
+      const expectedDates = [
+        mockUsers[0]!.createdAt.toLocaleDateString(),
+        mockUsers[1]!.createdAt.toLocaleDateString(),
+        mockUsers[2]!.createdAt.toLocaleDateString(),
+      ];
+
+      expectedDates.forEach((date) => {
+        expect(screen.getByText(date)).toBeInTheDocument();
+      });
     });
 
     it("should render columns with custom render functions", () => {
