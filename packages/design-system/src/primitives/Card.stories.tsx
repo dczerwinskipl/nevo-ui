@@ -1,6 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Card } from "./Card";
+import { Card, CardHeader, CardBody, CardFooter, CardVariant } from "./Card";
 import { Typography } from "./Typography";
+import { Button } from "./Button";
+import { Badge } from "./Badge";
+import { Grid } from "../layout/Grid";
+import { Flex } from "../layout/Flex";
+import { Stack } from "../layout/Stack";
 import React from "react";
 
 const meta = {
@@ -11,12 +16,29 @@ const meta = {
     docs: {
       description: {
         component:
-          "A versatile card component that provides a consistent container with shadow, rounded corners, and proper theme support.",
+          "A versatile card component with composable structure. Supports multiple variants, interactive states, and loading state.",
       },
     },
   },
   tags: ["autodocs"],
   argTypes: {
+    variant: {
+      control: "select",
+      options: ["default", "bordered", "elevated", "flat"] as CardVariant[],
+      description: "The visual style variant of the card",
+    },
+    hoverable: {
+      control: "boolean",
+      description: "Whether the card has hover effects",
+    },
+    clickable: {
+      control: "boolean",
+      description: "Whether the card is clickable",
+    },
+    loading: {
+      control: "boolean",
+      description: "Loading state - shows spinner overlay",
+    },
     className: {
       control: "text",
       description: "Additional CSS classes to apply",
@@ -34,178 +56,211 @@ export const Default: Story = {
   },
 };
 
-// With text content
-export const WithText: Story = {
-  args: {
-    children: (
-      <div>
-        <Typography type="card-title" className="mb-2">
-          Card Title
-        </Typography>
-        <Typography type="body" intent="neutral">
-          This is a simple card with some text content. Cards are useful for
-          grouping related information.
-        </Typography>
-      </div>
-    ),
-  },
+// All variants
+export const AllVariants: Story = {
+  render: () => (
+    <Grid cols={2} gap={4} className="min-w-[600px]">
+      <Card variant="default">
+        <Typography type="card-title" className="mb-2">Default</Typography>
+        <Typography type="body" intent="neutral">Standard card with subtle shadow</Typography>
+      </Card>
+      <Card variant="bordered">
+        <Typography type="card-title" className="mb-2">Bordered</Typography>
+        <Typography type="body" intent="neutral">Card with prominent border</Typography>
+      </Card>
+      <Card variant="elevated">
+        <Typography type="card-title" className="mb-2">Elevated</Typography>
+        <Typography type="body" intent="neutral">Card with elevated shadow</Typography>
+      </Card>
+      <Card variant="flat">
+        <Typography type="card-title" className="mb-2">Flat</Typography>
+        <Typography type="body" intent="neutral">Flat card with subtle background</Typography>
+      </Card>
+    </Grid>
+  ),
 };
 
-// With structured content
-export const WithStructuredContent: Story = {
+// Composable structure
+export const ComposableStructure: Story = {
   render: () => (
-    <Card style={{ minWidth: "300px" }}>
-      <div className="flex flex-col gap-4">
-        <div
-          className="border-b pb-3"
-          style={{ borderColor: "var(--color-border)" }}
-        >
-          <Typography type="section-title" className="mb-1">
-            Product Name
-          </Typography>
-          <Typography type="caption" intent="neutral">
-            SKU: ABC-12345
-          </Typography>
-        </div>
-        <div>
-          <Typography type="body" className="mb-2">
-            <strong>Description:</strong> This is a detailed product description
-            that provides more information about the item.
-          </Typography>
+    <Card className="min-w-[400px]">
+      <CardHeader>
+        <Flex justify="between" align="center">
+          <Typography type="section-title">Product Card</Typography>
+          <Badge intent="success">New</Badge>
+        </Flex>
+      </CardHeader>
+      <CardBody>
+        <Stack gap={3}>
           <Typography type="body">
-            <strong>Price:</strong> $99.99
-          </Typography>
-        </div>
-      </div>
-    </Card>
-  ),
-  args: {},
-};
-
-// Multiple cards
-export const MultipleCards: Story = {
-  render: () => (
-    <div
-      style={{
-        display: "flex",
-        gap: "1rem",
-        flexWrap: "wrap",
-        maxWidth: "800px",
-      }}
-    >
-      <Card style={{ flex: "1 1 200px" }}>
-        <Typography type="card-title" className="mb-2">
-          Card 1
-        </Typography>
-        <Typography type="body" intent="neutral">
-          First card content
-        </Typography>
-      </Card>
-      <Card style={{ flex: "1 1 200px" }}>
-        <Typography type="card-title" className="mb-2">
-          Card 2
-        </Typography>
-        <Typography type="body" intent="neutral">
-          Second card content
-        </Typography>
-      </Card>
-      <Card style={{ flex: "1 1 200px" }}>
-        <Typography type="card-title" className="mb-2">
-          Card 3
-        </Typography>
-        <Typography type="body" intent="neutral">
-          Third card content
-        </Typography>
-      </Card>
-    </div>
-  ),
-  args: {},
-};
-
-// With custom styling
-export const CustomStyling: Story = {
-  args: {
-    className: "border-2 border-blue-500",
-    children: (
-      <div>
-        <Typography type="card-title" className="mb-2">
-          Styled Card
-        </Typography>
-        <Typography type="body" intent="neutral">
-          This card has custom border styling applied
-        </Typography>
-      </div>
-    ),
-  },
-};
-
-// Interactive card
-export const Interactive: Story = {
-  render: function InteractiveCard() {
-    const [isHovered, setIsHovered] = React.useState(false);
-
-    return (
-      <Card
-        style={{
-          minWidth: "300px",
-          cursor: "pointer",
-          transition: "transform 0.2s, box-shadow 0.2s",
-          transform: isHovered ? "translateY(-4px)" : "translateY(0)",
-        }}
-        onClick={() => alert("Card clicked!")}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <Typography type="card-title" className="mb-2">
-          Interactive Card
-        </Typography>
-        <Typography type="body" intent="neutral">
-          Hover over me and click!
-        </Typography>
-      </Card>
-    );
-  },
-  args: {},
-};
-
-// Card with image
-export const WithImage: Story = {
-  render: () => (
-    <Card style={{ maxWidth: "300px" }}>
-      <div className="flex flex-col gap-3">
-        <div
-          className="w-full h-40 rounded-lg flex items-center justify-center text-sm opacity-60"
-          style={{ backgroundColor: "var(--color-surface-variant)" }}
-        >
-          Image Placeholder
-        </div>
-        <div>
-          <Typography type="card-title" className="mb-1">
-            Image Card
+            This card demonstrates the composable structure with CardHeader,
+            CardBody, and CardFooter components.
           </Typography>
           <Typography type="body" intent="neutral">
-            Card with an image placeholder
+            Price: <strong>$99.99</strong>
           </Typography>
-        </div>
-      </div>
+        </Stack>
+      </CardBody>
+      <CardFooter>
+        <Button variant="solid" intent="primary" size="sm">
+          Add to Cart
+        </Button>
+        <Button variant="outline" intent="neutral" size="sm">
+          View Details
+        </Button>
+      </CardFooter>
     </Card>
   ),
-  args: {},
+};
+
+// Interactive cards
+export const Interactive: Story = {
+  render: () => (
+    <Stack gap={4}>
+      <Card hoverable className="min-w-[300px]">
+        <Typography type="card-title" className="mb-2">Hoverable Card</Typography>
+        <Typography type="body" intent="neutral">
+          Hover over me to see the effect!
+        </Typography>
+      </Card>
+      <Card clickable onClick={() => alert("Card clicked!")} className="min-w-[300px]">
+        <Typography type="card-title" className="mb-2">Clickable Card</Typography>
+        <Typography type="body" intent="neutral">
+          Click me or press Enter/Space when focused
+        </Typography>
+      </Card>
+      <Card hoverable clickable onClick={() => alert("Card clicked!")} className="min-w-[300px]">
+        <Typography type="card-title" className="mb-2">Hoverable + Clickable</Typography>
+        <Typography type="body" intent="neutral">
+          I have both hover and click effects
+        </Typography>
+      </Card>
+    </Stack>
+  ),
+};
+
+// Loading state
+export const LoadingState: Story = {
+  render: () => (
+    <Grid cols={2} gap={4}>
+      <Card className="min-w-[250px]">
+        <CardHeader>
+          <Typography type="card-title">Normal Card</Typography>
+        </CardHeader>
+        <CardBody>
+          <Typography type="body">This card is interactive</Typography>
+        </CardBody>
+      </Card>
+      <Card loading className="min-w-[250px]">
+        <CardHeader>
+          <Typography type="card-title">Loading Card</Typography>
+        </CardHeader>
+        <CardBody>
+          <Typography type="body">This card is loading...</Typography>
+        </CardBody>
+      </Card>
+    </Grid>
+  ),
+};
+
+// Real-world product cards
+export const ProductCards: Story = {
+  render: () => (
+    <Grid cols={3} gap={4} className="max-w-4xl">
+      {[
+        {
+          name: "Wireless Mouse",
+          price: "$29.99",
+          status: "In Stock",
+          intent: "success" as const,
+        },
+        {
+          name: "Mechanical Keyboard",
+          price: "$129.99",
+          status: "Low Stock",
+          intent: "warning" as const,
+        },
+        {
+          name: "USB-C Hub",
+          price: "$49.99",
+          status: "New Arrival",
+          intent: "info" as const,
+        },
+      ].map((product, idx) => (
+        <Card key={idx} variant="elevated" hoverable>
+          <CardHeader>
+            <Typography type="card-title">{product.name}</Typography>
+          </CardHeader>
+          <CardBody>
+            <Stack gap={2}>
+              <Typography type="body">Price: {product.price}</Typography>
+              <Badge intent={product.intent} variant="subtle">
+                {product.status}
+              </Badge>
+            </Stack>
+          </CardBody>
+          <CardFooter>
+            <Button variant="solid" intent="primary" size="sm">
+              Add to Cart
+            </Button>
+          </CardFooter>
+        </Card>
+      ))}
+    </Grid>
+  ),
+};
+
+// Profile card example
+export const ProfileCard: Story = {
+  render: () => (
+    <Card variant="bordered" className="min-w-[400px]">
+      <CardHeader>
+        <Flex gap={3} align="center">
+          <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+            JD
+          </div>
+          <Stack gap={0}>
+            <Typography type="section-title">John Doe</Typography>
+            <Typography type="caption" intent="neutral">
+              Software Engineer
+            </Typography>
+          </Stack>
+        </Flex>
+      </CardHeader>
+      <CardBody>
+        <Stack gap={3}>
+          <div>
+            <Typography type="label">About</Typography>
+            <Typography type="body" intent="neutral">
+              Passionate developer with 5+ years of experience in React and TypeScript.
+            </Typography>
+          </div>
+          <div>
+            <Typography type="label">Location</Typography>
+            <Typography type="body" intent="neutral">
+              San Francisco, CA
+            </Typography>
+          </div>
+        </Stack>
+      </CardBody>
+      <CardFooter>
+        <Button variant="solid" intent="primary" size="sm">
+          Connect
+        </Button>
+        <Button variant="outline" intent="neutral" size="sm">
+          Message
+        </Button>
+      </CardFooter>
+    </Card>
+  ),
 };
 
 // Card grid layout
 export const GridLayout: Story = {
   render: () => (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-        gap: "1rem",
-        maxWidth: "800px",
-      }}
-    >
+    <Grid cols={3} gap={4} className="max-w-4xl">
       {[1, 2, 3, 4, 5, 6].map((num) => (
-        <Card key={num}>
+        <Card key={num} variant="default">
           <Typography type="card-title" className="mb-2">
             Card {num}
           </Typography>
@@ -214,7 +269,6 @@ export const GridLayout: Story = {
           </Typography>
         </Card>
       ))}
-    </div>
+    </Grid>
   ),
-  args: {},
 };
