@@ -1,5 +1,8 @@
 export * from "./theme/ThemeProvider";
 
+// Theme types
+export type { ComponentIntent, ComponentVariant, ComponentSize } from "./theme/types";
+
 // Hooks
 export * from "./hooks";
 

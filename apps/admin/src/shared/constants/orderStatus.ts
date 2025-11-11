@@ -1,9 +1,9 @@
-import type { BadgeIntent } from "@nevo/design-system";
+import type { ComponentIntent } from "@nevo/design-system";
 
 /**
  * Maps business order statuses to semantic intent colors
  */
-export const ORDER_STATUS_INTENT_MAP: Record<string, BadgeIntent> = {
+export const ORDER_STATUS_INTENT_MAP: Record<string, ComponentIntent> = {
   'active': 'success',
   'inactive': 'error', 
   'draft': 'warning'
@@ -12,7 +12,7 @@ export const ORDER_STATUS_INTENT_MAP: Record<string, BadgeIntent> = {
 /**
  * Transforms business status to semantic intent for UI components
  */
-export function getStatusIntent(status: string): BadgeIntent {
+export function getStatusIntent(status: string): ComponentIntent {
   return ORDER_STATUS_INTENT_MAP[status] || 'warning';
 }
 
