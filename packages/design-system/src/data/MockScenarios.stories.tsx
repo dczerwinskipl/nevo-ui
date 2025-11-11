@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState, useEffect } from "react";
-import { scenarios } from "@nevo/api-mocks";
+import type { Scenario } from "@nevo/api-mocks";
 import { Button } from "../primitives/Button";
 
 /**
@@ -8,20 +8,32 @@ import { Button } from "../primitives/Button";
  * This shows how to test different API states in Storybook
  */
 function ApiDataExample() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<unknown>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [scenario, setScenario] = useState(scenarios.current());
+  const [scenario, setScenario] = useState<Scenario>("success");
 
   // Subscribe to scenario changes
   useEffect(() => {
-    const unsubscribe = scenarios.subscribe((newScenario) => {
-      setScenario(newScenario);
-      // Clear previous state when scenario changes
-      setData(null);
-      setError(null);
-    });
-    return unsubscribe;
+    // Dynamically import scenarios to avoid build-time dependency
+    import("@nevo/api-mocks")
+      .then(({ scenarios }) => {
+        setScenario(scenarios.current());
+
+        const unsubscribe = scenarios.subscribe((newScenario: Scenario) => {
+          setScenario(newScenario);
+          // Clear previous state when scenario changes
+          setData(null);
+          setError(null);
+        });
+
+        return () => {
+          unsubscribe();
+        };
+      })
+      .catch(() => {
+        // MSW not available, ignore
+      });
   }, []);
 
   const fetchData = async () => {
@@ -31,15 +43,16 @@ function ApiDataExample() {
 
     try {
       const response = await fetch("/api/products");
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const result = await response.json();
       setData(result);
-    } catch (err: any) {
-      setError(err.message || "Network error");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Network error";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -48,16 +61,19 @@ function ApiDataExample() {
   return (
     <div style={{ fontFamily: "system-ui", maxWidth: "600px" }}>
       <h2>MSW Scenario Testing Example</h2>
-      
-      <div style={{ 
-        padding: "1rem", 
-        background: "#f5f5f5", 
-        borderRadius: "4px",
-        marginBottom: "1rem" 
-      }}>
+
+      <div
+        style={{
+          padding: "1rem",
+          background: "#f5f5f5",
+          borderRadius: "4px",
+          marginBottom: "1rem",
+        }}
+      >
         <strong>Current Scenario:</strong> {scenario}
         <p style={{ fontSize: "0.875rem", color: "#666", marginTop: "0.5rem" }}>
-          Use the "Mock Scenario" toolbar dropdown above to switch scenarios
+          Use the &quot;Mock Scenario&quot; toolbar dropdown above to switch
+          scenarios
         </p>
       </div>
 
@@ -66,40 +82,45 @@ function ApiDataExample() {
       </Button>
 
       {loading && (
-        <div style={{ marginTop: "1rem", color: "#666" }}>
-          ⏳ Loading...
-        </div>
+        <div style={{ marginTop: "1rem", color: "#666" }}>⏳ Loading...</div>
       )}
 
       {error && (
-        <div style={{ 
-          marginTop: "1rem", 
-          padding: "1rem", 
-          background: "#fee", 
-          color: "#c00",
-          borderRadius: "4px" 
-        }}>
+        <div
+          style={{
+            marginTop: "1rem",
+            padding: "1rem",
+            background: "#fee",
+            color: "#c00",
+            borderRadius: "4px",
+          }}
+        >
           <strong>Error:</strong> {error}
         </div>
       )}
 
-      {data && !error && (
-        <div style={{ 
-          marginTop: "1rem", 
-          padding: "1rem", 
-          background: "#efe", 
-          borderRadius: "4px" 
-        }}>
-          <strong>Success:</strong> Received {Array.isArray(data) ? data.length : 0} items
-          <pre style={{ 
-            marginTop: "0.5rem", 
-            fontSize: "0.75rem",
-            overflow: "auto" 
-          }}>
+      {data && !error ? (
+        <div
+          style={{
+            marginTop: "1rem",
+            padding: "1rem",
+            background: "#efe",
+            borderRadius: "4px",
+          }}
+        >
+          <strong>Success:</strong> Received{" "}
+          {Array.isArray(data) ? data.length : 0} items
+          <pre
+            style={{
+              marginTop: "0.5rem",
+              fontSize: "0.75rem",
+              overflow: "auto",
+            }}
+          >
             {JSON.stringify(data, null, 2)}
           </pre>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -111,7 +132,8 @@ const meta: Meta<typeof ApiDataExample> = {
     docs: {
       description: {
         component: `
-This example demonstrates how to test different API scenarios in Storybook using MSW (Mock Service Worker).
+This example demonstrates how to test different API scenarios in Storybook
+using MSW (Mock Service Worker).
 
 ## How to Use
 
@@ -131,8 +153,10 @@ This example demonstrates how to test different API scenarios in Storybook using
 
 ## Implementation
 
-The \`withMockScenario\` decorator automatically syncs the toolbar selection with MSW's ScenarioManager.
-This allows you to test how your components handle different API states without modifying code.
+The \`withMockScenario\` decorator automatically syncs the toolbar selection
+with MSW's ScenarioManager.
+This allows you to test how your components handle different API states without
+modifying code.
         `,
       },
     },

@@ -1,14 +1,14 @@
 /**
  * Playwright helpers for controlling MSW mock scenarios in E2E tests
- * 
+ *
  * @example
  * ```typescript
  * import { setScenario, resetScenario } from '@nevo/api-mocks/playwright';
- * 
+ *
  * test.beforeEach(async ({ page }) => {
  *   await resetScenario(page);
  * });
- * 
+ *
  * test('handles rate limiting', async ({ page }) => {
  *   await setScenario(page, 'rate-limit');
  *   await page.goto('/products');
@@ -17,7 +17,7 @@
  * ```
  */
 
-import type { Scenario } from './foundation/scenarios';
+import type { Scenario } from "./foundation/scenarios";
 
 /**
  * Minimal Playwright Page interface to avoid requiring @playwright/test as a dependency
@@ -32,10 +32,10 @@ interface PlaywrightPage {
 /**
  * Set mock scenario in Playwright test
  * Uses window.setMockScenario() which is available in the browser context
- * 
+ *
  * @param page - Playwright page object
  * @param scenario - Scenario to activate
- * 
+ *
  * @example
  * ```typescript
  * await setScenario(page, 'rate-limit');
@@ -46,20 +46,22 @@ export async function setScenario(
   scenario: Scenario
 ): Promise<void> {
   await page.evaluate((s: Scenario) => {
-    if (typeof window.setMockScenario === 'function') {
+    if (typeof window.setMockScenario === "function") {
       window.setMockScenario(s);
     } else {
-      console.warn('window.setMockScenario is not available. Make sure MSW is initialized.');
+      console.warn(
+        "window.setMockScenario is not available. Make sure MSW is initialized."
+      );
     }
   }, scenario);
 }
 
 /**
  * Get current mock scenario in Playwright test
- * 
+ *
  * @param page - Playwright page object
  * @returns Current scenario
- * 
+ *
  * @example
  * ```typescript
  * const scenario = await getScenario(page);
@@ -68,18 +70,18 @@ export async function setScenario(
  */
 export async function getScenario(page: PlaywrightPage): Promise<Scenario> {
   return await page.evaluate(() => {
-    if (typeof window.getMockScenario === 'function') {
+    if (typeof window.getMockScenario === "function") {
       return window.getMockScenario();
     }
-    return 'success'; // default
+    return "success"; // default
   });
 }
 
 /**
  * Reset mock scenario to 'success' in Playwright test
- * 
+ *
  * @param page - Playwright page object
- * 
+ *
  * @example
  * ```typescript
  * test.beforeEach(async ({ page }) => {
@@ -89,7 +91,7 @@ export async function getScenario(page: PlaywrightPage): Promise<Scenario> {
  */
 export async function resetScenario(page: PlaywrightPage): Promise<void> {
   await page.evaluate(() => {
-    if (typeof window.resetMockScenario === 'function') {
+    if (typeof window.resetMockScenario === "function") {
       window.resetMockScenario();
     }
   });
@@ -98,11 +100,11 @@ export async function resetScenario(page: PlaywrightPage): Promise<void> {
 /**
  * Wait for scenario to be applied
  * Sets the scenario and waits briefly for it to take effect
- * 
+ *
  * @param page - Playwright page object
  * @param scenario - Scenario to activate
  * @param waitMs - Time to wait after setting scenario (default: 100ms)
- * 
+ *
  * @example
  * ```typescript
  * await waitForScenario(page, 'server-error');
@@ -120,18 +122,26 @@ export async function waitForScenario(
 
 /**
  * Get list of all available scenarios
- * 
+ *
  * @param page - Playwright page object
  * @returns Array of available scenario names
  */
 export async function listScenarios(page: PlaywrightPage): Promise<Scenario[]> {
   return await page.evaluate(() => {
-    if (typeof window.listMockScenarios === 'function') {
+    if (typeof window.listMockScenarios === "function") {
       return window.listMockScenarios();
     }
-    return ['success', 'empty', 'loading-slow', 'rate-limit', 'server-error', 'validation-error', 'network-error'];
+    return [
+      "success",
+      "empty",
+      "loading-slow",
+      "rate-limit",
+      "server-error",
+      "validation-error",
+      "network-error",
+    ];
   });
 }
 
 // Re-export Scenario type for convenience
-export type { Scenario } from './foundation/scenarios';
+export type { Scenario } from "./foundation/scenarios";

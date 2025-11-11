@@ -1,21 +1,21 @@
 /**
  * Available mock scenarios for testing different API states
  */
-export type Scenario = 
-  | 'success'
-  | 'empty' 
-  | 'loading-slow'
-  | 'rate-limit'
-  | 'server-error'
-  | 'validation-error'
-  | 'network-error';
+export type Scenario =
+  | "success"
+  | "empty"
+  | "loading-slow"
+  | "rate-limit"
+  | "server-error"
+  | "validation-error"
+  | "network-error";
 
 /**
  * Manages mock API scenarios for testing
  * Supports localStorage persistence, event dispatching, and subscriptions
  */
 class ScenarioManager {
-  private currentScenario: Scenario = 'success';
+  private currentScenario: Scenario = "success";
   private listeners: Set<(scenario: Scenario) => void> = new Set();
 
   /**
@@ -27,12 +27,12 @@ class ScenarioManager {
     this.currentScenario = scenario;
 
     // Store in localStorage for persistence across page reloads
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('mock-scenario', scenario);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("mock-scenario", scenario);
 
       // Dispatch custom event for UI updates (Storybook, debugging tools)
       window.dispatchEvent(
-        new CustomEvent('mock-scenario-change', {
+        new CustomEvent("mock-scenario-change", {
           detail: { scenario, previous },
         })
       );
@@ -48,8 +48,8 @@ class ScenarioManager {
    */
   current(): Scenario {
     // Check localStorage first for persistence
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('mock-scenario') as Scenario;
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("mock-scenario") as Scenario;
       if (stored && this.isValidScenario(stored)) {
         this.currentScenario = stored;
       }
@@ -61,9 +61,9 @@ class ScenarioManager {
    * Reset scenario to 'success' and clear localStorage
    */
   reset(): void {
-    this.set('success');
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('mock-scenario');
+    this.set("success");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("mock-scenario");
     }
   }
 
@@ -73,13 +73,13 @@ class ScenarioManager {
    */
   list(): Scenario[] {
     return [
-      'success',
-      'empty',
-      'loading-slow', 
-      'rate-limit',
-      'server-error',
-      'validation-error',
-      'network-error'
+      "success",
+      "empty",
+      "loading-slow",
+      "rate-limit",
+      "server-error",
+      "validation-error",
+      "network-error",
     ];
   }
 
@@ -119,11 +119,11 @@ export function getCurrentScenario(): Scenario {
  * @returns Promise that resolves after delay
  */
 export function simulateDelay(ms: number = 300): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 // Global window API for Playwright and Storybook integration
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   /**
    * Set mock scenario globally (available in browser console and Playwright)
    */

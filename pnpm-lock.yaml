@@ -95,6 +95,9 @@ importers:
 
   packages/design-system:
     dependencies:
+      '@nevo/api-mocks':
+        specifier: workspace:*
+        version: link:../api-mocks
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
