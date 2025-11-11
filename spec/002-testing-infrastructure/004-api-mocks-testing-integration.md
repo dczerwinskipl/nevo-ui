@@ -4,6 +4,10 @@
 
 ## Task: 004-api-mocks-testing-integration
 
+**Status**: ✅ COMPLETED  
+**Priority**: HIGH  
+**Dependencies**: Stories 002 ✅, 003 ✅
+
 ### Overview
 
 This specification defines enhancements to the `@nevo/api-mocks` package to better support **Storybook** and **Playwright** testing workflows. The goal is to make scenario switching more flexible and testable through programmatic APIs, not just localStorage.

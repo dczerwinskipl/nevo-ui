@@ -85,6 +85,143 @@ window.setMockScenario("server-error");
 const current = getCurrentScenario(); // 'success' (default)
 ```
 
+## Storybook Integration
+
+The package provides a decorator and toolbar integration for switching scenarios in Storybook.
+
+### Setup
+
+```typescript
+// .storybook/preview.tsx
+import { withMockScenario, mockScenarioGlobalTypes } from '@nevo/api-mocks/storybook';
+
+export const decorators = [withMockScenario];
+export const globalTypes = mockScenarioGlobalTypes;
+```
+
+### Usage
+
+Once configured, you'll see a "Mock Scenario" dropdown in the Storybook toolbar. Select any scenario to test your components with different API states:
+
+- ✅ Success - Normal responses
+- ⭕ Empty - Empty data sets
+- ⏱️ Slow Loading - 3-second delays
+- 🛑 Rate Limit - HTTP 429 errors
+- ❌ Server Error - HTTP 500 errors
+- ⚠️ Validation Error - HTTP 422 errors
+- 🌐 Network Error - Connection failures
+
+The scenario selection persists across page reloads via localStorage.
+
+## Playwright Integration
+
+Playwright helpers make it easy to test different API scenarios in E2E tests.
+
+### Setup
+
+```typescript
+import { setScenario, resetScenario } from '@nevo/api-mocks/playwright';
+
+test.beforeEach(async ({ page }) => {
+  // Reset to success scenario before each test
+  await resetScenario(page);
+});
+```
+
+### Examples
+
+```typescript
+test('handles rate limiting gracefully', async ({ page }) => {
+  await setScenario(page, 'rate-limit');
+  await page.goto('/products');
+  
+  await expect(page.getByText(/rate limit/i)).toBeVisible();
+});
+
+test('shows loading state for slow responses', async ({ page }) => {
+  await setScenario(page, 'loading-slow');
+  await page.goto('/products');
+  
+  await expect(page.getByRole('progressbar')).toBeVisible();
+});
+
+test('displays error message on server failure', async ({ page }) => {
+  await setScenario(page, 'server-error');
+  await page.goto('/products');
+  
+  await expect(page.getByText(/something went wrong/i)).toBeVisible();
+});
+```
+
+### Playwright API
+
+- `setScenario(page, scenario)` - Set the active scenario
+- `getScenario(page)` - Get the current scenario
+- `resetScenario(page)` - Reset to 'success' scenario
+- `waitForScenario(page, scenario, waitMs?)` - Set scenario and wait for it to apply
+- `listScenarios(page)` - Get all available scenarios
+
+## Programmatic API
+
+The ScenarioManager provides a programmatic API for managing scenarios in your code.
+
+### Basic Usage
+
+```typescript
+import { scenarios, getCurrentScenario } from '@nevo/api-mocks';
+
+// Set scenario programmatically
+scenarios.set('loading-slow');
+
+// Get current scenario
+const current = getCurrentScenario(); // 'loading-slow'
+
+// Reset to default
+scenarios.reset();
+
+// Get all available scenarios
+const all = scenarios.list();
+// ['success', 'empty', 'loading-slow', 'rate-limit', 'server-error', 'validation-error', 'network-error']
+```
+
+### Event Subscriptions
+
+Subscribe to scenario changes to update your UI or debug tools:
+
+```typescript
+import { scenarios } from '@nevo/api-mocks';
+
+// Subscribe to changes
+const unsubscribe = scenarios.subscribe((scenario) => {
+  console.log('Scenario changed to:', scenario);
+  // Update debug UI, analytics, etc.
+});
+
+// Unsubscribe when done
+unsubscribe();
+```
+
+### Window API (Browser Console)
+
+When running in a browser, global functions are available for debugging:
+
+```javascript
+// In browser console
+window.setMockScenario('server-error');
+window.getMockScenario(); // 'server-error'
+window.resetMockScenario();
+window.listMockScenarios(); // Array of all scenarios
+```
+
+Scenario changes also dispatch a custom event:
+
+```javascript
+window.addEventListener('mock-scenario-change', (event) => {
+  console.log('Scenario changed:', event.detail);
+  // { scenario: 'loading-slow', previous: 'success' }
+});
+```
+
 ## API Reference
 
 ### `withScenarios(handler)`

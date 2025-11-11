@@ -1,6 +1,7 @@
 import type { Preview } from "@storybook/react";
 import React from "react";
 import { ThemeProvider, ThemeCtx, useTheme } from "../src/theme/ThemeProvider";
+import { withMockScenario, mockScenarioGlobalTypes } from "@nevo/api-mocks/storybook";
 import "../src/styles.css";
 
 // Component to sync Storybook's theme toggle with ThemeProvider
@@ -29,8 +30,9 @@ const withTheme = (Story: any, context: any) => {
 };
 
 const preview: Preview = {
-  decorators: [withTheme],
+  decorators: [withMockScenario, withTheme],
   globalTypes: {
+    ...mockScenarioGlobalTypes,
     theme: {
       name: "Theme",
       description: "Global theme for components",
