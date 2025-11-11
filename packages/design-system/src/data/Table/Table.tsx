@@ -39,7 +39,7 @@ export const Table = <T extends Record<string, any>>({
       setSnapshotData(data || []);
     }
     setPrevIsLoading(isLoading);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [isLoading, prevIsLoading, data]);
 
   const handleActionClick = (action: TableAction<T>, row: T) => {
