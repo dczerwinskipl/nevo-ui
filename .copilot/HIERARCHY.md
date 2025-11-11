@@ -33,7 +33,9 @@ Level 1: ENTRY POINT
 ## 🎯 Which Files to Read When?
 
 ### Every Time (Default Context)
+
 **Always load these files automatically:**
+
 1. `instructions.md` - Your index and quick reference
 2. `conventions.md` - Coding standards
 3. `glossary.md` - Domain terms
@@ -43,6 +45,7 @@ Level 1: ENTRY POINT
 ### On Demand (Task-Specific)
 
 #### Creating a Component
+
 ```
 READ: recipes/component.md
       context/ds-api-guidelines.md
@@ -52,6 +55,7 @@ VERIFY: checklists/component_development.md
 ```
 
 #### Submitting a Pull Request
+
 ```
 READ: workflow.md (Git workflow, PR process)
 VERIFY: checklists/pr_submission.md
@@ -59,6 +63,7 @@ VERIFY: checklists/pr_submission.md
 ```
 
 #### Reviewing a Pull Request
+
 ```
 READ: checklists/pr_review.md
       conventions.md (already loaded)
@@ -66,6 +71,7 @@ VERIFY: All items in pr_review.md checklist
 ```
 
 #### Writing Storybook Stories
+
 ```
 READ: recipes/storybook.md
       conventions.md (already loaded)
@@ -73,23 +79,27 @@ READ: recipes/storybook.md
 ```
 
 #### Writing Tests
+
 ```
 READ: recipes/testing.md
       context/testing-strategy.md
 ```
 
 #### Understanding Release Process
+
 ```
 READ: workflow.md (Release process, versioning, deployment)
 ```
 
 #### Understanding Specification Management
+
 ```
 READ: workflow.md (Spec folder structure, branch naming, templates)
       recipes/spec-creation.md (How to create granular, verifiable specs)
 ```
 
 #### Creating Epic or Story Specs
+
 ```
 READ: recipes/spec-creation.md (Detailed templates and guidelines)
       workflow.md (Specification management process)
@@ -100,27 +110,32 @@ VERIFY: Templates in spec-creation.md
 ## 📝 File Purposes
 
 ### Entry Point
+
 - **instructions.md** - Quick index, workflow guide, which files to read for what
 
 ### Core Standards (Always Reference)
+
 - **conventions.md** - Coding patterns, naming, structure, Git conventions, VS Code setup
 - **glossary.md** - Domain terminology
 - **workflow.md** - Development workflow, specification management, Git workflow, PR process, release process, deployment
 - **README.md** - Folder overview (for humans)
 
 ### Detailed Context (Reference as Needed)
+
 - **context/architecture.md** - System overview, tech stack, monorepo structure
 - **context/ds-api-guidelines.md** - Component API patterns and examples
 - **context/a11y-guidelines.md** - WCAG 2.1 AA standards and implementation
 - **context/testing-strategy.md** - Testing philosophy and patterns
 
 ### Task Guides (Use for Specific Tasks)
+
 - **recipes/component.md** - Step-by-step component creation
 - **recipes/storybook.md** - How to write effective stories
 - **recipes/testing.md** - How to write tests with examples
 - **recipes/spec-creation.md** - How to create granular, verifiable epic and story specifications
 
 ### Quality Gates (Verification)
+
 - **checklists/component_development.md** - Complete component checklist
 - **checklists/pr_review.md** - PR review checklist
 - **checklists/pr_submission.md** - PR submission checklist (before creating PR)
@@ -129,9 +144,11 @@ VERIFY: Templates in spec-creation.md
 ## 🔄 Relationship Between Files
 
 ### Content Overlap (By Design)
+
 Some concepts appear in multiple files with different levels of detail:
 
 **Example: Git Workflow**
+
 - `conventions.md` → Branch naming, commit message format
 - `workflow.md` → Complete Git workflow, PR process, release process
 - `checklists/pr_submission.md` → PR submission checklist
@@ -139,16 +156,19 @@ Some concepts appear in multiple files with different levels of detail:
 - `checklists/definition_of_done.md` → When is a task complete?
 
 **Example: Component API Patterns**
+
 - `conventions.md` → Brief mention of patterns
 - `context/ds-api-guidelines.md` → Detailed API guidelines
 - `recipes/component.md` → Step-by-step with examples
 - `checklists/component_development.md` → Verification checklist
 
-**Why?** 
+**Why?**
+
 - Quick reference vs. detailed guide vs. step-by-step vs. verification
 - Different files serve different purposes in the workflow
 
 ### No Duplication in:
+
 - Specific technical details (only in one place)
 - Code examples (recipes have most examples)
 - Checklists (only in checklists/)
@@ -156,6 +176,7 @@ Some concepts appear in multiple files with different levels of detail:
 ## 💡 Usage Patterns
 
 ### Pattern 1: Quick Task
+
 ```
 User: "Create a Button component"
 AI reads: instructions.md → recipes/component.md → conventions.md
@@ -163,18 +184,21 @@ AI verifies: checklists/component_development.md → checklists/definition_of_do
 ```
 
 ### Pattern 2: Understanding System
+
 ```
 User: "Explain the architecture"
 AI reads: instructions.md → context/architecture.md → workflow.md
 ```
 
 ### Pattern 3: Code Review
+
 ```
 User: "Review this PR"
 AI reads: instructions.md → checklists/pr_review.md → conventions.md
 ```
 
 ### Pattern 4: Submitting PR
+
 ```
 User: "I'm ready to submit a PR"
 AI reads: instructions.md → checklists/pr_submission.md → workflow.md (Git workflow)
@@ -182,12 +206,14 @@ AI verifies: All items in pr_submission.md → definition_of_done.md
 ```
 
 ### Pattern 5: Accessibility Question
+
 ```
 User: "How to make this accessible?"
 AI reads: instructions.md → context/a11y-guidelines.md
 ```
 
 ### Pattern 6: Release Process
+
 ```
 User: "How do I release a new version?"
 AI reads: instructions.md → workflow.md (Release Process section)

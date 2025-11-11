@@ -185,6 +185,9 @@ export const Alignment: Story = {
  * Nested stacks combining vertical and horizontal layouts.
  */
 export const Nested: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <Stack gap={6}>
       <div className="text-sm font-medium">Nested Stacks Example</div>
