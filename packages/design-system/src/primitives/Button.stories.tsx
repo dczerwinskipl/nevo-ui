@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Button } from "./Button";
 import { ComponentIntent, ComponentVariant, ComponentSize } from "../theme";
+import { Flex } from "../layout/Flex";
+import { Stack } from "../layout/Stack";
 
 const meta = {
   title: "Primitives/Button",
@@ -65,14 +67,14 @@ export const Primary: Story = {
 // All intents showcase
 export const AllIntents: Story = {
   render: () => (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+    <Flex wrap gap={4}>
       <Button intent="primary">Primary</Button>
       <Button intent="success">Success</Button>
       <Button intent="warning">Warning</Button>
       <Button intent="error">Error</Button>
       <Button intent="info">Info</Button>
       <Button intent="neutral">Neutral</Button>
-    </div>
+    </Flex>
   ),
   parameters: {
     docs: {
@@ -86,12 +88,12 @@ export const AllIntents: Story = {
 // All variants showcase
 export const AllVariants: Story = {
   render: () => (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+    <Flex wrap gap={4}>
       <Button variant="solid">Solid</Button>
       <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>
       <Button variant="subtle">Subtle</Button>
-    </div>
+    </Flex>
   ),
   parameters: {
     docs: {
@@ -105,20 +107,13 @@ export const AllVariants: Story = {
 // All sizes showcase
 export const AllSizes: Story = {
   render: () => (
-    <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        alignItems: "center",
-        gap: "1rem",
-      }}
-    >
+    <Flex wrap align="center" gap={4}>
       <Button size="xs">Extra Small</Button>
       <Button size="sm">Small</Button>
       <Button size="md">Medium</Button>
       <Button size="lg">Large</Button>
       <Button size="xl">Extra Large</Button>
-    </div>
+    </Flex>
   ),
   parameters: {
     docs: {
@@ -133,14 +128,14 @@ export const AllSizes: Story = {
 // States showcase
 export const States: Story = {
   render: () => (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+    <Flex wrap gap={4}>
       <Button>Normal</Button>
       <Button loading>Loading</Button>
       <Button disabled>Disabled</Button>
       <Button loading disabled>
         Loading & Disabled
       </Button>
-    </div>
+    </Flex>
   ),
   parameters: {
     docs: {
@@ -166,7 +161,7 @@ export const Interactive: Story = {
 // Accessibility test cases
 export const AccessibilityTest: Story = {
   render: () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+    <Stack gap={4}>
       <Button aria-label="Save document">Save</Button>
       <Button
         disabled
@@ -176,7 +171,7 @@ export const AccessibilityTest: Story = {
         Delete
       </Button>
       <Button size="xs">Touch Target Test (min 44px)</Button>
-    </div>
+    </Stack>
   ),
   parameters: {
     docs: {
@@ -197,32 +192,25 @@ export const AccessibilityTest: Story = {
 // Long text handling
 export const LongText: Story = {
   render: () => (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-        maxWidth: "300px",
-      }}
-    >
+    <Stack gap={4} className="max-w-xs">
       <Button>Short</Button>
       <Button>This is a medium length button text</Button>
       <Button>
         This is a very long button text that might wrap or overflow
       </Button>
-    </div>
+    </Stack>
   ),
 };
 
 // Icon buttons (if icons are added later)
 export const WithIcon: Story = {
   render: () => (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+    <Flex wrap gap={4}>
       <Button>
         <span>📧</span> Send Email
       </Button>
       <Button intent="error">🗑️ Delete</Button>
-    </div>
+    </Flex>
   ),
   parameters: {
     docs: {

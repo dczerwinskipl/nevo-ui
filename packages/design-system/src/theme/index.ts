@@ -14,3 +14,11 @@ export {
   getIntentStyle,
 } from "./utils";
 export { tokens } from "./tokens";
+export {
+  INTENT_VARIANT_CLASSES,
+  VARIANT_BASE_CLASSES,
+  SIZE_CLASSES,
+  getIntentVariantClasses,
+  getVariantBaseClasses,
+  getSizeClasses,
+} from "./classNames";
