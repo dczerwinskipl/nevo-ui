@@ -21,6 +21,7 @@ When working on this project, **automatically reference these files**:
 - **Creating components**: [recipes/component.md](./recipes/component.md) + [checklists/component_development.md](./checklists/component_development.md)
 - **Writing stories**: [recipes/storybook.md](./recipes/storybook.md)
 - **Writing tests**: [recipes/testing.md](./recipes/testing.md)
+- **Creating specs**: [recipes/spec-creation.md](./recipes/spec-creation.md)
 - **Submitting PRs**: [checklists/pr_submission.md](./checklists/pr_submission.md)
 - **Reviewing PRs**: [checklists/pr_review.md](./checklists/pr_review.md)
 - **Definition of Done**: [checklists/definition_of_done.md](./checklists/definition_of_done.md)

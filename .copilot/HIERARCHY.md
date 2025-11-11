@@ -21,7 +21,8 @@ Level 1: ENTRY POINT
         ├── recipes/
         │   ├── component.md    - HOW to create components
         │   ├── storybook.md    - HOW to write stories
-        │   └── testing.md      - HOW to write tests
+        │   ├── testing.md      - HOW to write tests
+        │   └── spec-creation.md - HOW to create specs
         └── checklists/
             ├── component_development.md - VERIFY component completion
             ├── pr_review.md             - VERIFY PR quality
@@ -85,6 +86,15 @@ READ: workflow.md (Release process, versioning, deployment)
 #### Understanding Specification Management
 ```
 READ: workflow.md (Spec folder structure, branch naming, templates)
+      recipes/spec-creation.md (How to create granular, verifiable specs)
+```
+
+#### Creating Epic or Story Specs
+```
+READ: recipes/spec-creation.md (Detailed templates and guidelines)
+      workflow.md (Specification management process)
+VERIFY: Templates in spec-creation.md
+        Epic/story acceptance criteria are verifiable
 ```
 
 ## 📝 File Purposes
@@ -108,6 +118,7 @@ READ: workflow.md (Spec folder structure, branch naming, templates)
 - **recipes/component.md** - Step-by-step component creation
 - **recipes/storybook.md** - How to write effective stories
 - **recipes/testing.md** - How to write tests with examples
+- **recipes/spec-creation.md** - How to create granular, verifiable epic and story specifications
 
 ### Quality Gates (Verification)
 - **checklists/component_development.md** - Complete component checklist

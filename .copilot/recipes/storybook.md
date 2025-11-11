@@ -107,6 +107,97 @@ Overlays/
 
 ## Story Patterns
 
+### ❌ NEVER Use Raw HTML in Stories
+
+**Rule**: Always use design system primitives (Card, Button, Typography) instead of raw HTML (`<div>`, `<button>`, `<h1>`, etc.)
+
+**Why**:
+- Ensures consistency across all stories
+- Uses proper theme tokens
+- Demonstrates actual component usage
+- Maintains accessibility standards
+- Shows best practices to developers
+
+### ✅ Use Design System Primitives
+
+```tsx
+// ❌ BAD - Using raw HTML
+export const Example: Story = {
+  render: () => (
+    <div style={{ padding: '1rem', backgroundColor: '#fff', borderRadius: '8px' }}>
+      <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Title</h3>
+      <p>Description text</p>
+      <button style={{ padding: '0.5rem 1rem', background: '#3b82f6', color: '#fff' }}>
+        Click me
+      </button>
+    </div>
+  ),
+};
+
+// ✅ GOOD - Using design system primitives
+export const Example: Story = {
+  render: () => (
+    <Card className="p-4">
+      <Typography type="card-title">Title</Typography>
+      <Typography type="body" className="mt-2">Description text</Typography>
+      <Button intent="primary" className="mt-4">Click me</Button>
+    </Card>
+  ),
+};
+```
+
+### ✅ Common Primitives to Use
+
+```tsx
+import { 
+  Card,           // Instead of <div> for containers
+  Typography,     // Instead of <h1>, <h2>, <p>, <span>
+  Button,         // Instead of <button>
+  Badge,          // For status indicators
+} from '@nevo/design-system';
+
+// Layout
+<Card>...</Card>                                    // Container
+<div className="flex gap-4">...</div>               // Flexbox (Tailwind OK)
+<div className="grid grid-cols-2 gap-4">...</div>  // Grid (Tailwind OK)
+
+// Typography
+<Typography type="page-title">...</Typography>      // h1
+<Typography type="section-title">...</Typography>   // h2
+<Typography type="card-title">...</Typography>      // h3
+<Typography type="body">...</Typography>            // p
+<Typography type="caption">...</Typography>         // Small text
+<Typography type="label">...</Typography>           // Form labels
+
+// Interactive
+<Button intent="primary">...</Button>
+<Badge intent="success">...</Badge>
+```
+
+### ✅ When Tailwind Classes Are OK
+
+**Acceptable**: Using Tailwind utility classes for layout and spacing
+
+```tsx
+// ✅ GOOD - Tailwind for layout
+<div className="flex flex-col gap-4">
+  <Card className="p-4">...</Card>
+  <Card className="p-4">...</Card>
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  <Card>...</Card>
+  <Card>...</Card>
+  <Card>...</Card>
+</div>
+
+// ✅ GOOD - Tailwind for responsive spacing
+<div className="p-4 md:p-6 lg:p-8">...</div>
+
+// ❌ BAD - Inline styles for things Tailwind can do
+<div style={{ display: 'flex', gap: '1rem', padding: '1rem' }}>...</div>
+```
+
 ### 1. Default Story
 The simplest, most common use case:
 

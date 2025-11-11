@@ -19,6 +19,92 @@ This document describes the development workflow, processes, and procedures for 
 - `spec/001-ui-components/001-button-component.md`
 - `spec/002-testing-infrastructure/001-introduce-modular-api-mocks.md`
 
+### Epic and Story Structure
+
+**Epic**: Large body of work that can be broken down into stories
+
+**Story**: Discrete unit of work that can be completed in 1-3 days
+
+**Format**:
+```
+spec/
+└── <epic-number>-<epic-name>/
+    ├── README.md                        # Epic overview
+    ├── <story-number>-<story-name>.md   # Story details
+    └── ...
+```
+
+**Example**:
+```
+spec/
+└── 003-design-system-cleanup/
+    ├── README.md                              # Epic overview
+    ├── 001-audit-components.md                # Story 001
+    ├── 002-refactor-primitives.md             # Story 002
+    ├── 003-refactor-data-components.md        # Story 003
+    └── 001-audit-report.md                    # Deliverables
+```
+
+### Creating Granular, Verifiable Tasks
+
+**Rule**: Break stories into small, verifiable tasks that can be checked off incrementally.
+
+**Good Task Characteristics**:
+- ✅ Clear, specific action ("Audit Button.tsx for inline styles")
+- ✅ Measurable outcome ("All inline styles documented")
+- ✅ Estimated time (15 min, 1 hour, 2 hours)
+- ✅ Can be completed independently
+- ✅ Easy to verify completion
+
+**Bad Task Characteristics**:
+- ❌ Too vague ("Improve Button component")
+- ❌ No clear outcome ("Look at styling")
+- ❌ No estimate
+- ❌ Depends on too many other tasks
+- ❌ Difficult to verify
+
+**Example - Good Task Breakdown**:
+
+```markdown
+### Task 002-1: Audit Button Component
+**Estimate**: 30 minutes
+
+- [ ] Count lines of code (target: < 200)
+- [ ] Identify all inline styles (list line numbers)
+- [ ] Document constants not extracted (if any)
+- [ ] Check test coverage (target: > 80%)
+- [ ] Verify Storybook stories coverage
+- [ ] List accessibility issues (if any)
+
+**Deliverable**: Audit checklist completed in story document
+
+### Task 002-2: Replace Inline Styles with Tailwind
+**Estimate**: 1-2 hours
+**Depends on**: Task 002-1
+
+- [ ] Convert `background` style to Tailwind classes
+- [ ] Convert `color` style to Tailwind classes
+- [ ] Convert `border` style to Tailwind classes
+- [ ] Convert `boxShadow` style to Tailwind classes
+- [ ] Remove inline `style={{}}` prop
+- [ ] Test all variants still render correctly
+- [ ] Verify dark mode still works
+
+**Deliverable**: Button.tsx with zero inline styles (except dynamic values)
+
+### Task 002-3: Improve Loading State
+**Estimate**: 30 minutes
+**Depends on**: Task 002-2
+
+- [ ] Import Spinner component
+- [ ] Replace "Loading..." text with <Spinner />
+- [ ] Add size prop to match button size
+- [ ] Update tests for loading state
+- [ ] Update Storybook story for loading state
+
+**Deliverable**: Button shows proper loading indicator
+```
+
 ### Branch Naming Convention
 
 **Rule**: Branch names must follow the pattern `features/<epic>/<task>-<description>`
@@ -31,6 +117,7 @@ This document describes the development workflow, processes, and procedures for 
 - `features/000-devops/003-cloudflare-preview-deployments`
 - `features/001-ui-components/001-button-component`
 - `features/002-testing-infrastructure/001-introduce-modular-api-mocks`
+- `features/003-design-system-cleanup/001-audit-components`
 
 **Alternative branch naming** (for smaller tasks):
 - Feature: `feature/component-name` or `feature/feature-description`
