@@ -5,7 +5,6 @@ import { TableColumn, TableAction } from "./types";
 import { Eye, Edit, Trash2, Package, MoreVertical } from "lucide-react";
 import { Badge } from "../../primitives/Badge";
 import { Button } from "../../primitives/Button";
-import { Card } from "../../primitives/Card";
 
 interface Product {
   id: number;
@@ -205,11 +204,7 @@ export const LoadingWithSnapshot: Story = {
 
     return (
       <div>
-        <Button
-          intent="primary"
-          onClick={handleRefresh}
-          className="mb-4"
-        >
+        <Button intent="primary" onClick={handleRefresh} className="mb-4">
           Simulate Loading
         </Button>
         <Table
@@ -352,28 +347,16 @@ export const InteractiveStates: Story = {
     return (
       <div>
         <div className="mb-4 flex gap-2">
-          <Button
-            intent="primary"
-            onClick={() => handleStateChange("default")}
-          >
+          <Button intent="primary" onClick={() => handleStateChange("default")}>
             Default
           </Button>
-          <Button
-            intent="warning"
-            onClick={() => handleStateChange("loading")}
-          >
+          <Button intent="warning" onClick={() => handleStateChange("loading")}>
             Loading
           </Button>
-          <Button
-            intent="neutral"
-            onClick={() => handleStateChange("empty")}
-          >
+          <Button intent="neutral" onClick={() => handleStateChange("empty")}>
             Empty
           </Button>
-          <Button
-            intent="error"
-            onClick={() => handleStateChange("error")}
-          >
+          <Button intent="error" onClick={() => handleStateChange("error")}>
             Error
           </Button>
         </div>
