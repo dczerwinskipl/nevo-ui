@@ -120,14 +120,10 @@ function ThemeSynchronizer({ isDark }: { isDark: boolean }) {
 const withTheme = (Story: any, context: any) => {
   const isDark = context.globals.theme === "dark";
 
-  console.log("[withTheme] Wrapping story:", context.title, context.name);
-
   return (
     <ThemeProvider initialDark={isDark}>
       <ThemeSynchronizer isDark={isDark} />
-      <div style={{ padding: "1rem" }}>
-        <Story />
-      </div>
+      <Story />
     </ThemeProvider>
   );
 };

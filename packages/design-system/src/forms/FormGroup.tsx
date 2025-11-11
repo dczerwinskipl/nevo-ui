@@ -1,5 +1,6 @@
 import React from "react";
 import { clsx } from "clsx";
+import { useTheme } from "../theme";
 
 export interface FormGroupProps {
   title?: string;
@@ -24,13 +25,24 @@ export function FormGroup({
   direction = "vertical",
   spacing = "md",
 }: FormGroupProps) {
+  const { tokens } = useTheme();
+
   return (
     <div className={clsx("form-group", className)}>
       {(title || description) && (
         <div className="mb-4">
-          {title && <h3 className="text-lg font-semibold mb-1">{title}</h3>}
+          {title && (
+            <h3
+              className="text-lg font-semibold mb-1"
+              style={{ color: tokens.text }}
+            >
+              {title}
+            </h3>
+          )}
           {description && (
-            <p className="text-sm text-gray-600">{description}</p>
+            <p className="text-sm" style={{ color: tokens.muted }}>
+              {description}
+            </p>
           )}
         </div>
       )}
