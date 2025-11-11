@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { EmptyState } from "./EmptyState";
+import { Card } from "../primitives/Card";
 import {
   Package,
   ShoppingCart,
@@ -127,54 +128,53 @@ export const WithoutIcon: Story = {
 export const AllVariations: Story = {
   render: () => (
     <div className="space-y-8">
-      <div className="border rounded-lg p-4">
+      <Card className="p-4">
         <EmptyState
           title="No products yet"
           description="You haven't added any products yet."
           icon={<Package className="w-12 h-12" />}
         />
-      </div>
-      <div className="border rounded-lg p-4">
+      </Card>
+      <Card className="p-4">
         <EmptyState
           title="No orders found"
           description="There are no orders matching your criteria."
           icon={<ShoppingCart className="w-12 h-12" />}
         />
-      </div>
-      <div className="border rounded-lg p-4">
+      </Card>
+      <Card className="p-4">
         <EmptyState
           title="No results found"
           description="Try adjusting your search or filters."
           icon={<Search className="w-12 h-12" />}
         />
-      </div>
+      </Card>
     </div>
   ),
 };
 
 export const InContainer: Story = {
   render: () => (
-    <div
-      className="border rounded-lg"
-      style={{ minHeight: "400px", display: "flex", alignItems: "center" }}
-    >
-      <EmptyState
-        title="No items in your cart"
-        description="Add some products to your cart to get started with your order."
-        icon={<ShoppingCart className="w-12 h-12" />}
-      />
-    </div>
+    <Card style={{ minHeight: "400px" }}>
+      <div className="flex items-center h-full">
+        <EmptyState
+          title="No items in your cart"
+          description="Add some products to your cart to get started with your order."
+          icon={<ShoppingCart className="w-12 h-12" />}
+        />
+      </div>
+    </Card>
   ),
 };
 
 export const CompactLayout: Story = {
   render: () => (
-    <div className="border rounded-lg p-2">
+    <Card className="p-2">
       <EmptyState
         title="No data"
         description="Nothing to display."
         icon={<Inbox className="w-8 h-8" />}
       />
-    </div>
+    </Card>
   ),
 };

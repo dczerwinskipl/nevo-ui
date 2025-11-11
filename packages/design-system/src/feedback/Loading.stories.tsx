@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Loading } from "./Loading";
+import { Card } from "../primitives/Card";
+import { Typography } from "../primitives/Typography";
 
 const meta: Meta<typeof Loading> = {
   title: "Feedback/Loading",
@@ -55,15 +57,21 @@ export const AllSizes: Story = {
     <div className="flex items-center gap-8">
       <div className="flex flex-col items-center gap-2">
         <Loading size="sm" />
-        <span className="text-sm text-gray-500">Small</span>
+        <Typography type="caption" intent="neutral">
+          Small
+        </Typography>
       </div>
       <div className="flex flex-col items-center gap-2">
         <Loading size="md" />
-        <span className="text-sm text-gray-500">Medium</span>
+        <Typography type="caption" intent="neutral">
+          Medium
+        </Typography>
       </div>
       <div className="flex flex-col items-center gap-2">
         <Loading size="lg" />
-        <span className="text-sm text-gray-500">Large</span>
+        <Typography type="caption" intent="neutral">
+          Large
+        </Typography>
       </div>
     </div>
   ),
@@ -74,15 +82,21 @@ export const AllVariants: Story = {
     <div className="flex items-center gap-8">
       <div className="flex flex-col items-center gap-2">
         <Loading variant="spinner" size="md" />
-        <span className="text-sm text-gray-500">Spinner</span>
+        <Typography type="caption" intent="neutral">
+          Spinner
+        </Typography>
       </div>
       <div className="flex flex-col items-center gap-2">
         <Loading variant="dots" size="md" />
-        <span className="text-sm text-gray-500">Dots</span>
+        <Typography type="caption" intent="neutral">
+          Dots
+        </Typography>
       </div>
       <div className="flex flex-col items-center gap-2">
         <Loading variant="pulse" size="md" />
-        <span className="text-sm text-gray-500">Pulse</span>
+        <Typography type="caption" intent="neutral">
+          Pulse
+        </Typography>
       </div>
     </div>
   ),
@@ -128,17 +142,11 @@ export const WithLongText: Story = {
 
 export const InCard: Story = {
   render: () => (
-    <div
-      className="p-8 rounded-lg border"
-      style={{
-        minHeight: "200px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <Loading variant="spinner" size="lg" text="Loading content..." />
-    </div>
+    <Card className="p-8" style={{ minHeight: "200px" }}>
+      <div className="flex items-center justify-center h-full">
+        <Loading variant="spinner" size="lg" text="Loading content..." />
+      </div>
+    </Card>
   ),
 };
 
@@ -148,9 +156,9 @@ export const FullPageLoading: Story = {
       className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30"
       style={{ minHeight: "400px" }}
     >
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-xl">
+      <Card className="p-8">
         <Loading variant="spinner" size="lg" text="Loading application..." />
-      </div>
+      </Card>
     </div>
   ),
 };
@@ -159,7 +167,9 @@ export const AllCombinations: Story = {
   render: () => (
     <div className="space-y-8">
       <div>
-        <h3 className="text-lg font-semibold mb-4">Spinner Variants</h3>
+        <Typography type="card-title" className="mb-4">
+          Spinner Variants
+        </Typography>
         <div className="flex gap-8">
           <Loading variant="spinner" size="sm" text="Small" />
           <Loading variant="spinner" size="md" text="Medium" />
@@ -167,7 +177,9 @@ export const AllCombinations: Story = {
         </div>
       </div>
       <div>
-        <h3 className="text-lg font-semibold mb-4">Dots Variants</h3>
+        <Typography type="card-title" className="mb-4">
+          Dots Variants
+        </Typography>
         <div className="flex gap-8">
           <Loading variant="dots" size="sm" text="Small" />
           <Loading variant="dots" size="md" text="Medium" />
@@ -175,7 +187,9 @@ export const AllCombinations: Story = {
         </div>
       </div>
       <div>
-        <h3 className="text-lg font-semibold mb-4">Pulse Variants</h3>
+        <Typography type="card-title" className="mb-4">
+          Pulse Variants
+        </Typography>
         <div className="flex gap-8">
           <Loading variant="pulse" size="sm" text="Small" />
           <Loading variant="pulse" size="md" text="Medium" />

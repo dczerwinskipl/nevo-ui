@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { Sidebar } from "./Sidebar";
+import { Button } from "../primitives/Button";
+import { Card } from "../primitives/Card";
+import { Typography } from "../primitives/Typography";
 
 const meta: Meta<typeof Sidebar> = {
   title: "Navigation/Sidebar",
@@ -28,10 +31,12 @@ export const Default: Story = {
       <div style={{ height: "600px", display: "flex" }}>
         <Sidebar route={route} onNavigate={setRoute} />
         <div className="flex-1 p-8">
-          <h1 className="text-2xl font-bold mb-4">Current Route: {route}</h1>
-          <p className="text-gray-600">
+          <Typography type="section-title" className="mb-4">
+            Current Route: {route}
+          </Typography>
+          <Typography type="body" intent="neutral">
             Click on navigation items to change the active route.
-          </p>
+          </Typography>
         </div>
       </div>
     );
@@ -46,11 +51,13 @@ export const WithActiveChild: Story = {
       <div style={{ height: "600px", display: "flex" }}>
         <Sidebar route={route} onNavigate={setRoute} />
         <div className="flex-1 p-8">
-          <h1 className="text-2xl font-bold mb-4">Current Route: {route}</h1>
-          <p className="text-gray-600">
+          <Typography type="section-title" className="mb-4">
+            Current Route: {route}
+          </Typography>
+          <Typography type="body" intent="neutral">
             The Products section is expanded with &quot;All Products&quot;
             active.
-          </p>
+          </Typography>
         </div>
       </div>
     );
@@ -65,8 +72,12 @@ export const MinimalNavigation: Story = {
       <div style={{ height: "600px", display: "flex" }}>
         <Sidebar route={route} onNavigate={setRoute} />
         <div className="flex-1 p-8">
-          <h1 className="text-2xl font-bold mb-4">Current Route: {route}</h1>
-          <p className="text-gray-600">Minimal sidebar with 3 items.</p>
+          <Typography type="section-title" className="mb-4">
+            Current Route: {route}
+          </Typography>
+          <Typography type="caption" intent="neutral">
+            Minimal sidebar with 3 items.
+          </Typography>
         </div>
       </div>
     );
@@ -81,10 +92,12 @@ export const ExtendedNavigation: Story = {
       <div style={{ height: "600px", display: "flex" }}>
         <Sidebar route={route} onNavigate={setRoute} />
         <div className="flex-1 p-8">
-          <h1 className="text-2xl font-bold mb-4">Current Route: {route}</h1>
-          <p className="text-gray-600">
+          <Typography type="section-title" className="mb-4">
+            Current Route: {route}
+          </Typography>
+          <Typography type="caption" intent="neutral">
             Extended navigation with many items and nested children.
-          </p>
+          </Typography>
         </div>
       </div>
     );
@@ -105,17 +118,20 @@ export const MobileOverlay: Story = {
           onClose={() => setIsOpen(false)}
         />
         <div className="flex-1 p-8">
-          <button
+          <Button
+            intent="primary"
             onClick={() => setIsOpen(true)}
-            className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="mb-4"
           >
             Open Mobile Sidebar
-          </button>
-          <h1 className="text-2xl font-bold mb-4">Current Route: {route}</h1>
-          <p className="text-gray-600">
+          </Button>
+          <Typography type="section-title" className="mb-4">
+            Current Route: {route}
+          </Typography>
+          <Typography type="caption" intent="neutral">
             This demonstrates the mobile overlay behavior. Click the button to
             open the sidebar.
-          </p>
+          </Typography>
         </div>
       </div>
     );
@@ -136,17 +152,18 @@ export const Interactive: Story = {
 
     return (
       <div>
-        <div className="mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
-          <p className="text-sm">
+        <Card className="mb-4 p-4">
+          <Typography type="body" className="mb-2">
             Navigation clicks: <strong>{clicks}</strong>
-          </p>
-          <button
+          </Typography>
+          <Button
+            intent="primary"
             onClick={() => setMobileOpen(true)}
-            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 md:hidden"
+            className="md:hidden"
           >
             Open Mobile Menu
-          </button>
-        </div>
+          </Button>
+        </Card>
         <div style={{ height: "600px", display: "flex" }}>
           <Sidebar
             route={route}
@@ -155,15 +172,25 @@ export const Interactive: Story = {
             onClose={() => setMobileOpen(false)}
           />
           <div className="flex-1 p-8">
-            <h1 className="text-2xl font-bold mb-4">Current Route: {route}</h1>
-            <p className="text-gray-600 mb-4">
+            <Typography type="section-title" className="mb-4">
+              Current Route: {route}
+            </Typography>
+            <Typography type="caption" intent="neutral" className="mb-4">
               Try navigating to different sections and their children.
-            </p>
-            <div className="space-y-2 text-sm">
-              <p>• Click parent items to expand/collapse children</p>
-              <p>• Click child items to navigate</p>
-              <p>• Active states are highlighted</p>
-              <p>• Mobile overlay works on small screens</p>
+            </Typography>
+            <div className="space-y-2">
+              <Typography type="body">
+                • Click parent items to expand/collapse children
+              </Typography>
+              <Typography type="body">
+                • Click child items to navigate
+              </Typography>
+              <Typography type="body">
+                • Active states are highlighted
+              </Typography>
+              <Typography type="body">
+                • Mobile overlay works on small screens
+              </Typography>
             </div>
           </div>
         </div>
@@ -181,36 +208,54 @@ export const WithContentArea: Story = {
         case "dashboard":
           return (
             <div>
-              <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
-              <p>Welcome to your dashboard!</p>
+              <Typography type="page-title" className="mb-4">
+                Dashboard
+              </Typography>
+              <Typography type="body">
+                Welcome to your dashboard!
+              </Typography>
             </div>
           );
         case "products-list":
           return (
             <div>
-              <h1 className="text-3xl font-bold mb-4">All Products</h1>
-              <p>View and manage all your products here.</p>
+              <Typography type="page-title" className="mb-4">
+                All Products
+              </Typography>
+              <Typography type="body">
+                View and manage all your products here.
+              </Typography>
             </div>
           );
         case "orders-list":
           return (
             <div>
-              <h1 className="text-3xl font-bold mb-4">All Orders</h1>
-              <p>View and manage all orders.</p>
+              <Typography type="page-title" className="mb-4">
+                All Orders
+              </Typography>
+              <Typography type="body">
+                View and manage all orders.
+              </Typography>
             </div>
           );
         case "users":
           return (
             <div>
-              <h1 className="text-3xl font-bold mb-4">Users</h1>
-              <p>Manage your users and permissions.</p>
+              <Typography type="page-title" className="mb-4">
+                Users
+              </Typography>
+              <Typography type="body">
+                Manage your users and permissions.
+              </Typography>
             </div>
           );
         default:
           return (
             <div>
-              <h1 className="text-3xl font-bold mb-4">{route}</h1>
-              <p>Content for {route}</p>
+              <Typography type="page-title" className="mb-4">
+                {route}
+              </Typography>
+              <Typography type="body">Content for {route}</Typography>
             </div>
           );
       }

@@ -4,6 +4,8 @@ import { Table } from "./Table";
 import { TableColumn, TableAction } from "./types";
 import { Eye, Edit, Trash2, Package, MoreVertical } from "lucide-react";
 import { Badge } from "../../primitives/Badge";
+import { Button } from "../../primitives/Button";
+import { Card } from "../../primitives/Card";
 
 interface Product {
   id: number;
@@ -203,12 +205,13 @@ export const LoadingWithSnapshot: Story = {
 
     return (
       <div>
-        <button
+        <Button
+          intent="primary"
           onClick={handleRefresh}
-          className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="mb-4"
         >
           Simulate Loading
-        </button>
+        </Button>
         <Table
           data={sampleProducts}
           columns={columns}
@@ -349,30 +352,30 @@ export const InteractiveStates: Story = {
     return (
       <div>
         <div className="mb-4 flex gap-2">
-          <button
+          <Button
+            intent="primary"
             onClick={() => handleStateChange("default")}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Default
-          </button>
-          <button
+          </Button>
+          <Button
+            intent="warning"
             onClick={() => handleStateChange("loading")}
-            className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
           >
             Loading
-          </button>
-          <button
+          </Button>
+          <Button
+            intent="neutral"
             onClick={() => handleStateChange("empty")}
-            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
           >
             Empty
-          </button>
-          <button
+          </Button>
+          <Button
+            intent="error"
             onClick={() => handleStateChange("error")}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
           >
             Error
-          </button>
+          </Button>
         </div>
         <Table
           data={data}

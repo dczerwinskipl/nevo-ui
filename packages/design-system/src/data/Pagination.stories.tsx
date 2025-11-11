@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Pagination } from "./Pagination";
+import { Card } from "../primitives/Card";
+import { Typography } from "../primitives/Typography";
 
 const meta: Meta<typeof Pagination> = {
   title: "Data/Pagination",
@@ -75,15 +77,21 @@ export const DifferentPageSizes: Story = {
   render: () => (
     <div className="space-y-8">
       <div>
-        <h3 className="text-lg font-semibold mb-4">10 items per page</h3>
+        <Typography type="card-title" className="mb-4">
+          10 items per page
+        </Typography>
         <Pagination total={100} pageSize={10} />
       </div>
       <div>
-        <h3 className="text-lg font-semibold mb-4">25 items per page</h3>
+        <Typography type="card-title" className="mb-4">
+          25 items per page
+        </Typography>
         <Pagination total={100} pageSize={25} />
       </div>
       <div>
-        <h3 className="text-lg font-semibold mb-4">50 items per page</h3>
+        <Typography type="card-title" className="mb-4">
+          50 items per page
+        </Typography>
         <Pagination total={100} pageSize={50} />
       </div>
     </div>
@@ -94,19 +102,27 @@ export const VariousTotals: Story = {
   render: () => (
     <div className="space-y-8">
       <div>
-        <h3 className="text-lg font-semibold mb-4">25 total items</h3>
+        <Typography type="card-title" className="mb-4">
+          25 total items
+        </Typography>
         <Pagination total={25} pageSize={10} />
       </div>
       <div>
-        <h3 className="text-lg font-semibold mb-4">100 total items</h3>
+        <Typography type="card-title" className="mb-4">
+          100 total items
+        </Typography>
         <Pagination total={100} pageSize={10} />
       </div>
       <div>
-        <h3 className="text-lg font-semibold mb-4">500 total items</h3>
+        <Typography type="card-title" className="mb-4">
+          500 total items
+        </Typography>
         <Pagination total={500} pageSize={10} />
       </div>
       <div>
-        <h3 className="text-lg font-semibold mb-4">1000 total items</h3>
+        <Typography type="card-title" className="mb-4">
+          1000 total items
+        </Typography>
         <Pagination total={1000} pageSize={10} />
       </div>
     </div>
@@ -115,7 +131,7 @@ export const VariousTotals: Story = {
 
 export const InTable: Story = {
   render: () => (
-    <div className="border rounded-lg p-4">
+    <Card className="p-4">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -137,6 +153,6 @@ export const InTable: Story = {
         </table>
       </div>
       <Pagination total={100} pageSize={10} />
-    </div>
+    </Card>
   ),
 };

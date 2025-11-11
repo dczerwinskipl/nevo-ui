@@ -34,13 +34,13 @@ export const Table = <T extends Record<string, any>>({
 
   // Capture data snapshot when isLoading changes from true to false
   useEffect(() => {
-    if (!isLoading && prevIsLoading) {
+    if ((!isLoading && prevIsLoading) || data?.length > 0) {
       // Store current data after finishing loading data
       setSnapshotData(data || []);
     }
     setPrevIsLoading(isLoading);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, prevIsLoading]);
+  }, [isLoading, prevIsLoading, data]);
 
   const handleActionClick = (action: TableAction<T>, row: T) => {
     action.onClick?.(row);

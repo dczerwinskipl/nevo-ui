@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Card } from "./Card";
+import { Typography } from "./Typography";
 import React from "react";
 
 const meta = {
@@ -38,11 +39,13 @@ export const WithText: Story = {
   args: {
     children: (
       <div>
-        <h3 className="text-lg font-semibold mb-2">Card Title</h3>
-        <p className="text-sm opacity-80">
+        <Typography type="card-title" className="mb-2">
+          Card Title
+        </Typography>
+        <Typography type="body" intent="neutral">
           This is a simple card with some text content. Cards are useful for
           grouping related information.
-        </p>
+        </Typography>
       </div>
     ),
   },
@@ -57,17 +60,21 @@ export const WithStructuredContent: Story = {
           className="border-b pb-3"
           style={{ borderColor: "var(--color-border)" }}
         >
-          <h2 className="text-xl font-bold">Product Name</h2>
-          <p className="text-sm opacity-60">SKU: ABC-12345</p>
+          <Typography type="section-title" className="mb-1">
+            Product Name
+          </Typography>
+          <Typography type="caption" intent="neutral">
+            SKU: ABC-12345
+          </Typography>
         </div>
         <div>
-          <p className="text-sm mb-2">
+          <Typography type="body" className="mb-2">
             <strong>Description:</strong> This is a detailed product description
             that provides more information about the item.
-          </p>
-          <p className="text-sm">
+          </Typography>
+          <Typography type="body">
             <strong>Price:</strong> $99.99
-          </p>
+          </Typography>
         </div>
       </div>
     </Card>
@@ -87,16 +94,28 @@ export const MultipleCards: Story = {
       }}
     >
       <Card style={{ flex: "1 1 200px" }}>
-        <h3 className="font-semibold mb-2">Card 1</h3>
-        <p className="text-sm opacity-80">First card content</p>
+        <Typography type="card-title" className="mb-2">
+          Card 1
+        </Typography>
+        <Typography type="body" intent="neutral">
+          First card content
+        </Typography>
       </Card>
       <Card style={{ flex: "1 1 200px" }}>
-        <h3 className="font-semibold mb-2">Card 2</h3>
-        <p className="text-sm opacity-80">Second card content</p>
+        <Typography type="card-title" className="mb-2">
+          Card 2
+        </Typography>
+        <Typography type="body" intent="neutral">
+          Second card content
+        </Typography>
       </Card>
       <Card style={{ flex: "1 1 200px" }}>
-        <h3 className="font-semibold mb-2">Card 3</h3>
-        <p className="text-sm opacity-80">Third card content</p>
+        <Typography type="card-title" className="mb-2">
+          Card 3
+        </Typography>
+        <Typography type="body" intent="neutral">
+          Third card content
+        </Typography>
       </Card>
     </div>
   ),
@@ -109,10 +128,12 @@ export const CustomStyling: Story = {
     className: "border-2 border-blue-500",
     children: (
       <div>
-        <h3 className="text-lg font-semibold mb-2">Styled Card</h3>
-        <p className="text-sm opacity-80">
+        <Typography type="card-title" className="mb-2">
+          Styled Card
+        </Typography>
+        <Typography type="body" intent="neutral">
           This card has custom border styling applied
-        </p>
+        </Typography>
       </div>
     ),
   },
@@ -135,8 +156,12 @@ export const Interactive: Story = {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <h3 className="font-semibold mb-2">Interactive Card</h3>
-        <p className="text-sm opacity-80">Hover over me and click!</p>
+        <Typography type="card-title" className="mb-2">
+          Interactive Card
+        </Typography>
+        <Typography type="body" intent="neutral">
+          Hover over me and click!
+        </Typography>
       </Card>
     );
   },
@@ -155,8 +180,12 @@ export const WithImage: Story = {
           Image Placeholder
         </div>
         <div>
-          <h3 className="font-semibold mb-1">Image Card</h3>
-          <p className="text-sm opacity-80">Card with an image placeholder</p>
+          <Typography type="card-title" className="mb-1">
+            Image Card
+          </Typography>
+          <Typography type="body" intent="neutral">
+            Card with an image placeholder
+          </Typography>
         </div>
       </div>
     </Card>
@@ -177,8 +206,12 @@ export const GridLayout: Story = {
     >
       {[1, 2, 3, 4, 5, 6].map((num) => (
         <Card key={num}>
-          <h3 className="font-semibold mb-2">Card {num}</h3>
-          <p className="text-sm opacity-80">Content for card number {num}</p>
+          <Typography type="card-title" className="mb-2">
+            Card {num}
+          </Typography>
+          <Typography type="body" intent="neutral">
+            Content for card number {num}
+          </Typography>
         </Card>
       ))}
     </div>

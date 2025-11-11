@@ -2,7 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState, useEffect } from "react";
 import type { Scenario } from "@nevo/api-mocks";
 import { Button } from "../primitives/Button";
-import { useTheme } from "../theme/ThemeProvider";
+import { Card } from "../primitives/Card";
+import { Typography } from "../primitives/Typography";
+import { Alert } from "../feedback/Alert";
 
 interface ApiResponse {
   data: unknown[];
@@ -25,7 +27,6 @@ function ApiDataExample({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scenario, setScenario] = useState<Scenario>("success");
-  const { tokens } = useTheme();
 
   // Subscribe to scenario changes
   useEffect(() => {
@@ -73,76 +74,41 @@ function ApiDataExample({
   };
 
   return (
-    <div
-      style={{
-        fontFamily: "system-ui",
-        maxWidth: "600px",
-        color: tokens.text,
-      }}
-    >
-      <h2 style={{ color: tokens.text }}>MSW Scenario Testing Example</h2>
+    <div style={{ maxWidth: "600px" }}>
+      <Typography type="section-title" className="mb-4">
+        MSW Scenario Testing Example
+      </Typography>
 
-      <div
-        style={{
-          padding: "1rem",
-          background: tokens.card,
-          borderRadius: "4px",
-          marginBottom: "1rem",
-          border: `1px solid ${tokens.border}`,
-        }}
-      >
-        <strong style={{ color: tokens.text }}>Current Scenario:</strong>{" "}
-        {scenario}
+      <Card className="mb-4">
+        <Typography type="body" className="mb-2">
+          <strong>Current Scenario:</strong> {scenario}
+        </Typography>
         {!hideToolbarHint && (
-          <p
-            style={{
-              fontSize: "0.875rem",
-              color: tokens.muted,
-              marginTop: "0.5rem",
-            }}
-          >
+          <Typography type="caption" intent="neutral">
             Use the &quot;Mock Scenario&quot; toolbar dropdown above to switch
             scenarios
-          </p>
+          </Typography>
         )}
-      </div>
+      </Card>
 
       <Button onClick={fetchData} disabled={loading}>
         {loading ? "Loading..." : "Fetch Data"}
       </Button>
 
       {loading && (
-        <div style={{ marginTop: "1rem", color: tokens.muted }}>
+        <Typography type="body" intent="neutral" className="mt-4">
           ⏳ Loading...
-        </div>
+        </Typography>
       )}
 
       {error && (
-        <div
-          style={{
-            marginTop: "1rem",
-            padding: "1rem",
-            background: tokens.intent.error.bg,
-            color: tokens.intent.error.text,
-            border: `1px solid ${tokens.intent.error.border}`,
-            borderRadius: "4px",
-          }}
-        >
+        <Alert intent="error" className="mt-4">
           <strong>Error:</strong> {error}
-        </div>
+        </Alert>
       )}
 
       {data && !error ? (
-        <div
-          style={{
-            marginTop: "1rem",
-            padding: "1rem",
-            background: tokens.intent.success.bg,
-            color: tokens.intent.success.text,
-            border: `1px solid ${tokens.intent.success.border}`,
-            borderRadius: "4px",
-          }}
-        >
+        <Alert intent="success" className="mt-4">
           <strong>Success:</strong> Received{" "}
           {(data as ApiResponse)?.data?.length ||
             (Array.isArray(data) ? data.length : 0)}{" "}
@@ -152,12 +118,11 @@ function ApiDataExample({
               marginTop: "0.5rem",
               fontSize: "0.75rem",
               overflow: "auto",
-              color: tokens.text,
             }}
           >
             {JSON.stringify(data, null, 2)}
           </pre>
-        </div>
+        </Alert>
       ) : null}
     </div>
   );

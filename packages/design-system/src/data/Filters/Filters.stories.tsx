@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { Filters } from "./Filters";
 import { FilterConfig, FilterValue } from "../types";
+import { Card } from "../../primitives/Card";
 
 interface ProductFilters extends Record<string, FilterValue> {
   search: string;
@@ -364,11 +365,11 @@ export const Interactive: Story = {
           hasAppliedFilters={hasApplied}
         />
         {hasApplied && (
-          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+          <Card className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20">
             <p className="text-sm">
               Found <strong>{results}</strong> products matching your filters
             </p>
-          </div>
+          </Card>
         )}
       </div>
     );

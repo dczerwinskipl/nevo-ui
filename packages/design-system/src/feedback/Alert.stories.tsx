@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { Alert } from "./Alert";
+import { Button } from "../primitives/Button";
 import { AlertTriangle } from "lucide-react";
 
 const meta: Meta<typeof Alert> = {
@@ -116,12 +117,9 @@ export const Dismissible: Story = {
         This alert can be dismissed by clicking the X button.
       </Alert>
     ) : (
-      <button
-        onClick={() => setVisible(true)}
-        className="px-4 py-2 bg-blue-500 text-white rounded"
-      >
+      <Button intent="primary" onClick={() => setVisible(true)}>
         Show Alert Again
-      </button>
+      </Button>
     );
   },
 };
@@ -242,12 +240,9 @@ export const Interactive: Story = {
 
     return (
       <div className="space-y-4">
-        <button
-          onClick={addAlert}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
+        <Button intent="primary" onClick={addAlert}>
           Add Random Alert
-        </button>
+        </Button>
         {alerts.map((alert) => (
           <Alert
             key={alert.id}
@@ -259,7 +254,7 @@ export const Interactive: Story = {
           </Alert>
         ))}
         {alerts.length === 0 && (
-          <p className="text-gray-500">All alerts dismissed!</p>
+          <p className="text-sm text-muted">All alerts dismissed!</p>
         )}
       </div>
     );
