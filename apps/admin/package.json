@@ -9,7 +9,11 @@
     "build": "pnpm msw:init && tsc -b && vite build",
     "preview": "vite preview",
     "lint": "echo 'lint placeholder'",
-    "msw:init": "msw init public --save"
+    "msw:init": "msw init public --save",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
     "@faker-js/faker": "^10.1.0",
@@ -25,6 +29,7 @@
     "react-router-dom": "^6.8.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.56.1",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

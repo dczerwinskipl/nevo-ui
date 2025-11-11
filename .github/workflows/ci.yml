@@ -96,12 +96,66 @@ jobs:
       - name: Run tests
         run: pnpm --filter @nevo/design-system run test:ci
 
-  # Build job
+  # E2E tests job (runs in parallel with build)
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [quality]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build design system (required for E2E tests)
+        run: pnpm --filter @nevo/design-system run build
+
+      - name: Initialize MSW for E2E tests
+        run: pnpm --filter @nevo/ecommerce-admin-app run msw:init
+
+      - name: Install Playwright Browsers
+        run: pnpm --filter @nevo/ecommerce-admin-app exec playwright install chromium --with-deps
+
+      - name: Run Playwright tests
+        run: pnpm --filter @nevo/ecommerce-admin-app run test:e2e
+
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: apps/admin/playwright-report/
+          retention-days: 7
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-test-results
+          path: apps/admin/test-results/
+          retention-days: 7
+
+  # Build job (runs on PRs and main branch pushes)
   build:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: [quality, test]
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
     # For PRs to main, also depend on branch policy
     # Note: GitHub will handle the branch-policy dependency automatically via required status checks
 
@@ -142,19 +196,15 @@ jobs:
           fi
 
       - name: Initialize MSW for admin app
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: pnpm --filter @nevo/ecommerce-admin-app run msw:init
 
       - name: Build admin app
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: pnpm --filter @nevo/ecommerce-admin-app run build
 
       - name: Build Storybook
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: pnpm --filter @nevo/design-system run storybook:build
 
       - name: Upload admin build artifacts
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: admin-dist
@@ -162,14 +212,14 @@ jobs:
           retention-days: 1
 
       - name: Upload Storybook build artifacts
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: storybook-dist
           path: packages/design-system/storybook-static/
           retention-days: 1
 
-  # Manual preview deployment (only for PRs)
+  # Preview deployment (only for PRs)
+  # E2E tests run in parallel - preview deploys as soon as build is ready
   preview-deploy:
     name: 🚀 Deploy Preview
     runs-on: ubuntu-latest
@@ -256,7 +306,7 @@ jobs:
     name: 🌟 Deploy Production
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [build]
+    needs: [build, e2e-tests]
     environment:
       name: production
       url: ${{ steps.deploy.outputs.url }}
@@ -303,7 +353,7 @@ jobs:
   ci-success:
     name: CI Success
     runs-on: ubuntu-latest
-    needs: [quality, test, build]
+    needs: [quality, test, build, e2e-tests]
     if: always()
 
     steps:
@@ -317,8 +367,13 @@ jobs:
             echo "Tests failed"
             exit 1
           fi
-          if [[ "${{ needs.build.result }}" != "success" ]]; then
+          # Build job runs on PRs and main branch only
+          if [[ "${{ needs.build.result }}" != "success" && "${{ needs.build.result }}" != "skipped" ]]; then
             echo "Build failed"
+            exit 1
+          fi
+          if [[ "${{ needs.e2e-tests.result }}" != "success" ]]; then
+            echo "E2E tests failed"
             exit 1
           fi
           echo "All checks passed! ✅"
