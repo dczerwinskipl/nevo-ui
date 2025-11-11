@@ -86,27 +86,51 @@ export const AllVariants: Story = {
     <Stack gap={4}>
       <Flex gap={2} align="center">
         <span className="text-sm min-w-[80px]">Solid:</span>
-        <Badge variant="solid" intent="primary">Solid</Badge>
-        <Badge variant="solid" intent="success">Solid</Badge>
-        <Badge variant="solid" intent="error">Solid</Badge>
+        <Badge variant="solid" intent="primary">
+          Solid
+        </Badge>
+        <Badge variant="solid" intent="success">
+          Solid
+        </Badge>
+        <Badge variant="solid" intent="error">
+          Solid
+        </Badge>
       </Flex>
       <Flex gap={2} align="center">
         <span className="text-sm min-w-[80px]">Outline:</span>
-        <Badge variant="outline" intent="primary">Outline</Badge>
-        <Badge variant="outline" intent="success">Outline</Badge>
-        <Badge variant="outline" intent="error">Outline</Badge>
+        <Badge variant="outline" intent="primary">
+          Outline
+        </Badge>
+        <Badge variant="outline" intent="success">
+          Outline
+        </Badge>
+        <Badge variant="outline" intent="error">
+          Outline
+        </Badge>
       </Flex>
       <Flex gap={2} align="center">
         <span className="text-sm min-w-[80px]">Ghost:</span>
-        <Badge variant="ghost" intent="primary">Ghost</Badge>
-        <Badge variant="ghost" intent="success">Ghost</Badge>
-        <Badge variant="ghost" intent="error">Ghost</Badge>
+        <Badge variant="ghost" intent="primary">
+          Ghost
+        </Badge>
+        <Badge variant="ghost" intent="success">
+          Ghost
+        </Badge>
+        <Badge variant="ghost" intent="error">
+          Ghost
+        </Badge>
       </Flex>
       <Flex gap={2} align="center">
         <span className="text-sm min-w-[80px]">Subtle:</span>
-        <Badge variant="subtle" intent="primary">Subtle</Badge>
-        <Badge variant="subtle" intent="success">Subtle</Badge>
-        <Badge variant="subtle" intent="error">Subtle</Badge>
+        <Badge variant="subtle" intent="primary">
+          Subtle
+        </Badge>
+        <Badge variant="subtle" intent="success">
+          Subtle
+        </Badge>
+        <Badge variant="subtle" intent="error">
+          Subtle
+        </Badge>
       </Flex>
     </Stack>
   ),
@@ -123,11 +147,21 @@ export const AllVariants: Story = {
 export const StatusBadges: Story = {
   render: () => (
     <Flex wrap gap={2}>
-      <Badge intent="success" variant="subtle">Active</Badge>
-      <Badge intent="warning" variant="subtle">Pending</Badge>
-      <Badge intent="error" variant="subtle">Inactive</Badge>
-      <Badge intent="info" variant="subtle">Draft</Badge>
-      <Badge intent="neutral" variant="subtle">Archived</Badge>
+      <Badge intent="success" variant="subtle">
+        Active
+      </Badge>
+      <Badge intent="warning" variant="subtle">
+        Pending
+      </Badge>
+      <Badge intent="error" variant="subtle">
+        Inactive
+      </Badge>
+      <Badge intent="info" variant="subtle">
+        Draft
+      </Badge>
+      <Badge intent="neutral" variant="subtle">
+        Archived
+      </Badge>
     </Flex>
   ),
   parameters: {
@@ -145,15 +179,21 @@ export const CountBadges: Story = {
     <Flex wrap gap={4} align="center">
       <Flex gap={2} align="center">
         <span>Messages</span>
-        <Badge intent="primary" variant="solid">5</Badge>
+        <Badge intent="primary" variant="solid">
+          5
+        </Badge>
       </Flex>
       <Flex gap={2} align="center">
         <span>Notifications</span>
-        <Badge intent="error" variant="solid">12</Badge>
+        <Badge intent="error" variant="solid">
+          12
+        </Badge>
       </Flex>
       <Flex gap={2} align="center">
         <span>Updates</span>
-        <Badge intent="info" variant="solid">3</Badge>
+        <Badge intent="info" variant="solid">
+          3
+        </Badge>
       </Flex>
     </Flex>
   ),
@@ -170,11 +210,21 @@ export const CountBadges: Story = {
 export const CategoryBadges: Story = {
   render: () => (
     <Flex wrap gap={2}>
-      <Badge intent="primary" variant="outline">Electronics</Badge>
-      <Badge intent="success" variant="outline">New Arrival</Badge>
-      <Badge intent="warning" variant="outline">Limited Stock</Badge>
-      <Badge intent="error" variant="outline">Sale</Badge>
-      <Badge intent="info" variant="outline">Featured</Badge>
+      <Badge intent="primary" variant="outline">
+        Electronics
+      </Badge>
+      <Badge intent="success" variant="outline">
+        New Arrival
+      </Badge>
+      <Badge intent="warning" variant="outline">
+        Limited Stock
+      </Badge>
+      <Badge intent="error" variant="outline">
+        Sale
+      </Badge>
+      <Badge intent="info" variant="outline">
+        Featured
+      </Badge>
     </Flex>
   ),
   parameters: {
@@ -192,11 +242,18 @@ export const InlineWithText: Story = {
     <div className="max-w-md">
       <p>
         This product is{" "}
-        <Badge intent="success" variant="subtle">In Stock</Badge>{" "}
+        <Badge intent="success" variant="subtle">
+          In Stock
+        </Badge>{" "}
         and has a{" "}
-        <Badge intent="warning" variant="subtle">Limited Time Offer</Badge>.
-        Order now to get{" "}
-        <Badge intent="primary" variant="subtle">Free Shipping</Badge>!
+        <Badge intent="warning" variant="subtle">
+          Limited Time Offer
+        </Badge>
+        . Order now to get{" "}
+        <Badge intent="primary" variant="subtle">
+          Free Shipping
+        </Badge>
+        !
       </p>
     </div>
   ),
@@ -233,10 +290,18 @@ export const DifferentLengths: Story = {
 export const WithDots: Story = {
   render: () => (
     <Flex wrap gap={2}>
-      <Badge intent="success" dot>Online</Badge>
-      <Badge intent="error" dot>Offline</Badge>
-      <Badge intent="warning" dot>Away</Badge>
-      <Badge intent="info" dot>Busy</Badge>
+      <Badge intent="success" dot>
+        Online
+      </Badge>
+      <Badge intent="error" dot>
+        Offline
+      </Badge>
+      <Badge intent="warning" dot>
+        Away
+      </Badge>
+      <Badge intent="info" dot>
+        Busy
+      </Badge>
     </Flex>
   ),
   parameters: {
@@ -252,10 +317,18 @@ export const WithDots: Story = {
 export const WithIcons: Story = {
   render: () => (
     <Flex wrap gap={2}>
-      <Badge intent="success" icon={<span>✓</span>}>Verified</Badge>
-      <Badge intent="primary" icon={<span>⭐</span>}>Featured</Badge>
-      <Badge intent="warning" icon={<span>⚠</span>}>Warning</Badge>
-      <Badge intent="error" icon={<span>✕</span>}>Error</Badge>
+      <Badge intent="success" icon={<span>✓</span>}>
+        Verified
+      </Badge>
+      <Badge intent="primary" icon={<span>⭐</span>}>
+        Featured
+      </Badge>
+      <Badge intent="warning" icon={<span>⚠</span>}>
+        Warning
+      </Badge>
+      <Badge intent="error" icon={<span>✕</span>}>
+        Error
+      </Badge>
     </Flex>
   ),
   parameters: {

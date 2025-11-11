@@ -18,7 +18,18 @@ export {
   INTENT_VARIANT_CLASSES,
   VARIANT_BASE_CLASSES,
   SIZE_CLASSES,
+  INTENT_TEXT_COLORS,
   getIntentVariantClasses,
   getVariantBaseClasses,
   getSizeClasses,
+  getIntentTextColor,
 } from "./classNames";
+export {
+  generateCSSVariables,
+  INTENT_TEXT_CSS_VARS,
+  INTENT_BG_CSS_VARS,
+  INTENT_BORDER_CSS_VARS,
+  getIntentTextCSSVar,
+  getIntentBgCSSVar,
+  getIntentBorderCSSVar,
+} from "./cssVariables";

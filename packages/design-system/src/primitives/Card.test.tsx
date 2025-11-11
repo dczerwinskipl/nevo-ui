@@ -23,7 +23,9 @@ describe("Card Component", () => {
     });
 
     it("applies custom className", () => {
-      const { container } = render(<Card className="custom-class">Content</Card>);
+      const { container } = render(
+        <Card className="custom-class">Content</Card>
+      );
       const card = container.firstChild as HTMLElement;
       expect(card).toHaveClass("custom-class");
     });
@@ -69,7 +71,7 @@ describe("Card Component", () => {
       variants.forEach((variant) => {
         const { container } = render(<Card variant={variant}>Content</Card>);
         const card = container.firstChild as HTMLElement;
-        
+
         // All variants should have dark mode background classes
         const className = card.className;
         expect(className).toMatch(/dark:bg-gray-/);
@@ -252,7 +254,7 @@ describe("Card Component", () => {
       const card = container.firstChild as HTMLElement;
       expect(card).toHaveClass("border-2", "cursor-pointer", "custom-class");
       expect(card).toHaveAttribute("role", "button");
-      
+
       fireEvent.click(card);
       expect(handleClick).toHaveBeenCalled();
     });
@@ -326,7 +328,14 @@ describe("Card Component", () => {
       it("applies default border top and flex styles", () => {
         const { container } = render(<CardFooter>Footer</CardFooter>);
         const footer = container.firstChild as HTMLElement;
-        expect(footer).toHaveClass("mt-4", "pt-4", "border-t", "flex", "items-center", "gap-2");
+        expect(footer).toHaveClass(
+          "mt-4",
+          "pt-4",
+          "border-t",
+          "flex",
+          "items-center",
+          "gap-2"
+        );
       });
 
       it("applies custom className", () => {

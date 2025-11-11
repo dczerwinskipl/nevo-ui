@@ -241,19 +241,20 @@ Use this checklist when creating or modifying components in the design system.
 ## Quick Reference
 
 ### Component Template
+
 ```tsx
-import React from 'react';
-import { cn } from '../../primitives/utils';
-import type { ComponentNameProps } from './types';
+import React from "react";
+import { cn } from "../../primitives/utils";
+import type { ComponentNameProps } from "./types";
 
 export const ComponentName = React.forwardRef<
   HTMLDivElement,
   ComponentNameProps
->(({ className, variant = 'default', children, ...props }, ref) => {
+>(({ className, variant = "default", children, ...props }, ref) => {
   return (
     <div
       ref={ref}
-      className={cn('base-classes', variantClasses[variant], className)}
+      className={cn("base-classes", variantClasses[variant], className)}
       {...props}
     >
       {children}
@@ -261,31 +262,33 @@ export const ComponentName = React.forwardRef<
   );
 });
 
-ComponentName.displayName = 'ComponentName';
+ComponentName.displayName = "ComponentName";
 ```
 
 ### Test Template
-```tsx
-import { render, screen } from '@testing-library/react';
-import { ComponentName } from './ComponentName';
 
-describe('ComponentName', () => {
-  it('renders correctly', () => {
+```tsx
+import { render, screen } from "@testing-library/react";
+import { ComponentName } from "./ComponentName";
+
+describe("ComponentName", () => {
+  it("renders correctly", () => {
     render(<ComponentName>Test</ComponentName>);
-    expect(screen.getByText('Test')).toBeInTheDocument();
+    expect(screen.getByText("Test")).toBeInTheDocument();
   });
 });
 ```
 
 ### Story Template
+
 ```tsx
-import type { Meta, StoryObj } from '@storybook/react';
-import { ComponentName } from './ComponentName';
+import type { Meta, StoryObj } from "@storybook/react";
+import { ComponentName } from "./ComponentName";
 
 const meta: Meta<typeof ComponentName> = {
-  title: 'Category/ComponentName',
+  title: "Category/ComponentName",
   component: ComponentName,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
 };
 
 export default meta;
@@ -293,7 +296,7 @@ type Story = StoryObj<typeof ComponentName>;
 
 export const Default: Story = {
   args: {
-    children: 'Default ComponentName',
+    children: "Default ComponentName",
   },
 };
 ```

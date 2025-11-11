@@ -8,7 +8,8 @@ As a **Storybook author**, I want **reusable layout primitives (Stack, Flex, Gri
 
 **Background:** Currently, all Storybook stories use raw HTML `<div>` elements with inline styles for layout (80+ instances found). This violates our guideline that stories should use only design system primitives.
 
-**Current State:** 
+**Current State:**
+
 ```tsx
 // Current approach in stories
 <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
@@ -18,6 +19,7 @@ As a **Storybook author**, I want **reusable layout primitives (Stack, Flex, Gri
 ```
 
 **Desired State:**
+
 ```tsx
 // Desired approach using primitives
 <Stack direction="row" gap="4" wrap>
@@ -27,15 +29,18 @@ As a **Storybook author**, I want **reusable layout primitives (Stack, Flex, Gri
 ```
 
 **Links:**
+
 - Parent Epic: [003-design-system-cleanup/README.md](./README-UPDATED.md)
 - Related Audit: [AUDIT-REPORT-COMPLETE.md](./AUDIT-REPORT-COMPLETE.md#missing-layout-primitives)
 
 ## Detailed Requirements
 
 ### 1. Stack Component
+
 Create a flexible stacking layout component for vertical/horizontal layouts with consistent spacing.
 
 **Props:**
+
 - `direction?: 'row' | 'column'` (default: 'column')
 - `gap?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12` (Tailwind gap values)
 - `align?: 'start' | 'center' | 'end' | 'stretch'`
@@ -45,9 +50,11 @@ Create a flexible stacking layout component for vertical/horizontal layouts with
 - `children: ReactNode`
 
 ### 2. Flex Component
+
 Create a Flexbox layout component with full control over flex properties.
 
 **Props:**
+
 - `direction?: 'row' | 'column' | 'row-reverse' | 'column-reverse'`
 - `gap?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12`
 - `align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline'`
@@ -59,9 +66,11 @@ Create a Flexbox layout component with full control over flex properties.
 - `children: ReactNode`
 
 ### 3. Grid Component
+
 Create a CSS Grid layout component for grid-based layouts.
 
 **Props:**
+
 - `cols?: 1 | 2 | 3 | 4 | 5 | 6 | 12 | 'auto'` (number of columns)
 - `gap?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12`
 - `rows?: number | 'auto'` (number of rows)
@@ -71,9 +80,11 @@ Create a CSS Grid layout component for grid-based layouts.
 - `children: ReactNode`
 
 ### 4. Container Component
+
 Create a container component with max-width constraints and responsive padding.
 
 **Props:**
+
 - `size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'` (max-width: 640px, 768px, 1024px, 1280px, 100%)
 - `padding?: 0 | 2 | 4 | 6 | 8` (responsive padding)
 - `center?: boolean` (center with mx-auto)
@@ -83,6 +94,7 @@ Create a container component with max-width constraints and responsive padding.
 ## Acceptance Criteria
 
 ### Stack Component
+
 - [ ] AC1: Stack component file created at `packages/design-system/src/primitives/Stack.tsx` (Verification: File exists)
 - [ ] AC2: Supports `direction` prop with 'row' and 'column' values (Verification: Unit test passes)
 - [ ] AC3: Supports all gap values (0-12) using Tailwind gap utilities (Verification: Unit test passes)
@@ -92,6 +104,7 @@ Create a container component with max-width constraints and responsive padding.
 - [ ] AC7: Exported from `packages/design-system/src/index.ts` (Verification: Import test passes)
 
 ### Flex Component
+
 - [ ] AC8: Flex component file created at `packages/design-system/src/primitives/Flex.tsx` (Verification: File exists)
 - [ ] AC9: Supports all flex direction values (Verification: Unit test passes)
 - [ ] AC10: Supports all alignment and justification values (Verification: Unit test passes)
@@ -100,6 +113,7 @@ Create a container component with max-width constraints and responsive padding.
 - [ ] AC13: Exported from index (Verification: Import test passes)
 
 ### Grid Component
+
 - [ ] AC14: Grid component file created at `packages/design-system/src/primitives/Grid.tsx` (Verification: File exists)
 - [ ] AC15: Supports cols prop with predefined values (Verification: Unit test passes)
 - [ ] AC16: Supports gap prop (Verification: Unit test passes)
@@ -108,6 +122,7 @@ Create a container component with max-width constraints and responsive padding.
 - [ ] AC19: Exported from index (Verification: Import test passes)
 
 ### Container Component
+
 - [ ] AC20: Container component file created at `packages/design-system/src/primitives/Container.tsx` (Verification: File exists)
 - [ ] AC21: Supports size prop with max-width values (Verification: Unit test passes)
 - [ ] AC22: Supports padding prop (Verification: Unit test passes)
@@ -116,12 +131,14 @@ Create a container component with max-width constraints and responsive padding.
 - [ ] AC25: Exported from index (Verification: Import test passes)
 
 ### Testing
+
 - [ ] AC26: Stack.test.tsx created with ≥80% coverage (Verification: `pnpm test Stack.test.tsx --coverage`)
 - [ ] AC27: Flex.test.tsx created with ≥80% coverage (Verification: `pnpm test Flex.test.tsx --coverage`)
 - [ ] AC28: Grid.test.tsx created with ≥80% coverage (Verification: `pnpm test Grid.test.tsx --coverage`)
 - [ ] AC29: Container.test.tsx created with ≥80% coverage (Verification: `pnpm test Container.test.tsx --coverage`)
 
 ### Storybook
+
 - [ ] AC30: Stack.stories.tsx created with all prop variations (Verification: Story file exists, Storybook builds)
 - [ ] AC31: Flex.stories.tsx created with all prop variations (Verification: Story file exists, Storybook builds)
 - [ ] AC32: Grid.stories.tsx created with all prop variations (Verification: Story file exists, Storybook builds)
@@ -129,6 +146,7 @@ Create a container component with max-width constraints and responsive padding.
 - [ ] AC34: All stories use real content (Button, Card, etc.) to demonstrate layout (Verification: Code review)
 
 ### Documentation
+
 - [ ] AC35: JSDoc comments added to all components (Verification: Code review)
 - [ ] AC36: Props documented with descriptions (Verification: Storybook controls show descriptions)
 - [ ] AC37: Usage examples in story descriptions (Verification: Code review)
@@ -151,7 +169,7 @@ Create a container component with max-width constraints and responsive padding.
    - Support grid-specific utilities
 
 4. **`packages/design-system/src/primitives/Container.tsx`**
-   - Map size to max-w-* classes
+   - Map size to max-w-\* classes
    - Responsive padding support
 
 5. **Test files** for each component
@@ -166,13 +184,13 @@ Create a container component with max-width constraints and responsive padding.
 Example for Stack component:
 
 ```tsx
-import React from 'react';
-import { clsx } from 'clsx';
+import React from "react";
+import { clsx } from "clsx";
 
-type StackDirection = 'row' | 'column';
+type StackDirection = "row" | "column";
 type StackGap = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12;
-type StackAlign = 'start' | 'center' | 'end' | 'stretch';
-type StackJustify = 'start' | 'center' | 'end' | 'between' | 'around';
+type StackAlign = "start" | "center" | "end" | "stretch";
+type StackJustify = "start" | "center" | "end" | "between" | "around";
 
 interface StackProps extends React.HTMLAttributes<HTMLDivElement> {
   direction?: StackDirection;
@@ -184,20 +202,20 @@ interface StackProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const GAP_CLASSES: Record<StackGap, string> = {
-  0: 'gap-0',
-  1: 'gap-1',
-  2: 'gap-2',
-  3: 'gap-3',
-  4: 'gap-4',
-  5: 'gap-5',
-  6: 'gap-6',
-  8: 'gap-8',
-  10: 'gap-10',
-  12: 'gap-12',
+  0: "gap-0",
+  1: "gap-1",
+  2: "gap-2",
+  3: "gap-3",
+  4: "gap-4",
+  5: "gap-5",
+  6: "gap-6",
+  8: "gap-8",
+  10: "gap-10",
+  12: "gap-12",
 };
 
 export const Stack: React.FC<StackProps> = ({
-  direction = 'column',
+  direction = "column",
   gap = 4,
   align,
   justify,
@@ -209,12 +227,12 @@ export const Stack: React.FC<StackProps> = ({
   return (
     <div
       className={clsx(
-        'flex',
-        direction === 'row' ? 'flex-row' : 'flex-col',
+        "flex",
+        direction === "row" ? "flex-row" : "flex-col",
         GAP_CLASSES[gap],
         align && `items-${align}`,
         justify && `justify-${justify}`,
-        wrap && 'flex-wrap',
+        wrap && "flex-wrap",
         className
       )}
       {...rest}
@@ -228,6 +246,7 @@ export const Stack: React.FC<StackProps> = ({
 ### Testing Strategy
 
 **Unit Tests (per component):**
+
 - [ ] Renders with default props
 - [ ] Applies correct classes for each prop value
 - [ ] Forwards className prop
@@ -235,18 +254,19 @@ export const Stack: React.FC<StackProps> = ({
 - [ ] Renders children correctly
 
 **Example Test:**
+
 ```tsx
-describe('Stack', () => {
-  it('renders with default props', () => {
+describe("Stack", () => {
+  it("renders with default props", () => {
     render(<Stack>Content</Stack>);
-    const stack = screen.getByText('Content').parentElement;
-    expect(stack).toHaveClass('flex', 'flex-col', 'gap-4');
+    const stack = screen.getByText("Content").parentElement;
+    expect(stack).toHaveClass("flex", "flex-col", "gap-4");
   });
 
-  it('applies row direction', () => {
+  it("applies row direction", () => {
     render(<Stack direction="row">Content</Stack>);
-    const stack = screen.getByText('Content').parentElement;
-    expect(stack).toHaveClass('flex-row');
+    const stack = screen.getByText("Content").parentElement;
+    expect(stack).toHaveClass("flex-row");
   });
 
   // ... more tests
@@ -256,6 +276,7 @@ describe('Stack', () => {
 ### Storybook Stories
 
 **Example Stories:**
+
 ```tsx
 export const Default: Story = {
   render: () => (
@@ -307,9 +328,11 @@ export const WithAlignment: Story = {
 ## Dependencies
 
 **Before This Story:**
+
 - None (can start immediately)
 
 **After This Story:**
+
 - Story 004-018 will use these primitives in their stories
 
 ## Effort Estimate
@@ -326,6 +349,7 @@ export const WithAlignment: Story = {
 ## Task Breakdown
 
 ### Task 1: Create Stack Component (90 minutes)
+
 - [ ] Create `Stack.tsx` file
 - [ ] Implement Stack component with all props
 - [ ] Create `Stack.test.tsx` with full test coverage
@@ -333,6 +357,7 @@ export const WithAlignment: Story = {
 - [ ] Export from index.ts
 
 ### Task 2: Create Flex Component (120 minutes)
+
 - [ ] Create `Flex.tsx` file
 - [ ] Implement Flex component with all props
 - [ ] Create `Flex.test.tsx` with full test coverage
@@ -340,6 +365,7 @@ export const WithAlignment: Story = {
 - [ ] Export from index.ts
 
 ### Task 3: Create Grid Component (120 minutes)
+
 - [ ] Create `Grid.tsx` file
 - [ ] Implement Grid component with all props
 - [ ] Create `Grid.test.tsx` with full test coverage
@@ -347,6 +373,7 @@ export const WithAlignment: Story = {
 - [ ] Export from index.ts
 
 ### Task 4: Create Container Component (90 minutes)
+
 - [ ] Create `Container.tsx` file
 - [ ] Implement Container component with all props
 - [ ] Create `Container.test.tsx` with full test coverage
@@ -354,6 +381,7 @@ export const WithAlignment: Story = {
 - [ ] Export from index.ts
 
 ### Task 5: Documentation & Verification (60 minutes)
+
 - [ ] Add comprehensive JSDoc comments
 - [ ] Verify all tests pass
 - [ ] Verify Storybook builds

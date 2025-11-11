@@ -9,25 +9,31 @@ This checklist ensures that your pull request is complete and ready for review b
 ### Code Quality
 
 - [ ] **TypeScript compilation passes**
+
   ```bash
   pnpm run typecheck
   ```
+
   - No type errors
   - All types properly defined
   - No `any` types without justification
 
 - [ ] **ESLint validation passes**
+
   ```bash
   pnpm run lint
   ```
+
   - No ESLint errors
   - No ESLint warnings
   - Code formatted with Prettier
 
 - [ ] **All tests passing**
+
   ```bash
   pnpm run test
   ```
+
   - Unit tests passing
   - Integration tests passing
   - E2E tests passing (if applicable)
@@ -37,6 +43,7 @@ This checklist ensures that your pull request is complete and ready for review b
   ```bash
   pnpm run build
   ```
+
   - Build completes without errors
   - No build warnings
   - Bundle size acceptable
@@ -302,6 +309,7 @@ This checklist ensures that your pull request is complete and ready for review b
 ### Pre-Submit
 
 - [ ] **Branch is up to date**
+
   ```bash
   git pull origin main
   # Resolve conflicts if any
@@ -336,28 +344,33 @@ This checklist ensures that your pull request is complete and ready for review b
 ## 📊 PR Checklist Summary
 
 **Before creating PR**:
+
 1. ✅ Code quality checks pass (typecheck, lint, test, build)
 2. ✅ Self-review completed
 3. ✅ No merge conflicts
 
 **PR description includes**:
+
 1. ✅ Descriptive title
 2. ✅ What/why/how description
 3. ✅ Related issues/specs
 4. ✅ Screenshots (for UI changes)
 
 **Testing complete**:
+
 1. ✅ Unit tests added/updated
 2. ✅ Integration/E2E tests (if applicable)
 3. ✅ Accessibility tested
 4. ✅ All tests passing
 
 **Documentation updated**:
+
 1. ✅ JSDoc comments
 2. ✅ README (if applicable)
 3. ✅ Storybook stories (for components)
 
 **Quality validated**:
+
 1. ✅ Accessibility requirements met
 2. ✅ Performance validated
 3. ✅ Security checked

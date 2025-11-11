@@ -3,6 +3,7 @@
 This recipe guides you through creating a new component in the Nevo UI Design System.
 
 ## Overview
+
 Follow this systematic approach to ensure consistency, accessibility, and quality.
 
 ## Steps
@@ -10,6 +11,7 @@ Follow this systematic approach to ensure consistency, accessibility, and qualit
 ### 1. Plan the Component
 
 **Define Requirements:**
+
 - What problem does this component solve?
 - What are the use cases?
 - What variants/states are needed?
@@ -17,12 +19,14 @@ Follow this systematic approach to ensure consistency, accessibility, and qualit
 - **Can it be simplified?** - Keep it as simple as possible
 
 **Check for Existing Solutions:**
+
 - Search the design system for similar components
 - Check if composition of existing primitives would work
 - Review Radix UI, Headless UI for patterns
 - **Check feedback components** - Use EmptyState, ErrorState, Loading instead of custom implementations
 
 **Identify Complex Logic:**
+
 - Will this component need complex state management?
 - Can logic be extracted to a custom hook?
 - Can subcomponents be extracted to separate files?
@@ -30,6 +34,7 @@ Follow this systematic approach to ensure consistency, accessibility, and qualit
 ### 2. Component Structure
 
 **File Location:**
+
 ```
 packages/design-system/src/
   ├── primitives/     # Base UI elements (Button, Input, Card)
@@ -41,6 +46,7 @@ packages/design-system/src/
 ```
 
 **Create Component Files:**
+
 ```
 ComponentName/
   ├── ComponentName.tsx       # Main component (<200 lines)
@@ -51,6 +57,7 @@ ComponentName/
 ```
 
 **If component grows beyond 150-200 lines**, extract subcomponents:
+
 ```
 ComponentName/
   ├── ComponentName.tsx       # Main orchestrator
@@ -63,6 +70,7 @@ ComponentName/
 ```
 
 **Example - Table with Subcomponents**:
+
 ```
 Table/
   ├── Table.tsx              # Main component (150 lines)
@@ -78,6 +86,7 @@ Table/
 ### 3. Component Implementation
 
 **Keep It Simple:**
+
 - Each component should have ONE clear responsibility
 - Extract complex logic to custom hooks
 - Extract subcomponents when file exceeds ~150 lines
@@ -87,21 +96,21 @@ Table/
 
 ```tsx
 // ComponentName.tsx
-import React from 'react';
-import { cn } from '../../primitives/utils';
-import type { ComponentNameProps } from './types';
+import React from "react";
+import { cn } from "../../primitives/utils";
+import type { ComponentNameProps } from "./types";
 
 export const ComponentName = React.forwardRef<
   HTMLDivElement,
   ComponentNameProps
->(({ className, variant = 'default', children, ...props }, ref) => {
+>(({ className, variant = "default", children, ...props }, ref) => {
   return (
     <div
       ref={ref}
       className={cn(
-        'base-classes',
-        variant === 'primary' && 'primary-classes',
-        variant === 'secondary' && 'secondary-classes',
+        "base-classes",
+        variant === "primary" && "primary-classes",
+        variant === "secondary" && "secondary-classes",
         className
       )}
       {...props}
@@ -111,28 +120,28 @@ export const ComponentName = React.forwardRef<
   );
 });
 
-ComponentName.displayName = 'ComponentName';
+ComponentName.displayName = "ComponentName";
 ```
 
 **Types File:**
 
 ```tsx
 // types.ts
-import type { ComponentPropsWithoutRef } from 'react';
+import type { ComponentPropsWithoutRef } from "react";
 
-export interface ComponentNameProps extends ComponentPropsWithoutRef<'div'> {
+export interface ComponentNameProps extends ComponentPropsWithoutRef<"div"> {
   /**
    * Visual style variant
    * @default 'default'
    */
-  variant?: 'default' | 'primary' | 'secondary';
-  
+  variant?: "default" | "primary" | "secondary";
+
   /**
    * Size of the component
    * @default 'md'
    */
-  size?: 'sm' | 'md' | 'lg';
-  
+  size?: "sm" | "md" | "lg";
+
   /**
    * Additional content or configuration
    */
@@ -144,35 +153,37 @@ export interface ComponentNameProps extends ComponentPropsWithoutRef<'div'> {
 
 ```tsx
 // index.ts
-export { ComponentName } from './ComponentName';
-export type { ComponentNameProps } from './types';
+export { ComponentName } from "./ComponentName";
+export type { ComponentNameProps } from "./types";
 ```
 
 ### 4. Styling with Tailwind
 
 **Tailwind First - Always**:
+
 - Use Tailwind utility classes for all styling
 - Avoid inline styles unless absolutely necessary (dynamic values)
 - Theme tokens should contain Tailwind classes, not CSS values
 
 **Follow Design Tokens:**
+
 ```tsx
 // ✅ Good - Tailwind classes
 className={cn(
   // Layout
   'flex items-center gap-2',
-  
+
   // Colors from theme (Tailwind classes)
   'bg-background-primary text-content-primary',
-  
+
   // Interactive states
   'hover:bg-background-secondary',
   'focus-visible:ring-2 focus-visible:ring-primary-500',
   'disabled:opacity-50 disabled:cursor-not-allowed',
-  
+
   // Transitions
   'transition-colors duration-200',
-  
+
   // User className last
   className
 )}
@@ -188,16 +199,17 @@ style={{
 ```
 
 **When Inline Styles Are Acceptable**:
+
 ```tsx
 // ✅ OK - dynamic value from props
-<div 
+<div
   className="bg-primary-500 h-2 rounded transition-all"
   style={{ width: `${progress}%` }}
 
 />
 
 // ✅ OK - runtime calculation
-<div 
+<div
   className="absolute"
   style={{ transform: `rotate(${angle}deg)` }}
 
@@ -209,6 +221,7 @@ style={{
 ```
 
 **Variant Patterns:**
+
 ```tsx
 const variants = {
   default: 'bg-background-primary border border-border-primary',
@@ -228,6 +241,7 @@ className={cn(variants[variant], sizes[size], className)}
 ### 5. Accessibility Implementation
 
 **Semantic HTML:**
+
 ```tsx
 // Use appropriate element
 <button type="button" {...props}>  // for buttons
@@ -236,30 +250,29 @@ className={cn(variants[variant], sizes[size], className)}
 ```
 
 **ARIA Attributes:**
+
 ```tsx
-<div
-  role="alert"
-  aria-live="polite"
-  aria-atomic="true"
->
+<div role="alert" aria-live="polite" aria-atomic="true">
   {message}
 </div>
 ```
 
 **Keyboard Support:**
+
 ```tsx
 const handleKeyDown = (e: React.KeyboardEvent) => {
-  if (e.key === 'Enter' || e.key === ' ') {
+  if (e.key === "Enter" || e.key === " ") {
     e.preventDefault();
     onClick?.();
   }
-  if (e.key === 'Escape') {
+  if (e.key === "Escape") {
     onClose?.();
   }
 };
 ```
 
 **Focus Management:**
+
 ```tsx
 const ref = useRef<HTMLButtonElement>(null);
 
@@ -275,50 +288,50 @@ useEffect(() => {
 **Component Tests (ComponentName.test.tsx):**
 
 ```tsx
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { ComponentName } from './ComponentName';
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { ComponentName } from "./ComponentName";
 
-describe('ComponentName', () => {
-  it('renders children correctly', () => {
+describe("ComponentName", () => {
+  it("renders children correctly", () => {
     render(<ComponentName>Test Content</ComponentName>);
-    expect(screen.getByText('Test Content')).toBeInTheDocument();
+    expect(screen.getByText("Test Content")).toBeInTheDocument();
   });
 
-  it('applies variant classes', () => {
+  it("applies variant classes", () => {
     const { container } = render(
       <ComponentName variant="primary">Content</ComponentName>
     );
-    expect(container.firstChild).toHaveClass('expected-class');
+    expect(container.firstChild).toHaveClass("expected-class");
   });
 
-  it('handles click events', async () => {
+  it("handles click events", async () => {
     const onClick = jest.fn();
     render(<ComponentName onClick={onClick}>Click me</ComponentName>);
-    
-    await userEvent.click(screen.getByText('Click me'));
+
+    await userEvent.click(screen.getByText("Click me"));
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
-  it('supports keyboard navigation', async () => {
+  it("supports keyboard navigation", async () => {
     const onClose = jest.fn();
     render(<ComponentName onClose={onClose}>Content</ComponentName>);
-    
-    await userEvent.keyboard('{Escape}');
+
+    await userEvent.keyboard("{Escape}");
     expect(onClose).toHaveBeenCalled();
   });
 
-  it('forwards ref correctly', () => {
+  it("forwards ref correctly", () => {
     const ref = React.createRef<HTMLDivElement>();
     render(<ComponentName ref={ref}>Content</ComponentName>);
     expect(ref.current).toBeInstanceOf(HTMLDivElement);
   });
 
-  it('merges className prop', () => {
+  it("merges className prop", () => {
     const { container } = render(
       <ComponentName className="custom-class">Content</ComponentName>
     );
-    expect(container.firstChild).toHaveClass('custom-class');
+    expect(container.firstChild).toHaveClass("custom-class");
   });
 });
 ```
@@ -328,31 +341,31 @@ describe('ComponentName', () => {
 **Stories File (ComponentName.stories.tsx):**
 
 ```tsx
-import type { Meta, StoryObj } from '@storybook/react';
-import { ComponentName } from './ComponentName';
+import type { Meta, StoryObj } from "@storybook/react";
+import { ComponentName } from "./ComponentName";
 
 const meta: Meta<typeof ComponentName> = {
-  title: 'Category/ComponentName',
+  title: "Category/ComponentName",
   component: ComponentName,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
-        component: 'Brief description of the component and its purpose.',
+        component: "Brief description of the component and its purpose.",
       },
     },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     variant: {
-      control: 'select',
-      options: ['default', 'primary', 'secondary'],
-      description: 'Visual style variant',
+      control: "select",
+      options: ["default", "primary", "secondary"],
+      description: "Visual style variant",
     },
     size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
-      description: 'Component size',
+      control: "select",
+      options: ["sm", "md", "lg"],
+      description: "Component size",
     },
   },
 };
@@ -362,7 +375,7 @@ type Story = StoryObj<typeof ComponentName>;
 
 export const Default: Story = {
   args: {
-    children: 'Default ComponentName',
+    children: "Default ComponentName",
   },
 };
 
@@ -401,7 +414,7 @@ export const Interactive: Story = {
     const [state, setState] = React.useState(false);
     return (
       <ComponentName onClick={() => setState(!state)}>
-        State: {state ? 'On' : 'Off'}
+        State: {state ? "On" : "Off"}
       </ComponentName>
     );
   },
@@ -416,18 +429,18 @@ export const Interactive: Story = {
 // packages/design-system/src/index.ts
 
 // ... existing exports
-export { ComponentName } from './category/ComponentName';
-export type { ComponentNameProps } from './category/ComponentName';
+export { ComponentName } from "./category/ComponentName";
+export type { ComponentNameProps } from "./category/ComponentName";
 ```
 
 ### 9. Documentation
 
 **Add JSDoc Comments:**
 
-```tsx
+````tsx
 /**
  * ComponentName provides [brief description]
- * 
+ *
  * @example
  * ```tsx
  * <ComponentName variant="primary">
@@ -441,7 +454,7 @@ export const ComponentName = React.forwardRef<
 >((props, ref) => {
   // ...
 });
-```
+````
 
 **Update README if needed:**
 Add to the component inventory in `packages/design-system/README.md`.
@@ -469,12 +482,15 @@ Before submitting, verify:
 ## Examples from the Codebase
 
 ### Simple Component: Badge
+
 See: `packages/design-system/src/feedback/Badge/Badge.tsx`
 
 ### Complex Component: Table
+
 See: `packages/design-system/src/data/Table/Table.tsx`
 
 ### Form Component: Select
+
 See: `packages/design-system/src/forms/Select/Select.tsx`
 
 ## Common Patterns
@@ -488,24 +504,27 @@ When your component has complex state management, extract it to a custom hook:
 export const Table = ({ data, isLoading }) => {
   const [snapshot, setSnapshot] = useState([]);
   const [prevLoading, setPrevLoading] = useState(false);
-  
+
   useEffect(() => {
     if ((!isLoading && prevLoading) || data?.length > 0) {
       setSnapshot(data || []);
     }
     setPrevLoading(isLoading);
   }, [isLoading, prevLoading, data]);
-  
+
   const displayData = useMemo(() => {
-    return isLoading && snapshot.length > 0 ? snapshot : (data || []);
+    return isLoading && snapshot.length > 0 ? snapshot : data || [];
   }, [data, snapshot, isLoading]);
-  
+
   // Component continues...
 };
 
 // ✅ Good - extracted to custom hook
 // hooks/useDataSnapshot.ts
-export const useDataSnapshot = <T,>(data: T[] | undefined, isLoading: boolean) => {
+export const useDataSnapshot = <T,>(
+  data: T[] | undefined,
+  isLoading: boolean
+) => {
   const [snapshot, setSnapshot] = useState<T[]>([]);
   const [prevLoading, setPrevLoading] = useState(isLoading);
 
@@ -517,21 +536,22 @@ export const useDataSnapshot = <T,>(data: T[] | undefined, isLoading: boolean) =
   }, [isLoading, prevLoading, data]);
 
   return {
-    displayData: isLoading && snapshot.length > 0 ? snapshot : (data || []),
-    hasSnapshot: snapshot.length > 0
+    displayData: isLoading && snapshot.length > 0 ? snapshot : data || [],
+    hasSnapshot: snapshot.length > 0,
   };
 };
 
 // Table.tsx - clean and simple
 export const Table = ({ data, isLoading }) => {
   const { displayData, hasSnapshot } = useDataSnapshot(data, isLoading);
-  
+
   // Simple rendering logic
   return <div>{/* ... */}</div>;
 };
 ```
 
 **Where to Store Custom Hooks**:
+
 ```
 packages/design-system/src/
 └── hooks/                    # Reusable design system hooks
@@ -554,22 +574,22 @@ apps/admin/src/shared/
 
 ```tsx
 // ✅ Good - reuse existing components
-import { EmptyState, ErrorState, LoadingOverlay } from '@nevo/design-system';
+import { EmptyState, ErrorState, LoadingOverlay } from "@nevo/design-system";
 
 export const ProductList = ({ data, isLoading, error, refetch }) => {
   if (error) {
     return <ErrorState error={error} onRetry={refetch} />;
   }
-  
+
   if (!data?.length && !isLoading) {
     return (
-      <EmptyState 
+      <EmptyState
         title="No products found"
         description="Try adjusting your filters or search criteria"
       />
     );
   }
-  
+
   return (
     <LoadingOverlay isLoading={isLoading}>
       {/* Product list content */}
@@ -592,6 +612,7 @@ export const ProductList = ({ data }) => {
 ```
 
 **Available Feedback Components**:
+
 - `EmptyState` - No data scenarios
 - `ErrorState` - Error handling with retry button
 - `Loading` - Loading spinners/indicators
@@ -607,14 +628,20 @@ When a component file exceeds 150-200 lines, extract subcomponents:
 // ❌ Bad - everything in one file (500+ lines)
 export const ComplexTable = () => {
   // Header rendering (100 lines)
-  const renderHeader = () => { /* ... */ };
-  
+  const renderHeader = () => {
+    /* ... */
+  };
+
   // Row rendering (150 lines)
-  const renderRow = () => { /* ... */ };
-  
+  const renderRow = () => {
+    /* ... */
+  };
+
   // Actions (80 lines)
-  const renderActions = () => { /* ... */ };
-  
+  const renderActions = () => {
+    /* ... */
+  };
+
   // Loading states (70 lines)
   // ... becomes unmaintainable
 };
@@ -626,7 +653,7 @@ export const Table = ({ data, columns, actions }) => {
     <table>
       <TableHeader columns={columns} />
       <tbody>
-        {data.map(row => (
+        {data.map((row) => (
           <TableRow row={row} columns={columns} actions={actions} />
         ))}
       </tbody>
@@ -635,13 +662,19 @@ export const Table = ({ data, columns, actions }) => {
 };
 
 // TableHeader.tsx (50 lines)
-export const TableHeader = ({ columns }) => { /* ... */ };
+export const TableHeader = ({ columns }) => {
+  /* ... */
+};
 
 // TableRow.tsx (80 lines)
-export const TableRow = ({ row, columns, actions }) => { /* ... */ };
+export const TableRow = ({ row, columns, actions }) => {
+  /* ... */
+};
 
 // TableActions.tsx (40 lines)
-export const TableActions = ({ actions, row }) => { /* ... */ };
+export const TableActions = ({ actions, row }) => {
+  /* ... */
+};
 ```
 
 ### Compound Components
@@ -670,7 +703,7 @@ Tabs.Content = TabsContent;
   </Tabs.List>
   <Tabs.Content>Content 1</Tabs.Content>
   <Tabs.Content>Content 2</Tabs.Content>
-</Tabs>
+</Tabs>;
 ```
 
 ### Polymorphic Components
@@ -711,6 +744,7 @@ export const Polymorphic = <T extends React.ElementType = 'div'>({
 ## Next Steps
 
 After creating the component:
+
 1. Run tests: `pnpm test ComponentName`
 2. Check Storybook: `pnpm storybook`
 3. Run linter: `pnpm lint`

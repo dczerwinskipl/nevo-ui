@@ -9,18 +9,21 @@ As a **developer**, I want **the Button component to use only Tailwind CSS class
 **Background:** The Button component currently uses inline styles for theming, which violates the Tailwind-first guideline and makes the component harder to maintain.
 
 **Current State:**
+
 - Button uses inline `style` prop with dynamic background, color, border (Lines 53-60)
 - Button stories use raw `<div>` elements with inline styles for layout (7 instances)
 - Test coverage is incomplete (only basic rendering tests)
 - 2 TODO comments indicate incomplete refactoring
 
 **Desired State:**
+
 - All styling done via Tailwind classes
 - Button stories use layout primitives (Stack, Flex, Grid)
 - Comprehensive test coverage (≥80%)
 - No TODO comments
 
 **Links:**
+
 - Parent Epic: [003-design-system-cleanup/README-UPDATED.md](./README-UPDATED.md)
 - Related Audit: [AUDIT-REPORT-COMPLETE.md](./AUDIT-REPORT-COMPLETE.md#1-button-component)
 
@@ -29,18 +32,20 @@ As a **developer**, I want **the Button component to use only Tailwind CSS class
 ### 1. Remove Inline Styles
 
 **Current Code (Lines 53-60):**
+
 ```tsx
 style={{
   background: style.background,
   color: style.color,
   border: style.border,
-  boxShadow: variant === "solid" 
-    ? `0 1px 3px ${tokens.shadow.color}...` 
+  boxShadow: variant === "solid"
+    ? `0 1px 3px ${tokens.shadow.color}...`
     : "none",
 }}
 ```
 
 **Required Changes:**
+
 - Replace inline styles with Tailwind utility classes
 - Create variant-specific className mappings
 - Use `clsx` for conditional class composition
@@ -49,10 +54,12 @@ style={{
 ### 2. Update Button Stories
 
 **Current Issues:**
-- 7 instances of raw `<div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>` 
+
+- 7 instances of raw `<div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>`
 - Inline styles for layout
 
 **Required Changes:**
+
 - Replace all layout `<div>`s with `<Stack>`, `<Flex>`, or `<Grid>` primitives
 - Remove all inline styles from stories
 - Use only Tailwind classes for any custom styling
@@ -62,6 +69,7 @@ style={{
 **Current Coverage:** Basic rendering only
 
 **Required Tests:**
+
 - All intent variants (default, primary, success, error, warning, neutral)
 - All sizes (sm, md, lg)
 - All states (loading, disabled, active)
@@ -76,6 +84,7 @@ style={{
 ## Acceptance Criteria
 
 ### Component Refactoring
+
 - [ ] AC1: No inline `style` prop in Button.tsx (Verification: `grep "style={{" Button.tsx` returns 0)
 - [ ] AC2: All styling uses Tailwind classes (Verification: Code review)
 - [ ] AC3: Variant styles implemented via className mappings (Verification: Unit tests pass for all variants)
@@ -86,6 +95,7 @@ style={{
 - [ ] AC8: All TODO comments resolved (Verification: `grep "TODO" Button.tsx` returns 0)
 
 ### Story Files
+
 - [ ] AC9: No raw `<div>` in Button.stories.tsx (Verification: Manual review, uses Stack/Flex/Grid)
 - [ ] AC10: No inline styles in Button.stories.tsx (Verification: `grep "style={{" Button.stories.tsx` returns 0)
 - [ ] AC11: All layout uses primitives (Stack, Flex, Grid) (Verification: Code review)
@@ -94,6 +104,7 @@ style={{
 - [ ] AC14: Stories demonstrate all sizes (Verification: Storybook visual check)
 
 ### Testing
+
 - [ ] AC15: Intent variant tests added (Verification: Test file has describe block for intents)
 - [ ] AC16: Size variant tests added (Verification: Test file has describe block for sizes)
 - [ ] AC17: Loading state tests added (Verification: Test checks loading prop)
@@ -104,6 +115,7 @@ style={{
 - [ ] AC22: All tests pass (Verification: `pnpm test Button`)
 
 ### Code Quality
+
 - [ ] AC23: No TypeScript errors (Verification: `pnpm tsc --noEmit`)
 - [ ] AC24: No linting errors (Verification: `pnpm lint`)
 - [ ] AC25: JSDoc comments updated if needed (Verification: Code review)
@@ -114,29 +126,29 @@ style={{
 
 ```tsx
 const VARIANT_CLASSES = {
-  solid: 'shadow-sm',
-  outline: 'border',
-  ghost: 'border-transparent',
+  solid: "shadow-sm",
+  outline: "border",
+  ghost: "border-transparent",
 } as const;
 
 const INTENT_CLASSES = {
   default: {
-    solid: 'bg-gray-100 text-gray-900 hover:bg-gray-200',
-    outline: 'border-gray-300 text-gray-700 hover:bg-gray-50',
-    ghost: 'text-gray-700 hover:bg-gray-100',
+    solid: "bg-gray-100 text-gray-900 hover:bg-gray-200",
+    outline: "border-gray-300 text-gray-700 hover:bg-gray-50",
+    ghost: "text-gray-700 hover:bg-gray-100",
   },
   primary: {
-    solid: 'bg-blue-600 text-white hover:bg-blue-700',
-    outline: 'border-blue-600 text-blue-600 hover:bg-blue-50',
-    ghost: 'text-blue-600 hover:bg-blue-50',
+    solid: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border-blue-600 text-blue-600 hover:bg-blue-50",
+    ghost: "text-blue-600 hover:bg-blue-50",
   },
   // ... other intents
 } as const;
 
 const SIZE_CLASSES = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-base',
-  lg: 'px-6 py-3 text-lg',
+  sm: "px-3 py-1.5 text-sm",
+  md: "px-4 py-2 text-base",
+  lg: "px-6 py-3 text-lg",
 } as const;
 ```
 
@@ -144,13 +156,13 @@ const SIZE_CLASSES = {
 
 ```tsx
 const buttonClasses = clsx(
-  'inline-flex items-center justify-center rounded-md font-medium transition-colors',
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+  "inline-flex items-center justify-center rounded-md font-medium transition-colors",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
   VARIANT_CLASSES[variant],
   INTENT_CLASSES[intent][variant],
   SIZE_CLASSES[size],
-  loading && 'opacity-50 cursor-wait',
-  disabled && 'opacity-50 cursor-not-allowed',
+  loading && "opacity-50 cursor-wait",
+  disabled && "opacity-50 cursor-not-allowed",
   className
 );
 ```
@@ -158,6 +170,7 @@ const buttonClasses = clsx(
 ### 3. Update Stories to Use Primitives
 
 **Before:**
+
 ```tsx
 <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
   <Button>One</Button>
@@ -166,6 +179,7 @@ const buttonClasses = clsx(
 ```
 
 **After:**
+
 ```tsx
 <Stack direction="row" gap={4} wrap>
   <Button>One</Button>
@@ -176,74 +190,80 @@ const buttonClasses = clsx(
 ### 4. Add Comprehensive Tests
 
 ```tsx
-describe('Button', () => {
-  describe('variants', () => {
-    it('renders solid variant', () => {
+describe("Button", () => {
+  describe("variants", () => {
+    it("renders solid variant", () => {
       render(<Button variant="solid">Click me</Button>);
-      const button = screen.getByRole('button');
-      expect(button).toHaveClass('shadow-sm');
+      const button = screen.getByRole("button");
+      expect(button).toHaveClass("shadow-sm");
     });
     // ... more variant tests
   });
 
-  describe('intents', () => {
-    it('renders primary intent', () => {
+  describe("intents", () => {
+    it("renders primary intent", () => {
       render(<Button intent="primary">Click me</Button>);
-      const button = screen.getByRole('button');
-      expect(button).toHaveClass('bg-blue-600');
+      const button = screen.getByRole("button");
+      expect(button).toHaveClass("bg-blue-600");
     });
     // ... more intent tests
   });
 
-  describe('sizes', () => {
-    it('renders small size', () => {
+  describe("sizes", () => {
+    it("renders small size", () => {
       render(<Button size="sm">Click me</Button>);
-      const button = screen.getByRole('button');
-      expect(button).toHaveClass('px-3', 'py-1.5', 'text-sm');
+      const button = screen.getByRole("button");
+      expect(button).toHaveClass("px-3", "py-1.5", "text-sm");
     });
     // ... more size tests
   });
 
-  describe('states', () => {
-    it('handles loading state', () => {
+  describe("states", () => {
+    it("handles loading state", () => {
       render(<Button loading>Click me</Button>);
-      const button = screen.getByRole('button');
-      expect(button).toHaveClass('opacity-50', 'cursor-wait');
+      const button = screen.getByRole("button");
+      expect(button).toHaveClass("opacity-50", "cursor-wait");
     });
 
-    it('handles disabled state', () => {
+    it("handles disabled state", () => {
       render(<Button disabled>Click me</Button>);
-      const button = screen.getByRole('button');
+      const button = screen.getByRole("button");
       expect(button).toBeDisabled();
-      expect(button).toHaveClass('opacity-50', 'cursor-not-allowed');
+      expect(button).toHaveClass("opacity-50", "cursor-not-allowed");
     });
   });
 
-  describe('interactions', () => {
-    it('calls onClick handler', () => {
+  describe("interactions", () => {
+    it("calls onClick handler", () => {
       const onClick = jest.fn();
       render(<Button onClick={onClick}>Click me</Button>);
-      fireEvent.click(screen.getByRole('button'));
+      fireEvent.click(screen.getByRole("button"));
       expect(onClick).toHaveBeenCalledTimes(1);
     });
 
-    it('does not call onClick when disabled', () => {
+    it("does not call onClick when disabled", () => {
       const onClick = jest.fn();
-      render(<Button onClick={onClick} disabled>Click me</Button>);
-      fireEvent.click(screen.getByRole('button'));
+      render(
+        <Button onClick={onClick} disabled>
+          Click me
+        </Button>
+      );
+      fireEvent.click(screen.getByRole("button"));
       expect(onClick).not.toHaveBeenCalled();
     });
   });
 
-  describe('accessibility', () => {
-    it('has accessible name', () => {
+  describe("accessibility", () => {
+    it("has accessible name", () => {
       render(<Button>Click me</Button>);
-      expect(screen.getByRole('button', { name: 'Click me' })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Click me" })
+      ).toBeInTheDocument();
     });
 
-    it('supports aria-label', () => {
+    it("supports aria-label", () => {
       render(<Button aria-label="Close">×</Button>);
-      expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Close" })).toBeInTheDocument();
     });
   });
 });
@@ -267,9 +287,11 @@ describe('Button', () => {
 ## Dependencies
 
 **Before This Story:**
+
 - Story 002 (Create Layout Primitives) ✅ Complete
 
 **After This Story:**
+
 - Story 014 (Update Button Stories) - further story improvements
 
 ## Effort Estimate
@@ -284,17 +306,20 @@ describe('Button', () => {
 ## Task Breakdown
 
 ### Task 1: Refactor Button Component (90 minutes)
+
 - [ ] Create variant/intent/size class mappings
 - [ ] Replace inline styles with clsx composition
 - [ ] Test all visual variants manually in Storybook
 - [ ] Remove TODO comments
 
 ### Task 2: Update Button Stories (60 minutes)
+
 - [ ] Replace all raw `<div>` with Stack/Flex/Grid
 - [ ] Remove all inline styles
 - [ ] Verify all stories render correctly in Storybook
 
 ### Task 3: Improve Test Coverage (90 minutes)
+
 - [ ] Add variant tests
 - [ ] Add intent tests
 - [ ] Add size tests

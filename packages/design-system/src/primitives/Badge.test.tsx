@@ -2,10 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { Badge } from "./Badge";
 import { ThemeProvider } from "../theme/ThemeProvider";
-import {
-  ComponentIntent,
-  ComponentVariant,
-} from "../theme/types";
+import { ComponentIntent, ComponentVariant } from "../theme/types";
 
 // Mock data and helpers
 interface RenderProps extends React.HTMLAttributes<HTMLSpanElement> {
@@ -126,9 +123,9 @@ describe("Badge", () => {
 
       const badge = screen.getByText("Online");
       expect(badge).toBeInTheDocument();
-      
+
       // Check for dot element
-      const dot = container.querySelector('.h-1\\.5');
+      const dot = container.querySelector(".h-1\\.5");
       expect(dot).toBeInTheDocument();
     });
 
@@ -137,16 +134,16 @@ describe("Badge", () => {
 
       const badge = screen.getByText("Online");
       expect(badge).toBeInTheDocument();
-      
+
       // Check dot is not present
-      const dot = container.querySelector('.h-1\\.5');
+      const dot = container.querySelector(".h-1\\.5");
       expect(dot).not.toBeInTheDocument();
     });
 
     it("should not render dot by default", () => {
       const { container } = renderBadge({ children: "Online" });
 
-      const dot = container.querySelector('.h-1\\.5');
+      const dot = container.querySelector(".h-1\\.5");
       expect(dot).not.toBeInTheDocument();
     });
   });
@@ -204,8 +201,8 @@ describe("Badge", () => {
       });
 
       // Dot should be aria-hidden
-      const dot = container.querySelector('.h-1\\.5');
-      expect(dot).toHaveAttribute('aria-hidden', 'true');
+      const dot = container.querySelector(".h-1\\.5");
+      expect(dot).toHaveAttribute("aria-hidden", "true");
     });
   });
 
@@ -335,7 +332,7 @@ describe("Badge", () => {
 
     it("should support data attributes", () => {
       const { container } = renderBadge();
-      
+
       const badge = container.querySelector('[data-testid="test-badge"]');
       expect(badge).toBeInTheDocument();
     });

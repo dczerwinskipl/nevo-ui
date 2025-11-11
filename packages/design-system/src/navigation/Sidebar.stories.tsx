@@ -211,9 +211,7 @@ export const WithContentArea: Story = {
               <Typography type="page-title" className="mb-4">
                 Dashboard
               </Typography>
-              <Typography type="body">
-                Welcome to your dashboard!
-              </Typography>
+              <Typography type="body">Welcome to your dashboard!</Typography>
             </div>
           );
         case "products-list":
@@ -233,9 +231,7 @@ export const WithContentArea: Story = {
               <Typography type="page-title" className="mb-4">
                 All Orders
               </Typography>
-              <Typography type="body">
-                View and manage all orders.
-              </Typography>
+              <Typography type="body">View and manage all orders.</Typography>
             </div>
           );
         case "users":

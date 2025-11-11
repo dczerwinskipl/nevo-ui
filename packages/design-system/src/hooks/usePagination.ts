@@ -44,10 +44,10 @@ export interface PaginationState {
 
 /**
  * Hook for managing pagination state
- * 
+ *
  * @param config - Pagination configuration
  * @returns Pagination state and control functions
- * 
+ *
  * @example
  * ```tsx
  * function DataTable({ items }: { items: Item[] }) {
@@ -55,12 +55,12 @@ export interface PaginationState {
  *     totalItems: items.length,
  *     itemsPerPage: 10,
  *   });
- *   
+ *
  *   const displayItems = items.slice(
  *     pagination.startIndex,
  *     pagination.endIndex + 1
  *   );
- *   
+ *
  *   return (
  *     <>
  *       <Table data={displayItems} />

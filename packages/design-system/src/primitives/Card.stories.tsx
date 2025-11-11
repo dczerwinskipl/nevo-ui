@@ -61,20 +61,36 @@ export const AllVariants: Story = {
   render: () => (
     <Grid cols={2} gap={4} className="min-w-[600px]">
       <Card variant="default">
-        <Typography type="card-title" className="mb-2">Default</Typography>
-        <Typography type="body" intent="neutral">Standard card with subtle shadow</Typography>
+        <Typography type="card-title" className="mb-2">
+          Default
+        </Typography>
+        <Typography type="body" intent="neutral">
+          Standard card with subtle shadow
+        </Typography>
       </Card>
       <Card variant="bordered">
-        <Typography type="card-title" className="mb-2">Bordered</Typography>
-        <Typography type="body" intent="neutral">Card with prominent border</Typography>
+        <Typography type="card-title" className="mb-2">
+          Bordered
+        </Typography>
+        <Typography type="body" intent="neutral">
+          Card with prominent border
+        </Typography>
       </Card>
       <Card variant="elevated">
-        <Typography type="card-title" className="mb-2">Elevated</Typography>
-        <Typography type="body" intent="neutral">Card with elevated shadow</Typography>
+        <Typography type="card-title" className="mb-2">
+          Elevated
+        </Typography>
+        <Typography type="body" intent="neutral">
+          Card with elevated shadow
+        </Typography>
       </Card>
       <Card variant="flat">
-        <Typography type="card-title" className="mb-2">Flat</Typography>
-        <Typography type="body" intent="neutral">Flat card with subtle background</Typography>
+        <Typography type="card-title" className="mb-2">
+          Flat
+        </Typography>
+        <Typography type="body" intent="neutral">
+          Flat card with subtle background
+        </Typography>
       </Card>
     </Grid>
   ),
@@ -118,19 +134,34 @@ export const Interactive: Story = {
   render: () => (
     <Stack gap={4}>
       <Card hoverable className="min-w-[300px]">
-        <Typography type="card-title" className="mb-2">Hoverable Card</Typography>
+        <Typography type="card-title" className="mb-2">
+          Hoverable Card
+        </Typography>
         <Typography type="body" intent="neutral">
           Hover over me to see the effect!
         </Typography>
       </Card>
-      <Card clickable onClick={() => alert("Card clicked!")} className="min-w-[300px]">
-        <Typography type="card-title" className="mb-2">Clickable Card</Typography>
+      <Card
+        clickable
+        onClick={() => alert("Card clicked!")}
+        className="min-w-[300px]"
+      >
+        <Typography type="card-title" className="mb-2">
+          Clickable Card
+        </Typography>
         <Typography type="body" intent="neutral">
           Click me or press Enter/Space when focused
         </Typography>
       </Card>
-      <Card hoverable clickable onClick={() => alert("Card clicked!")} className="min-w-[300px]">
-        <Typography type="card-title" className="mb-2">Hoverable + Clickable</Typography>
+      <Card
+        hoverable
+        clickable
+        onClick={() => alert("Card clicked!")}
+        className="min-w-[300px]"
+      >
+        <Typography type="card-title" className="mb-2">
+          Hoverable + Clickable
+        </Typography>
         <Typography type="body" intent="neutral">
           I have both hover and click effects
         </Typography>
@@ -232,7 +263,8 @@ export const ProfileCard: Story = {
           <div>
             <Typography type="label">About</Typography>
             <Typography type="body" intent="neutral">
-              Passionate developer with 5+ years of experience in React and TypeScript.
+              Passionate developer with 5+ years of experience in React and
+              TypeScript.
             </Typography>
           </div>
           <div>

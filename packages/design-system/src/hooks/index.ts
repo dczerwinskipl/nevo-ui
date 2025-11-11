@@ -1,6 +1,6 @@
 /**
  * @module hooks
- * 
+ *
  * Reusable React hooks for the nEvo design system.
  * These hooks provide common functionality for state management,
  * user interactions, responsive design, and data handling.

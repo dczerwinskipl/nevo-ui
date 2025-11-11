@@ -4,9 +4,12 @@ import { clsx } from "clsx";
 export type CardVariant = "default" | "bordered" | "elevated" | "flat";
 
 const VARIANT_CLASSES: Record<CardVariant, string> = {
-  default: "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-sm",
-  bordered: "bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-600",
-  elevated: "bg-white dark:bg-gray-900 shadow-lg border border-gray-100 dark:border-gray-800",
+  default:
+    "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-sm",
+  bordered:
+    "bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-600",
+  elevated:
+    "bg-white dark:bg-gray-900 shadow-lg border border-gray-100 dark:border-gray-800",
   flat: "bg-gray-50 dark:bg-gray-800",
 } as const;
 
@@ -25,7 +28,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 /**
  * Card component - Container for grouping related content
- * 
+ *
  * @example
  * ```tsx
  * <Card variant="elevated">
@@ -74,7 +77,8 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
           // Interactive states
           {
             "cursor-pointer": clickable,
-            "transition-all duration-200 hover:shadow-md hover:-translate-y-0.5": hoverable,
+            "transition-all duration-200 hover:shadow-md hover:-translate-y-0.5":
+              hoverable,
             "opacity-60 pointer-events-none": loading,
           },
           // Custom className
@@ -138,7 +142,10 @@ export const CardBody: React.FC<CardBodyProps> = ({
   ...rest
 }) => {
   return (
-    <div className={clsx("text-gray-700 dark:text-gray-300", className)} {...rest}>
+    <div
+      className={clsx("text-gray-700 dark:text-gray-300", className)}
+      {...rest}
+    >
       {children}
     </div>
   );

@@ -198,7 +198,7 @@ describe("Flex", () => {
     expect(flex).toHaveAttribute("role", "group");
   });
 
-  it('combines multiple props correctly', () => {
+  it("combines multiple props correctly", () => {
     render(
       <Flex
         direction="column"
@@ -212,15 +212,15 @@ describe("Flex", () => {
         Content
       </Flex>
     );
-    const flex = screen.getByTestId('flex');
+    const flex = screen.getByTestId("flex");
     expect(flex).toHaveClass(
-      'flex',
-      'flex-col',
-      'gap-8',
-      'items-center',
-      'justify-between',
-      'flex-wrap',
-      'custom'
+      "flex",
+      "flex-col",
+      "gap-8",
+      "items-center",
+      "justify-between",
+      "flex-wrap",
+      "custom"
     );
   });
 });

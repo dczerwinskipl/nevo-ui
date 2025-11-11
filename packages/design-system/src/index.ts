@@ -1,7 +1,11 @@
 export * from "./theme/ThemeProvider";
 
 // Theme types
-export type { ComponentIntent, ComponentVariant, ComponentSize } from "./theme/types";
+export type {
+  ComponentIntent,
+  ComponentVariant,
+  ComponentSize,
+} from "./theme/types";
 
 // Hooks
 export * from "./hooks";
@@ -40,12 +44,7 @@ export type {
 // Primitives
 export * from "./primitives/Button";
 export type { ButtonProps } from "./primitives/Button";
-export {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-} from "./primitives/Card";
+export { Card, CardHeader, CardBody, CardFooter } from "./primitives/Card";
 export type {
   CardProps,
   CardVariant,

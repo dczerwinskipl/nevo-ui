@@ -3,16 +3,16 @@ import { useRef, useEffect } from "react";
 /**
  * Hook for detecting clicks outside of a referenced element
  * Useful for dropdowns, modals, popovers, etc.
- * 
+ *
  * @param handler - Callback function to execute when outside click is detected
  * @param enabled - Whether the listener is active (default: true)
  * @returns Ref to attach to the element
- * 
+ *
  * @example
  * ```tsx
  * function Dropdown({ onClose }: { onClose: () => void }) {
  *   const ref = useClickOutside<HTMLDivElement>(onClose);
- *   
+ *
  *   return (
  *     <div ref={ref}>
  *       Dropdown content

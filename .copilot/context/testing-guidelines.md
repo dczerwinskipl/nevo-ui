@@ -9,6 +9,7 @@
 **Problem:** Tests should not assume a specific locale (e.g., date formats, numbers, currencies).
 
 **❌ Bad:**
+
 ```typescript
 // Assumes US date format (M/D/YYYY)
 expect(screen.getByText("1/1/2023")).toBeInTheDocument();
@@ -18,6 +19,7 @@ expect(screen.getByText("1.234,56")).toBeInTheDocument();
 ```
 
 **✅ Good:**
+
 ```typescript
 // Use the same formatting method as in the component
 const expectedDate = mockData.date.toLocaleDateString();
@@ -27,17 +29,19 @@ expect(screen.getByText(expectedDate)).toBeInTheDocument();
 expect(screen.getByText(/\d+[.,]\d+/)).toBeInTheDocument();
 
 // Best: test logic, not format
-const dateElement = screen.getByTestId('formatted-date');
+const dateElement = screen.getByTestId("formatted-date");
 expect(dateElement).toHaveTextContent(mockData.date.toLocaleDateString());
 ```
 
 **Why this matters:**
+
 - Tests run in different environments (CI, developer machines)
 - Node.js locale may differ from browser locale
 - Date/number formatting varies by region
 - Hard-coded formats make tests brittle
 
 **When testing formatted values:**
+
 1. Use the same formatter in test as in component
 2. Test the data, not the presentation
 3. If testing presentation is necessary, use regex patterns
@@ -48,6 +52,7 @@ expect(dateElement).toHaveTextContent(mockData.date.toLocaleDateString());
 If you must test formatting, use the same formatting method as in the component:
 
 **✅ Example:**
+
 ```typescript
 // In component:
 const formattedDate = date.toLocaleDateString();
@@ -58,12 +63,13 @@ expect(screen.getByText(expectedDate)).toBeInTheDocument();
 ```
 
 **For complex formatting:**
+
 ```typescript
 // If component uses Intl API
-const formatter = new Intl.DateTimeFormat('en-US', { 
-  year: 'numeric', 
-  month: '2-digit', 
-  day: '2-digit' 
+const formatter = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
 });
 
 // Test uses same formatter
@@ -76,6 +82,7 @@ expect(screen.getByText(expectedDate)).toBeInTheDocument();
 React 18 introduces many `act()` warnings that don't affect functionality. Filter them in `jest.setup.js`:
 
 **✅ Example:**
+
 ```javascript
 const originalConsoleError = console.error;
 beforeEach(() => {
@@ -103,19 +110,22 @@ afterEach(() => {
 Use `@testing-library/user-event` instead of `fireEvent` for more realistic interaction tests:
 
 **❌ Bad:**
+
 ```typescript
 fireEvent.click(button);
-fireEvent.change(input, { target: { value: 'test' } });
+fireEvent.change(input, { target: { value: "test" } });
 ```
 
 **✅ Good:**
+
 ```typescript
 const user = userEvent.setup();
 await user.click(button);
-await user.type(input, 'test');
+await user.type(input, "test");
 ```
 
 **Why `userEvent` is better:**
+
 - Simulates real user behavior (including hover, focus, blur)
 - Handles keyboard navigation properly
 - Triggers all related events in correct order
@@ -126,18 +136,21 @@ await user.type(input, 'test');
 Prefer queries by role and accessible names:
 
 **❌ Bad:**
+
 ```typescript
-screen.getByTestId('submit-button');
-screen.getByClassName('btn-primary');
+screen.getByTestId("submit-button");
+screen.getByClassName("btn-primary");
 ```
 
 **✅ Good:**
+
 ```typescript
-screen.getByRole('button', { name: /submit/i });
-screen.getByLabelText('Email address');
+screen.getByRole("button", { name: /submit/i });
+screen.getByLabelText("Email address");
 ```
 
 **Query Priority:**
+
 1. `getByRole` - Accessible to screen readers
 2. `getByLabelText` - Form elements
 3. `getByPlaceholderText` - When no label exists
@@ -147,6 +160,7 @@ screen.getByLabelText('Email address');
 ### 6. Test Data Management
 
 **✅ Best Practices:**
+
 - Define mock data at the top of the file
 - Use helper functions to render components
 - Clear mocks in `afterEach`:
@@ -161,7 +175,7 @@ function renderComponent(props = {}) {
     data: mockData,
     ...props,
   };
-  
+
   return render(
     <ThemeProvider>
       <Component {...defaultProps} />
@@ -179,18 +193,20 @@ afterEach(() => {
 Always use `waitFor` or `findBy*` for asynchronous operations:
 
 **✅ Example:**
+
 ```typescript
 // Wait for element to appear
 await waitFor(() => {
-  expect(screen.getByRole('dialog')).toBeInTheDocument();
+  expect(screen.getByRole("dialog")).toBeInTheDocument();
 });
 
 // Or use findBy (combines getBy + waitFor)
-const dialog = await screen.findByRole('dialog');
+const dialog = await screen.findByRole("dialog");
 expect(dialog).toBeInTheDocument();
 ```
 
 **Common mistakes:**
+
 - Using `getBy*` for async content (will fail immediately)
 - Using arbitrary delays (`setTimeout`)
 - Not waiting for state updates
@@ -200,23 +216,22 @@ expect(dialog).toBeInTheDocument();
 Test not only happy paths but also error states:
 
 **✅ Example:**
+
 ```typescript
 it("should handle null/undefined values gracefully", () => {
-  const dataWithNulls = [
-    { id: 1, name: null, email: 'test@example.com' },
-  ];
-  
+  const dataWithNulls = [{ id: 1, name: null, email: "test@example.com" }];
+
   renderComponent({ data: dataWithNulls });
-  expect(screen.getByText('test@example.com')).toBeInTheDocument();
+  expect(screen.getByText("test@example.com")).toBeInTheDocument();
 });
 
 it("should display error message for invalid input", async () => {
   const user = userEvent.setup();
   renderComponent();
-  
-  const input = screen.getByRole('textbox');
-  await user.type(input, 'invalid');
-  
+
+  const input = screen.getByRole("textbox");
+  await user.type(input, "invalid");
+
   expect(await screen.findByText(/error/i)).toBeInTheDocument();
 });
 ```
@@ -226,10 +241,11 @@ it("should display error message for invalid input", async () => {
 For tests requiring specific dates, use `jest.useFakeTimers()`:
 
 **✅ Example:**
+
 ```typescript
 beforeEach(() => {
   jest.useFakeTimers();
-  jest.setSystemTime(new Date('2023-01-01'));
+  jest.setSystemTime(new Date("2023-01-01"));
 });
 
 afterEach(() => {
@@ -244,6 +260,7 @@ it("should use current date", () => {
 ```
 
 **Benefits:**
+
 - Consistent test results across runs
 - No timezone issues
 - Can test time-dependent behavior
@@ -254,25 +271,26 @@ it("should use current date", () => {
 Test performance for large datasets:
 
 **✅ Example:**
+
 ```typescript
 it("should handle large datasets efficiently", () => {
   const largeDataset = Array.from({ length: 1000 }, (_, i) => ({
     id: i,
     name: `User ${i}`,
   }));
-  
+
   const { container } = renderComponent({ data: largeDataset });
-  
+
   // Should render without errors
-  expect(container.querySelector('table')).toBeInTheDocument();
+  expect(container.querySelector("table")).toBeInTheDocument();
 });
 
 it("should virtualize long lists", () => {
   const longList = Array.from({ length: 10000 }, (_, i) => i);
   renderComponent({ items: longList });
-  
+
   // Should only render visible items
-  const renderedItems = screen.getAllByRole('listitem');
+  const renderedItems = screen.getAllByRole("listitem");
   expect(renderedItems.length).toBeLessThan(100);
 });
 ```
@@ -282,17 +300,17 @@ it("should virtualize long lists", () => {
 ### Testing Hooks
 
 ```typescript
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act } from "@testing-library/react";
 
 it("should toggle value", () => {
   const { result } = renderHook(() => useToggle(false));
-  
+
   expect(result.current[0]).toBe(false);
-  
+
   act(() => {
     result.current[1](); // toggle
   });
-  
+
   expect(result.current[0]).toBe(true);
 });
 ```
@@ -317,12 +335,12 @@ it("should use theme context", () => {
 ### Testing Component Variants
 
 ```typescript
-const variants = ['primary', 'secondary', 'error'] as const;
+const variants = ["primary", "secondary", "error"] as const;
 
 variants.forEach((variant) => {
   it(`should render ${variant} variant`, () => {
     renderComponent({ variant });
-    expect(screen.getByRole('button')).toHaveClass(`variant-${variant}`);
+    expect(screen.getByRole("button")).toHaveClass(`variant-${variant}`);
   });
 });
 ```
@@ -333,17 +351,17 @@ variants.forEach((variant) => {
 it("should support keyboard navigation", async () => {
   const user = userEvent.setup();
   renderComponent();
-  
-  const firstItem = screen.getByRole('button', { name: /first/i });
-  const secondItem = screen.getByRole('button', { name: /second/i });
-  
+
+  const firstItem = screen.getByRole("button", { name: /first/i });
+  const secondItem = screen.getByRole("button", { name: /second/i });
+
   firstItem.focus();
   expect(firstItem).toHaveFocus();
-  
-  await user.keyboard('{Tab}');
+
+  await user.keyboard("{Tab}");
   expect(secondItem).toHaveFocus();
-  
-  await user.keyboard('{Enter}');
+
+  await user.keyboard("{Enter}");
   expect(mockOnClick).toHaveBeenCalled();
 });
 ```
@@ -357,18 +375,18 @@ it("should support keyboard navigation", async () => {
 expect(component.state.isOpen).toBe(true);
 
 // Good - tests user-visible behavior
-expect(screen.getByRole('dialog')).toBeVisible();
+expect(screen.getByRole("dialog")).toBeVisible();
 ```
 
 ### ❌ Don't: Use Arbitrary Delays
 
 ```typescript
 // Bad
-await new Promise(resolve => setTimeout(resolve, 1000));
+await new Promise((resolve) => setTimeout(resolve, 1000));
 
 // Good
 await waitFor(() => {
-  expect(screen.getByText('Loaded')).toBeInTheDocument();
+  expect(screen.getByText("Loaded")).toBeInTheDocument();
 });
 ```
 
@@ -376,10 +394,10 @@ await waitFor(() => {
 
 ```typescript
 // Bad
-container.querySelector('.my-class');
+container.querySelector(".my-class");
 
 // Good
-screen.getByRole('button', { name: /submit/i });
+screen.getByRole("button", { name: /submit/i });
 ```
 
 ### ❌ Don't: Test Multiple Concerns in One Test
@@ -388,30 +406,30 @@ screen.getByRole('button', { name: /submit/i });
 // Bad - tests too many things
 it("should work correctly", () => {
   renderComponent();
-  expect(screen.getByRole('button')).toBeInTheDocument();
-  fireEvent.click(screen.getByRole('button'));
+  expect(screen.getByRole("button")).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button"));
   expect(mockOnClick).toHaveBeenCalled();
-  expect(screen.getByText('Success')).toBeInTheDocument();
+  expect(screen.getByText("Success")).toBeInTheDocument();
 });
 
 // Good - split into focused tests
 it("should render button", () => {
   renderComponent();
-  expect(screen.getByRole('button')).toBeInTheDocument();
+  expect(screen.getByRole("button")).toBeInTheDocument();
 });
 
 it("should call onClick when clicked", async () => {
   const user = userEvent.setup();
   renderComponent();
-  await user.click(screen.getByRole('button'));
+  await user.click(screen.getByRole("button"));
   expect(mockOnClick).toHaveBeenCalled();
 });
 
 it("should show success message after click", async () => {
   const user = userEvent.setup();
   renderComponent();
-  await user.click(screen.getByRole('button'));
-  expect(await screen.findByText('Success')).toBeInTheDocument();
+  await user.click(screen.getByRole("button"));
+  expect(await screen.findByText("Success")).toBeInTheDocument();
 });
 ```
 
@@ -427,12 +445,14 @@ it("should show success message after click", async () => {
 **Important:** All testing guidelines should be maintained in this file (`.copilot/context/testing-guidelines.md`), not in package-level documentation. Package-level testing docs should reference this file.
 
 **When to update this file:**
+
 - New testing patterns emerge
 - Common mistakes are identified
 - Testing library updates require changes
 - Team identifies confusing patterns
 
 **How to update:**
+
 - Follow the same structure (Bad/Good examples)
 - Include "Why this matters" for complex guidelines
 - Link to relevant resources

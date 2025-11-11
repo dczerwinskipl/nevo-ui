@@ -22,7 +22,7 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 
 /**
  * Badge component for displaying status, labels, and tags
- * 
+ *
  * @example
  * ```tsx
  * <Badge intent="success">Active</Badge>
@@ -59,7 +59,11 @@ export const Badge: React.FC<BadgeProps> = ({
           aria-hidden="true"
         />
       )}
-      {icon && <span className="inline-flex" aria-hidden="true">{icon}</span>}
+      {icon && (
+        <span className="inline-flex" aria-hidden="true">
+          {icon}
+        </span>
+      )}
       {children}
     </span>
   );

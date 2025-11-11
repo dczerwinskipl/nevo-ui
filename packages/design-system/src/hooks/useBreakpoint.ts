@@ -15,16 +15,16 @@ export type Breakpoint = keyof typeof BREAKPOINTS;
 
 /**
  * Hook for detecting current screen size breakpoint
- * 
+ *
  * @param breakpoint - The breakpoint to check against (default: 'md')
  * @returns Whether the screen is at or above the breakpoint
- * 
+ *
  * @example
  * ```tsx
  * function ResponsiveComponent() {
  *   const isMobile = !useBreakpoint('md');
  *   const isDesktop = useBreakpoint('lg');
- *   
+ *
  *   return isMobile ? <MobileView /> : <DesktopView />;
  * }
  * ```
@@ -59,14 +59,14 @@ export function useBreakpoint(breakpoint: Breakpoint = "md"): boolean {
 
 /**
  * Hook for getting current window dimensions
- * 
+ *
  * @returns Object with width and height
- * 
+ *
  * @example
  * ```tsx
  * function Component() {
  *   const { width, height } = useWindowSize();
- *   
+ *
  *   return <div>Window: {width}x{height}</div>;
  * }
  * ```

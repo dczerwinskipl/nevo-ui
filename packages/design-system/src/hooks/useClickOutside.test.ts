@@ -14,7 +14,9 @@ describe("useClickOutside", () => {
 
     // Click outside
     act(() => {
-      document.body.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+      document.body.dispatchEvent(
+        new MouseEvent("mousedown", { bubbles: true })
+      );
     });
 
     expect(handler).toHaveBeenCalledTimes(1);
@@ -51,7 +53,9 @@ describe("useClickOutside", () => {
     document.body.appendChild(element);
 
     act(() => {
-      document.body.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+      document.body.dispatchEvent(
+        new MouseEvent("mousedown", { bubbles: true })
+      );
     });
 
     expect(handler).not.toHaveBeenCalled();
@@ -69,7 +73,9 @@ describe("useClickOutside", () => {
     document.body.appendChild(element);
 
     act(() => {
-      document.body.dispatchEvent(new TouchEvent("touchstart", { bubbles: true }));
+      document.body.dispatchEvent(
+        new TouchEvent("touchstart", { bubbles: true })
+      );
     });
 
     expect(handler).toHaveBeenCalledTimes(1);
@@ -89,7 +95,9 @@ describe("useClickOutside", () => {
     unmount();
 
     act(() => {
-      document.body.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+      document.body.dispatchEvent(
+        new MouseEvent("mousedown", { bubbles: true })
+      );
     });
 
     expect(handler).not.toHaveBeenCalled();
@@ -102,7 +110,9 @@ describe("useClickOutside", () => {
     renderHook(() => useClickOutside(handler));
 
     act(() => {
-      document.body.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+      document.body.dispatchEvent(
+        new MouseEvent("mousedown", { bubbles: true })
+      );
     });
 
     expect(handler).not.toHaveBeenCalled();

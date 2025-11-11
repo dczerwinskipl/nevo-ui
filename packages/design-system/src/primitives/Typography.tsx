@@ -1,9 +1,6 @@
 import React from "react";
 import { clsx } from "clsx";
-import { useTheme, ComponentIntent } from "../theme";
-
-// TODO: TASK-019 - Replace string interpolation with clsx utility for better className merging
-// TODO: TASK-020 - Move className maps outside component to prevent recreation on each render
+import { ComponentIntent, getIntentTextCSSVar } from "../theme";
 
 // Extracted constants - no recreation on each render
 const SIZE_CLASSES = {
@@ -49,6 +46,7 @@ export interface TypographyProps {
   align?: "left" | "center" | "right";
   children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 
   // Override props for customization (use sparingly)
   size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
@@ -126,12 +124,11 @@ export const Typography: React.FC<TypographyProps> = ({
   align = "left",
   children,
   className = "",
+  style,
   size,
   weight,
   ...rest
 }) => {
-  const { tokens } = useTheme();
-
   // Get predefined style for the type
   const typeStyle = typeStyles[type];
 
@@ -141,21 +138,25 @@ export const Typography: React.FC<TypographyProps> = ({
   const finalWeight = weight || typeStyle.weight;
   const finalIntent = intent || typeStyle.intent;
 
-  // Get color based on intent or use default text color
-  const color = finalIntent ? tokens.intent[finalIntent].text : tokens.text;
-
   return (
     <As
       {...rest}
       className={clsx(
+        // Base typography styles
+        "m-0", // Reset default margins
+        "text-gray-900 dark:text-gray-100", // Default text color (fallback)
+        // Size and weight
         SIZE_CLASSES[finalSize],
         WEIGHT_CLASSES[finalWeight],
         ALIGN_CLASSES[align],
+        // Custom className
         className
       )}
       style={{
-        color,
-        margin: 0, // Reset default margins
+        // Intent color using CSS variable (theme-aware)
+        ...(finalIntent ? { color: getIntentTextCSSVar(finalIntent) } : {}),
+        // Merge with any custom styles
+        ...style,
       }}
     >
       {children}

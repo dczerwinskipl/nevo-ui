@@ -5,18 +5,23 @@ This document defines the API patterns and conventions for design system compone
 ## Core Principles
 
 ### 1. **Consistency**
+
 All components follow the same prop naming and structure patterns.
 
 ### 2. **Composability**
+
 Components can be combined to create complex UIs.
 
 ### 3. **Accessibility**
+
 WCAG 2.1 AA compliance is mandatory, not optional.
 
 ### 4. **Type Safety**
+
 All props are fully typed with exported TypeScript interfaces.
 
 ### 5. **Theming**
+
 Components integrate with the theme system automatically.
 
 ---
@@ -30,47 +35,47 @@ export interface ComponentNameProps {
   // ===== Semantic & Style =====
   /** Semantic meaning (primary, success, error, etc.) */
   intent?: ComponentIntent;
-  
+
   /** Visual style (solid, outline, ghost, subtle) */
-  variant?: 'solid' | 'outline' | 'ghost' | 'subtle';
-  
+  variant?: "solid" | "outline" | "ghost" | "subtle";
+
   /** Physical size (xs, sm, md, lg, xl) */
   size?: ComponentSize;
-  
+
   // ===== Styling =====
   /** Additional CSS classes */
   className?: string;
-  
+
   /** Inline styles (use sparingly) */
   style?: React.CSSProperties;
-  
+
   // ===== Content =====
   /** Component content */
   children?: React.ReactNode;
-  
+
   // ===== State =====
   /** Disabled state */
   disabled?: boolean;
-  
+
   /** Loading state (if applicable) */
   loading?: boolean;
-  
+
   // ===== Accessibility =====
   /** Accessible label */
-  'aria-label'?: string;
-  
+  "aria-label"?: string;
+
   /** ID of labelling element */
-  'aria-labelledby'?: string;
-  
+  "aria-labelledby"?: string;
+
   /** ID of describing element */
-  'aria-describedby'?: string;
-  
+  "aria-describedby"?: string;
+
   // ===== Standard HTML =====
   /** Element ID */
   id?: string;
-  
+
   /** Test ID for automated testing */
-  'data-testid'?: string;
+  "data-testid"?: string;
 }
 ```
 
@@ -81,13 +86,13 @@ export interface ComponentNameProps {
 ### ComponentIntent Type
 
 ```typescript
-type ComponentIntent = 
-  | 'primary'   // Main brand actions
-  | 'success'   // Positive actions (save, confirm)
-  | 'error'     // Destructive actions (delete, remove)
-  | 'warning'   // Cautionary actions
-  | 'info'      // Informational
-  | 'neutral';  // Default, secondary actions
+type ComponentIntent =
+  | "primary" // Main brand actions
+  | "success" // Positive actions (save, confirm)
+  | "error" // Destructive actions (delete, remove)
+  | "warning" // Cautionary actions
+  | "info" // Informational
+  | "neutral"; // Default, secondary actions
 ```
 
 ### Intent Usage
@@ -119,16 +124,17 @@ type ComponentIntent =
 ### Standard Variants
 
 ```typescript
-type ComponentVariant = 
-  | 'solid'    // Filled background (highest emphasis)
-  | 'outline'  // Border only (medium emphasis)
-  | 'ghost'    // Transparent, hover effect (low emphasis)
-  | 'subtle';  // Minimal styling (lowest emphasis)
+type ComponentVariant =
+  | "solid" // Filled background (highest emphasis)
+  | "outline" // Border only (medium emphasis)
+  | "ghost" // Transparent, hover effect (low emphasis)
+  | "subtle"; // Minimal styling (lowest emphasis)
 ```
 
 ### Variant Guidelines
 
 **Emphasis Hierarchy**:
+
 1. **Solid**: Primary action on a page
 2. **Outline**: Secondary action
 3. **Ghost**: Tertiary action or navigation
@@ -150,18 +156,18 @@ type ComponentVariant =
 ### ComponentSize Type
 
 ```typescript
-type ComponentSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+type ComponentSize = "xs" | "sm" | "md" | "lg" | "xl";
 ```
 
 ### Size Specifications
 
-| Size | Height | Use Case | Accessibility Note |
-|------|--------|----------|-------------------|
-| `xs` | 32px | Compact UIs, dense tables | ⚠️ Below WCAG touch target |
-| `sm` | 40px | Secondary actions | ⚠️ Below WCAG touch target |
-| `md` | 44px | Default interactive elements | ✅ Meets WCAG 2.1 AA |
-| `lg` | 48px | Primary actions | ✅ Comfortable touch target |
-| `xl` | 56px | Hero actions, mobile-first | ✅ Generous touch target |
+| Size | Height | Use Case                     | Accessibility Note          |
+| ---- | ------ | ---------------------------- | --------------------------- |
+| `xs` | 32px   | Compact UIs, dense tables    | ⚠️ Below WCAG touch target  |
+| `sm` | 40px   | Secondary actions            | ⚠️ Below WCAG touch target  |
+| `md` | 44px   | Default interactive elements | ✅ Meets WCAG 2.1 AA        |
+| `lg` | 48px   | Primary actions              | ✅ Comfortable touch target |
+| `xl` | 56px   | Hero actions, mobile-first   | ✅ Generous touch target    |
 
 **Default**: Always use `md` as the default size for interactive components.
 
@@ -183,6 +189,7 @@ type ComponentSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 ### Children Prop
 
 **For content containers**:
+
 ```typescript
 <Card>
   <CardHeader>Title</CardHeader>
@@ -194,6 +201,7 @@ type ComponentSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 ### Render Props
 
 **For flexible content**:
+
 ```typescript
 <Select
   options={options}
@@ -209,6 +217,7 @@ type ComponentSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 ### Compound Components
 
 **For related components**:
+
 ```typescript
 <Modal>
   <Modal.Header>Title</Modal.Header>
@@ -229,16 +238,16 @@ type ComponentSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 interface ComponentProps {
   /** Called when component is clicked */
   onClick?: (event: React.MouseEvent) => void;
-  
+
   /** Called when value changes */
   onChange?: (value: string) => void;
-  
+
   /** Called when component receives focus */
   onFocus?: (event: React.FocusEvent) => void;
-  
+
   /** Called when component loses focus */
   onBlur?: (event: React.FocusEvent) => void;
-  
+
   /** Called when user presses Enter key */
   onSubmit?: (event: React.FormEvent) => void;
 }
@@ -267,9 +276,9 @@ interface ComponentProps {
 ```typescript
 // ✅ GOOD - Default parameters in function signature
 export function Button({
-  intent = 'neutral',
-  variant = 'solid',
-  size = 'md',
+  intent = "neutral",
+  variant = "solid",
+  size = "md",
   disabled = false,
   children,
 }: ButtonProps) {
@@ -278,9 +287,9 @@ export function Button({
 
 // ❌ BAD - Deprecated defaultProps
 Button.defaultProps = {
-  intent: 'neutral',
-  variant: 'solid',
-  size: 'md',
+  intent: "neutral",
+  variant: "solid",
+  size: "md",
 };
 ```
 
@@ -366,10 +375,10 @@ interface InputProps {
 
 export function Input({ value, defaultValue, onChange }: InputProps) {
   const [internalValue, setInternalValue] = useState(defaultValue ?? '');
-  
+
   const isControlled = value !== undefined;
   const currentValue = isControlled ? value : internalValue;
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     if (!isControlled) {
@@ -377,7 +386,7 @@ export function Input({ value, defaultValue, onChange }: InputProps) {
     }
     onChange?.(newValue);
   };
-  
+
   return <input value={currentValue} onChange={handleChange} />;
 }
 ```
@@ -388,10 +397,10 @@ export function Input({ value, defaultValue, onChange }: InputProps) {
 
 ### JSDoc Comments
 
-```typescript
+````typescript
 /**
  * A versatile button component with multiple intents, variants, and sizes.
- * 
+ *
  * @example
  * ```tsx
  * <Button intent="primary" size="md" onClick={handleClick}>
@@ -405,36 +414,36 @@ export interface ButtonProps {
    * @default 'neutral'
    */
   intent?: ComponentIntent;
-  
+
   /**
    * The visual style of the button.
    * @default 'solid'
    */
   variant?: ButtonVariant;
-  
+
   /**
    * The size of the button.
    * @default 'md'
    */
   size?: ComponentSize;
-  
+
   /**
    * Whether the button is disabled.
    * @default false
    */
   disabled?: boolean;
-  
+
   /**
    * The content of the button.
    */
   children: React.ReactNode;
-  
+
   /**
    * Callback fired when the button is clicked.
    */
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
-```
+````
 
 ---
 
@@ -453,8 +462,8 @@ export function ComponentName(props: ComponentNameProps) {
 }
 
 // index.ts
-export { ComponentName } from './ComponentName';
-export type { ComponentNameProps } from './ComponentName';
+export { ComponentName } from "./ComponentName";
+export type { ComponentNameProps } from "./ComponentName";
 ```
 
 ---

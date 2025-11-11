@@ -1,6 +1,7 @@
 # Story 005: Refactor Badge Component
 
 ## Summary
+
 **As a** design system maintainer  
 **I want to** refactor the Badge component to eliminate inline styles and improve quality  
 **So that** the component follows design system guidelines with consistent styling and comprehensive tests
@@ -8,12 +9,14 @@
 ## Context
 
 ### Current State
+
 - Badge component likely contains inline styles
 - Test coverage may be incomplete
 - Stories may not demonstrate all variants
 - May not follow Tailwind-first approach
 
 ### Desired State
+
 - No inline styles in Badge component
 - Uses Tailwind CSS classes and theme tokens exclusively
 - Comprehensive test coverage (≥80%)
@@ -23,6 +26,7 @@
 ## Requirements
 
 ### 1. Badge Component Refactoring
+
 - [ ] Remove all inline styles from Badge.tsx
 - [ ] Use Tailwind CSS classes for all styling
 - [ ] Integrate theme tokens via `useTheme()` hook
@@ -33,6 +37,7 @@
 - [ ] Ensure accessibility (proper ARIA attributes, semantic HTML)
 
 ### 2. Testing
+
 - [ ] Comprehensive unit tests for Badge component
 - [ ] Test all intent variants
 - [ ] Test all size variants
@@ -42,6 +47,7 @@
 - [ ] Achieve ≥80% code coverage
 
 ### 3. Storybook Stories
+
 - [ ] Update Badge.stories.tsx to use layout primitives
 - [ ] Story for all intent variants
 - [ ] Story for all size variants
@@ -54,6 +60,7 @@
 ## Acceptance Criteria
 
 ### Code Quality
+
 - ✅ No inline styles remain in Badge.tsx
 - ✅ All styles use Tailwind CSS classes
 - ✅ Theme tokens used for colors via `useTheme()`
@@ -61,6 +68,7 @@
 - ✅ Props interface properly typed with JSDoc
 
 ### Functionality
+
 - ✅ Badge displays correctly in all intent variants
 - ✅ Badge displays correctly in all size variants
 - ✅ Badge supports optional icon/dot indicator
@@ -68,12 +76,14 @@
 - ✅ Disabled state works correctly
 
 ### Testing
+
 - ✅ All tests pass
 - ✅ Code coverage ≥80%
 - ✅ Tests cover all variants and props
 - ✅ Accessibility tests included
 
 ### Storybook
+
 - ✅ Stories use Stack/Flex layout primitives
 - ✅ All variants demonstrated
 - ✅ Interactive controls work
@@ -119,10 +129,10 @@ export const Badge: React.FC<BadgeProps> = ({
   ...rest
 }) => {
   const { tokens } = useTheme();
-  
+
   // Get colors from theme tokens
   const intentStyles = getIntentStyle(tokens, intent, variant);
-  
+
   return (
     <span
       className={clsx(
@@ -144,7 +154,11 @@ export const Badge: React.FC<BadgeProps> = ({
           aria-label="Remove badge"
         >
           <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            <path
+              fillRule="evenodd"
+              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+              clipRule="evenodd"
+            />
           </svg>
         </button>
       )}
@@ -169,9 +183,13 @@ describe("Badge", () => {
   it("applies correct size classes", () => {
     const { rerender } = render(<Badge size="sm">Small</Badge>);
     expect(screen.getByText("Small")).toHaveClass("px-2", "py-1", "text-xs");
-    
+
     rerender(<Badge size="lg">Large</Badge>);
-    expect(screen.getByText("Large")).toHaveClass("px-3", "py-1.5", "text-base");
+    expect(screen.getByText("Large")).toHaveClass(
+      "px-3",
+      "py-1.5",
+      "text-base"
+    );
   });
 
   it("renders with icon", () => {
@@ -187,8 +205,12 @@ describe("Badge", () => {
 
   it("calls onRemove when close button clicked", () => {
     const onRemove = jest.fn();
-    render(<Badge removable onRemove={onRemove}>Removable</Badge>);
-    
+    render(
+      <Badge removable onRemove={onRemove}>
+        Removable
+      </Badge>
+    );
+
     const removeButton = screen.getByLabelText("Remove badge");
     fireEvent.click(removeButton);
     expect(onRemove).toHaveBeenCalledTimes(1);
@@ -234,8 +256,12 @@ export const AllVariants: Story = {
 export const WithDot: Story = {
   render: () => (
     <Flex gap={2}>
-      <Badge dot intent="success">Active</Badge>
-      <Badge dot intent="danger">Error</Badge>
+      <Badge dot intent="success">
+        Active
+      </Badge>
+      <Badge dot intent="danger">
+        Error
+      </Badge>
     </Flex>
   ),
 };
@@ -267,7 +293,9 @@ export const Removable: Story = {
 - ⏳ Story 003 (Hooks library) - for potential shared hooks
 
 ## Effort Estimate
+
 **3-4 hours**
+
 - Component refactoring: 1 hour
 - Test creation: 1.5 hours
 - Story updates: 1 hour

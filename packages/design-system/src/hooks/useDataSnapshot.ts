@@ -3,16 +3,16 @@ import { useState, useEffect, useCallback } from "react";
 /**
  * Hook for managing data snapshot during loading states
  * Prevents UI flicker by maintaining previous data while fetching new data
- * 
+ *
  * @param data - Current data
  * @param isLoading - Loading state
  * @returns Display data (snapshot during loading, current data otherwise)
- * 
+ *
  * @example
  * ```tsx
  * function DataList({ data, isLoading }: Props) {
  *   const displayData = useDataSnapshot(data, isLoading);
- *   
+ *
  *   return (
  *     <div>
  *       {displayData.map(item => <Item key={item.id} {...item} />)}
@@ -48,15 +48,15 @@ export function useDataSnapshot<T>(
 /**
  * Hook for managing previous value of a state/prop
  * Useful for comparing current and previous values
- * 
+ *
  * @param value - Current value to track
  * @returns Previous value
- * 
+ *
  * @example
  * ```tsx
  * function Counter({ count }: { count: number }) {
  *   const prevCount = usePrevious(count);
- *   
+ *
  *   return <div>Count changed from {prevCount} to {count}</div>;
  * }
  * ```

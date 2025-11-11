@@ -9,11 +9,7 @@ export type FlexGap = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12;
 /**
  * Flex direction including reverse options
  */
-export type FlexDirection =
-  | "row"
-  | "column"
-  | "row-reverse"
-  | "column-reverse";
+export type FlexDirection = "row" | "column" | "row-reverse" | "column-reverse";
 
 /**
  * Alignment of items along the cross axis

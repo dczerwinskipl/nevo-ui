@@ -3,16 +3,16 @@ import { useEffect } from "react";
 /**
  * Hook for handling keyboard events
  * Useful for escape key handling, keyboard shortcuts, etc.
- * 
+ *
  * @param key - The keyboard key to listen for (e.g., 'Escape', 'Enter')
  * @param handler - Callback function to execute when key is pressed
  * @param enabled - Whether the listener is active (default: true)
- * 
+ *
  * @example
  * ```tsx
  * function Modal({ onClose }: { onClose: () => void }) {
  *   useKeyPress('Escape', onClose);
- *   
+ *
  *   return <div>Modal content</div>;
  * }
  * ```
@@ -38,10 +38,10 @@ export function useKeyPress(
 
 /**
  * Hook for handling multiple keyboard shortcuts
- * 
+ *
  * @param handlers - Map of key to handler function
  * @param enabled - Whether the listeners are active (default: true)
- * 
+ *
  * @example
  * ```tsx
  * useKeyPressMap({

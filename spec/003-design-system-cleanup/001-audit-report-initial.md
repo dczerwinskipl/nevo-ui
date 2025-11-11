@@ -31,11 +31,13 @@ Initial audit of design system components reveals several areas that need alignm
 ### Primitives
 
 #### Button.tsx
+
 **Location**: `packages/design-system/src/primitives/Button.tsx`  
 **Lines**: 67 ✅  
 **Status**: Needs refactoring
 
 **Issues**:
+
 1. **Inline Styles** (High Priority)
    - Lines 51-61: Using `style={{}}` for background, color, border, boxShadow
    - Should use Tailwind classes with theme tokens
@@ -52,6 +54,7 @@ Initial audit of design system components reveals several areas that need alignm
    - **Effort**: 1 minute
 
 **Good Practices**:
+
 - ✅ SIZE_CLASSES extracted outside component
 - ✅ Proper TypeScript types
 - ✅ Good prop interface
@@ -60,11 +63,13 @@ Initial audit of design system components reveals several areas that need alignm
 ---
 
 #### Badge.tsx
+
 **Location**: `packages/design-system/src/primitives/Badge.tsx`  
 **Lines**: 39 ✅  
 **Status**: Needs refactoring
 
 **Issues**:
+
 1. **Inline Styles** (High Priority)
    - Lines 29-33: Using `style={{}}` for background, border, color
    - Should use Tailwind classes with theme tokens
@@ -76,6 +81,7 @@ Initial audit of design system components reveals several areas that need alignm
    - **Effort**: 1 hour
 
 **Good Practices**:
+
 - ✅ Simple, focused component
 - ✅ Proper TypeScript types
 - ✅ Under 200 lines
@@ -83,11 +89,13 @@ Initial audit of design system components reveals several areas that need alignm
 ---
 
 #### Typography.tsx
+
 **Location**: `packages/design-system/src/primitives/Typography.tsx`  
 **Lines**: 165 ✅  
 **Status**: Mostly compliant
 
 **Issues**:
+
 1. **TODO Comments** (Medium Priority)
    - Line 5: TODO about clsx utility (may be already resolved)
    - Line 6: TODO about moving className maps outside
@@ -99,6 +107,7 @@ Initial audit of design system components reveals several areas that need alignm
    - **Effort**: TBD after full audit
 
 **Good Practices**:
+
 - ✅ Constants extracted outside component
 - ✅ Semantic type system
 - ✅ Good TypeScript types
@@ -107,18 +116,21 @@ Initial audit of design system components reveals several areas that need alignm
 ---
 
 #### Card.tsx
+
 **Status**: Needs audit  
 **Priority**: Medium
 
 ---
 
 #### Input.tsx
+
 **Status**: Needs audit  
 **Priority**: Medium
 
 ---
 
 #### Select.tsx
+
 **Status**: Needs audit  
 **Priority**: Medium
 
@@ -127,11 +139,13 @@ Initial audit of design system components reveals several areas that need alignm
 ### Data Components
 
 #### Table.tsx
+
 **Location**: `packages/design-system/src/data/Table/Table.tsx`  
 **Lines**: 131 ✅  
 **Status**: Needs refactoring
 
 **Issues**:
+
 1. **Complex Hook Logic Not Extracted** (High Priority)
    - Lines 30-42: Data snapshot logic embedded in component
    - Should be extracted to `useDataSnapshot` hook
@@ -143,11 +157,13 @@ Initial audit of design system components reveals several areas that need alignm
    - **Effort**: 15 minutes
 
 **Good Practices**:
+
 - ✅ Under 200 lines (131)
 - ✅ Good component decomposition (uses subcomponents)
 - ✅ Proper error/empty states
 
 **Recommended**:
+
 - Extract `useDataSnapshot` hook to `packages/design-system/src/hooks/useDataSnapshot.ts`
 - Use Tailwind class for text color
 
@@ -156,16 +172,19 @@ Initial audit of design system components reveals several areas that need alignm
 ### Storybook Stories
 
 #### Button.stories.tsx
+
 **Status**: Needs refactoring  
 **Priority**: High
 
 **Issues**:
+
 1. **Raw HTML in Stories** (High Priority)
    - Lines 68, 89: Using `<div style={{...}}>` instead of `<Card>` with Tailwind
    - Should use design system primitives
    - **Effort**: 30 minutes
 
 **Example Fix**:
+
 ```tsx
 // ❌ Current
 <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
@@ -181,10 +200,12 @@ Initial audit of design system components reveals several areas that need alignm
 ---
 
 #### Badge.stories.tsx
+
 **Status**: Needs refactoring  
 **Priority**: High
 
 **Issues**:
+
 1. **Extensive Raw HTML Usage** (High Priority)
    - Multiple instances of `<div style={{...}}>` and `<span style={{...}}>`
    - Lines 55, 77-79, 92-93, 106-107, 120-121, 149, 181, 188, 194, 200, 221, 252, 283
@@ -194,10 +215,12 @@ Initial audit of design system components reveals several areas that need alignm
 ---
 
 #### Card.stories.tsx
+
 **Status**: Needs refactoring  
 **Priority**: High
 
 **Issues**:
+
 1. **Inline Styles in Stories** (High Priority)
    - Multiple `style={{}}` usages
    - Lines 57, 61, 89, 96, 104, 112, 149, 174, 178, 200
@@ -209,10 +232,12 @@ Initial audit of design system components reveals several areas that need alignm
 ### Feedback Components
 
 #### Loading.stories.tsx
+
 **Status**: Needs refactoring  
 **Priority**: Medium
 
 **Issues**:
+
 1. **Inline Styles** (Medium Priority)
    - Lines 145, 157: Using `style={{ minHeight: "..." }}`
    - Should use Tailwind: `className="min-h-[200px]"`
@@ -224,22 +249,22 @@ Initial audit of design system components reveals several areas that need alignm
 
 ### By Severity
 
-| Severity | Count | Description |
-|----------|-------|-------------|
-| 🔴 Critical | 0 | No critical issues found |
-| 🟠 High | 8 | Inline styles, complex logic not in hooks, raw HTML in stories |
-| 🟡 Medium | 5 | Missing features, incomplete tests, TODO comments |
-| 🟢 Low | 2 | Documentation, minor improvements |
+| Severity    | Count | Description                                                    |
+| ----------- | ----- | -------------------------------------------------------------- |
+| 🔴 Critical | 0     | No critical issues found                                       |
+| 🟠 High     | 8     | Inline styles, complex logic not in hooks, raw HTML in stories |
+| 🟡 Medium   | 5     | Missing features, incomplete tests, TODO comments              |
+| 🟢 Low      | 2     | Documentation, minor improvements                              |
 
 ### By Category
 
-| Category | Issues | Effort Estimate |
-|----------|--------|-----------------|
-| Inline Styles (Components) | 4 | 6-10 hours |
-| Inline Styles (Stories) | 4 | 3-5 hours |
-| Extract to Hooks | 1 | 1-2 hours |
-| Missing Features | 1 | 1 hour |
-| Documentation | 3 | 1 hour |
+| Category                   | Issues | Effort Estimate |
+| -------------------------- | ------ | --------------- |
+| Inline Styles (Components) | 4      | 6-10 hours      |
+| Inline Styles (Stories)    | 4      | 3-5 hours       |
+| Extract to Hooks           | 1      | 1-2 hours       |
+| Missing Features           | 1      | 1 hour          |
+| Documentation              | 3      | 1 hour          |
 
 **Total Estimated Effort**: 12-19 hours
 

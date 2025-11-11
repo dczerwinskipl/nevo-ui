@@ -4,7 +4,15 @@ import { clsx } from "clsx";
 /**
  * Container size options mapping to max-width values
  */
-export type ContainerSize = "sm" | "md" | "lg" | "xl" | "2xl" | "4xl" | "7xl" | "full";
+export type ContainerSize =
+  | "sm"
+  | "md"
+  | "lg"
+  | "xl"
+  | "2xl"
+  | "4xl"
+  | "7xl"
+  | "full";
 
 /**
  * Padding size using Tailwind spacing scale

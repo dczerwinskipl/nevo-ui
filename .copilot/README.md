@@ -11,9 +11,11 @@
 ## 📁 File Organization
 
 ### 🚀 Quick Reference
+
 - **[instructions.md](./instructions.md)** ← **START HERE** - Quick index and workflow guide for AI assistants
 
 ### 📋 Core Standards
+
 - **[conventions.md](./conventions.md)** - Coding standards, naming, patterns, Git conventions, VS Code setup
 - **[glossary.md](./glossary.md)** - Domain terminology and definitions
 - **[workflow.md](./workflow.md)** - Development workflow, Git workflow, PR process, release process, deployment
@@ -47,6 +49,7 @@
 ### For AI Assistants (GitHub Copilot, Claude, etc.)
 
 **Default workflow:**
+
 1. **Read [instructions.md](./instructions.md)** - Contains workflow guide and file index
 2. **Reference automatically**:
    - [conventions.md](./conventions.md) - for coding standards
@@ -65,6 +68,7 @@
 ### For Developers
 
 Use these files as:
+
 - Onboarding material for team members
 - Reference during code reviews
 - Context for AI assistants
@@ -72,21 +76,21 @@ Use these files as:
 
 ## 📋 File Index by Task
 
-| When you need to... | Read this file |
-|---------------------|----------------|
-| **Understand the project** | [instructions.md](./instructions.md) → [context/architecture.md](./context/architecture.md) |
-| **Create a component** | [recipes/component.md](./recipes/component.md) → [checklists/component_development.md](./checklists/component_development.md) |
-| **Write Storybook stories** | [recipes/storybook.md](./recipes/storybook.md) |
-| **Write tests** | [recipes/testing.md](./recipes/testing.md) → [context/testing-strategy.md](./context/testing-strategy.md) |
-| **Submit a PR** | [checklists/pr_submission.md](./checklists/pr_submission.md) → [workflow.md](./workflow.md) |
-| **Review a PR** | [checklists/pr_review.md](./checklists/pr_review.md) |
-| **Check if task is done** | [checklists/definition_of_done.md](./checklists/definition_of_done.md) |
-| **Understand Git workflow** | [workflow.md](./workflow.md) (Git workflow, branch naming, commit messages) |
-| **Understand release process** | [workflow.md](./workflow.md) (Release process, versioning, deployment) |
-| **Understand accessibility** | [context/a11y-guidelines.md](./context/a11y-guidelines.md) |
-| **Check component API patterns** | [context/ds-api-guidelines.md](./context/ds-api-guidelines.md) |
-| **Look up a term** | [glossary.md](./glossary.md) |
-| **Check coding standards** | [conventions.md](./conventions.md) |
+| When you need to...              | Read this file                                                                                                                |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **Understand the project**       | [instructions.md](./instructions.md) → [context/architecture.md](./context/architecture.md)                                   |
+| **Create a component**           | [recipes/component.md](./recipes/component.md) → [checklists/component_development.md](./checklists/component_development.md) |
+| **Write Storybook stories**      | [recipes/storybook.md](./recipes/storybook.md)                                                                                |
+| **Write tests**                  | [recipes/testing.md](./recipes/testing.md) → [context/testing-strategy.md](./context/testing-strategy.md)                     |
+| **Submit a PR**                  | [checklists/pr_submission.md](./checklists/pr_submission.md) → [workflow.md](./workflow.md)                                   |
+| **Review a PR**                  | [checklists/pr_review.md](./checklists/pr_review.md)                                                                          |
+| **Check if task is done**        | [checklists/definition_of_done.md](./checklists/definition_of_done.md)                                                        |
+| **Understand Git workflow**      | [workflow.md](./workflow.md) (Git workflow, branch naming, commit messages)                                                   |
+| **Understand release process**   | [workflow.md](./workflow.md) (Release process, versioning, deployment)                                                        |
+| **Understand accessibility**     | [context/a11y-guidelines.md](./context/a11y-guidelines.md)                                                                    |
+| **Check component API patterns** | [context/ds-api-guidelines.md](./context/ds-api-guidelines.md)                                                                |
+| **Look up a term**               | [glossary.md](./glossary.md)                                                                                                  |
+| **Check coding standards**       | [conventions.md](./conventions.md)                                                                                            |
 
 ## 🎯 Key Principles (Quick Reference)
 
@@ -120,6 +124,7 @@ See [instructions.md](./instructions.md) for more commands and workflows.
 ## 📚 Related Documentation
 
 ### In This Repo
+
 - [Root README](../README.md) - Project overview and AI-powered methodology
 - [Design System README](../packages/design-system/README.md) - Component library
 - [API Mocks README](../packages/api-mocks/README.md) - MSW setup
@@ -127,6 +132,7 @@ See [instructions.md](./instructions.md) for more commands and workflows.
 - [Spec Folder](../spec/) - Detailed specifications
 
 ### File Relationships
+
 ```
 instructions.md ──┬──> conventions.md
                   ├──> glossary.md
@@ -146,6 +152,7 @@ For specific tasks:
 ## 🤝 Contributing to This Folder
 
 When adding/updating documentation:
+
 1. Keep files focused and concise
 2. Use practical, copy-pasteable examples
 3. Cross-reference related files

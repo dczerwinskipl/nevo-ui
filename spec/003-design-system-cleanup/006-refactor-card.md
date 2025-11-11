@@ -1,6 +1,7 @@
 # Story 006: Refactor Card Component
 
 ## Summary
+
 **As a** design system maintainer  
 **I want to** refactor the Card component to eliminate inline styles and improve quality  
 **So that** the component follows design system guidelines with consistent styling and comprehensive tests
@@ -8,6 +9,7 @@
 ## Context
 
 ### Current State
+
 - Card component likely contains inline styles
 - Test coverage may be incomplete
 - Stories may not demonstrate all variants and compositions
@@ -15,6 +17,7 @@
 - Card structure may not be composable
 
 ### Desired State
+
 - No inline styles in Card component
 - Uses Tailwind CSS classes and theme tokens exclusively
 - Comprehensive test coverage (≥80%)
@@ -25,6 +28,7 @@
 ## Requirements
 
 ### 1. Card Component Refactoring
+
 - [ ] Remove all inline styles from Card.tsx
 - [ ] Use Tailwind CSS classes for all styling
 - [ ] Integrate theme tokens via `useTheme()` hook
@@ -35,6 +39,7 @@
 - [ ] Ensure accessibility (proper semantic HTML, ARIA when needed)
 
 ### 2. Testing
+
 - [ ] Comprehensive unit tests for Card and sub-components
 - [ ] Test all variants
 - [ ] Test composable structure
@@ -44,6 +49,7 @@
 - [ ] Achieve ≥80% code coverage
 
 ### 3. Storybook Stories
+
 - [ ] Update Card.stories.tsx to use layout primitives
 - [ ] Story for all card variants
 - [ ] Story for composable structure examples
@@ -56,6 +62,7 @@
 ## Acceptance Criteria
 
 ### Code Quality
+
 - ✅ No inline styles remain in Card.tsx
 - ✅ All styles use Tailwind CSS classes
 - ✅ Theme tokens used for colors via `useTheme()`
@@ -64,6 +71,7 @@
 - ✅ Composable architecture implemented
 
 ### Functionality
+
 - ✅ Card displays correctly in all variants
 - ✅ Card sub-components work together seamlessly
 - ✅ Interactive cards respond to user actions
@@ -71,12 +79,14 @@
 - ✅ Cards work in various layout contexts
 
 ### Testing
+
 - ✅ All tests pass
 - ✅ Code coverage ≥80%
 - ✅ Tests cover all variants and compositions
 - ✅ Accessibility tests included
 
 ### Storybook
+
 - ✅ Stories use Stack/Flex/Grid layout primitives
 - ✅ All variants demonstrated
 - ✅ Interactive controls work
@@ -236,32 +246,42 @@ describe("Card", () => {
   });
 
   it("applies correct variant classes", () => {
-    const { container, rerender } = render(<Card variant="bordered">Test</Card>);
+    const { container, rerender } = render(
+      <Card variant="bordered">Test</Card>
+    );
     expect(container.firstChild).toHaveClass("border-2");
-    
+
     rerender(<Card variant="elevated">Test</Card>);
     expect(container.firstChild).toHaveClass("shadow-lg");
   });
 
   it("renders as clickable when clickable prop is true", () => {
     const onClick = jest.fn();
-    render(<Card clickable onClick={onClick}>Click me</Card>);
-    
+    render(
+      <Card clickable onClick={onClick}>
+        Click me
+      </Card>
+    );
+
     const card = screen.getByRole("button");
     expect(card).toBeInTheDocument();
-    
+
     fireEvent.click(card);
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
   it("supports keyboard navigation when clickable", () => {
     const onClick = jest.fn();
-    render(<Card clickable onClick={onClick}>Keyboard</Card>);
-    
+    render(
+      <Card clickable onClick={onClick}>
+        Keyboard
+      </Card>
+    );
+
     const card = screen.getByRole("button");
     fireEvent.keyDown(card, { key: "Enter" });
     expect(onClick).toHaveBeenCalledTimes(1);
-    
+
     fireEvent.keyDown(card, { key: " " });
     expect(onClick).toHaveBeenCalledTimes(2);
   });
@@ -279,7 +299,7 @@ describe("Card", () => {
         <CardFooter>Footer</CardFooter>
       </Card>
     );
-    
+
     expect(screen.getByText("Header")).toBeInTheDocument();
     expect(screen.getByText("Body")).toBeInTheDocument();
     expect(screen.getByText("Footer")).toBeInTheDocument();
@@ -291,7 +311,7 @@ describe("Card", () => {
         <CardHeader divider>Header</CardHeader>
       </Card>
     );
-    
+
     const header = screen.getByText("Header").parentElement;
     expect(header).toHaveClass("border-b");
   });
@@ -391,7 +411,9 @@ export const Loading: Story = {
 - ⏳ Story 004 (Button refactor) - for Card footer examples
 
 ## Effort Estimate
+
 **4-5 hours**
+
 - Component refactoring: 1.5 hours
 - Test creation: 1.5 hours
 - Story updates: 1.5 hours

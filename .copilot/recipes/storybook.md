@@ -5,6 +5,7 @@ This recipe provides guidelines for creating effective Storybook stories for des
 ## Overview
 
 Storybook stories serve multiple purposes:
+
 - **Documentation**: Show how to use components
 - **Testing**: Visual regression and interaction testing
 - **Development**: Isolated component development
@@ -15,41 +16,42 @@ Storybook stories serve multiple purposes:
 ### Basic Story File Template
 
 ```tsx
-import type { Meta, StoryObj } from '@storybook/react';
-import { ComponentName } from './ComponentName';
+import type { Meta, StoryObj } from "@storybook/react";
+import { ComponentName } from "./ComponentName";
 
 /**
  * Meta configuration
  */
 const meta: Meta<typeof ComponentName> = {
-  title: 'Category/ComponentName',
+  title: "Category/ComponentName",
   component: ComponentName,
   parameters: {
-    layout: 'centered', // or 'fullscreen', 'padded'
+    layout: "centered", // or 'fullscreen', 'padded'
     docs: {
       description: {
-        component: 'Component description here. Explain what it does and when to use it.',
+        component:
+          "Component description here. Explain what it does and when to use it.",
       },
     },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     variant: {
-      control: 'select',
-      options: ['default', 'primary', 'secondary'],
-      description: 'Visual style variant',
+      control: "select",
+      options: ["default", "primary", "secondary"],
+      description: "Visual style variant",
       table: {
-        defaultValue: { summary: 'default' },
+        defaultValue: { summary: "default" },
       },
     },
     size: {
-      control: 'radio',
-      options: ['sm', 'md', 'lg'],
+      control: "radio",
+      options: ["sm", "md", "lg"],
     },
     disabled: {
-      control: 'boolean',
+      control: "boolean",
     },
-    onClick: { action: 'clicked' },
+    onClick: { action: "clicked" },
   },
 };
 
@@ -61,7 +63,7 @@ type Story = StoryObj<typeof ComponentName>;
  */
 export const Default: Story = {
   args: {
-    children: 'Default Component',
+    children: "Default Component",
   },
 };
 ```
@@ -112,6 +114,7 @@ Overlays/
 **Rule**: Always use design system primitives (Card, Button, Typography) instead of raw HTML (`<div>`, `<button>`, `<h1>`, etc.)
 
 **Why**:
+
 - Ensures consistency across all stories
 - Uses proper theme tokens
 - Demonstrates actual component usage
@@ -124,10 +127,14 @@ Overlays/
 // ❌ BAD - Using raw HTML
 export const Example: Story = {
   render: () => (
-    <div style={{ padding: '1rem', backgroundColor: '#fff', borderRadius: '8px' }}>
-      <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Title</h3>
+    <div
+      style={{ padding: "1rem", backgroundColor: "#fff", borderRadius: "8px" }}
+    >
+      <h3 style={{ fontSize: "1.5rem", fontWeight: "bold" }}>Title</h3>
       <p>Description text</p>
-      <button style={{ padding: '0.5rem 1rem', background: '#3b82f6', color: '#fff' }}>
+      <button
+        style={{ padding: "0.5rem 1rem", background: "#3b82f6", color: "#fff" }}
+      >
         Click me
       </button>
     </div>
@@ -139,8 +146,12 @@ export const Example: Story = {
   render: () => (
     <Card className="p-4">
       <Typography type="card-title">Title</Typography>
-      <Typography type="body" className="mt-2">Description text</Typography>
-      <Button intent="primary" className="mt-4">Click me</Button>
+      <Typography type="body" className="mt-2">
+        Description text
+      </Typography>
+      <Button intent="primary" className="mt-4">
+        Click me
+      </Button>
     </Card>
   ),
 };
@@ -149,7 +160,7 @@ export const Example: Story = {
 ### ✅ Common Primitives to Use
 
 ```tsx
-import { 
+import {
   Card,           // Instead of <div> for containers
   Typography,     // Instead of <h1>, <h2>, <p>, <span>
   Button,         // Instead of <button>
@@ -199,18 +210,20 @@ import {
 ```
 
 ### 1. Default Story
+
 The simplest, most common use case:
 
 ```tsx
 export const Default: Story = {
   args: {
-    variant: 'default',
-    children: 'Click me',
+    variant: "default",
+    children: "Click me",
   },
 };
 ```
 
 ### 2. Variants Story
+
 Show all visual variants side-by-side:
 
 ```tsx
@@ -229,6 +242,7 @@ export const Variants: Story = {
 ```
 
 ### 3. Sizes Story
+
 Demonstrate size variations:
 
 ```tsx
@@ -244,6 +258,7 @@ export const Sizes: Story = {
 ```
 
 ### 4. States Story
+
 Show interactive states:
 
 ```tsx
@@ -265,6 +280,7 @@ export const States: Story = {
 ```
 
 ### 5. With Icons Story
+
 Show icon usage:
 
 ```tsx
@@ -288,6 +304,7 @@ export const WithIcons: Story = {
 ```
 
 ### 6. Composition Story
+
 Demonstrate component composition:
 
 ```tsx
@@ -311,6 +328,7 @@ export const CompositionExample: Story = {
 ```
 
 ### 7. Interactive Story
+
 Stories with state and interactions:
 
 ```tsx
@@ -320,9 +338,7 @@ export const Interactive: Story = {
     return (
       <div className="space-y-4">
         <Typography>Count: {count}</Typography>
-        <Button onClick={() => setCount(count + 1)}>
-          Increment
-        </Button>
+        <Button onClick={() => setCount(count + 1)}>Increment</Button>
       </div>
     );
   },
@@ -330,20 +346,22 @@ export const Interactive: Story = {
 ```
 
 ### 8. Playground Story
+
 Let users experiment with all props:
 
 ```tsx
 export const Playground: Story = {
   args: {
-    variant: 'primary',
-    size: 'md',
-    children: 'Playground Button',
+    variant: "primary",
+    size: "md",
+    children: "Playground Button",
     disabled: false,
   },
   parameters: {
     docs: {
       description: {
-        story: 'Use the controls to experiment with different prop combinations.',
+        story:
+          "Use the controls to experiment with different prop combinations.",
       },
     },
   },
@@ -351,6 +369,7 @@ export const Playground: Story = {
 ```
 
 ### 9. Real-World Example
+
 Show realistic usage:
 
 ```tsx
@@ -365,7 +384,8 @@ export const RealWorldExample: Story = {
           <AlertIcon className="w-4 h-4" />
           <Alert.Title>Are you sure?</Alert.Title>
           <Alert.Description>
-            This action cannot be undone. The product will be permanently deleted.
+            This action cannot be undone. The product will be permanently
+            deleted.
           </Alert.Description>
         </Alert>
       </Card.Content>
@@ -415,7 +435,7 @@ export const WithDescription: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'This story demonstrates the primary variant with icon.',
+        story: "This story demonstrates the primary variant with icon.",
       },
     },
   },
@@ -466,7 +486,7 @@ export const LoremExample: Story = {
 export const Responsive: Story = {
   parameters: {
     viewport: {
-      defaultViewport: 'mobile1',
+      defaultViewport: "mobile1",
     },
   },
   render: () => (
@@ -484,7 +504,7 @@ export const Responsive: Story = {
 ```tsx
 export const DarkMode: Story = {
   parameters: {
-    backgrounds: { default: 'dark' },
+    backgrounds: { default: "dark" },
   },
   decorators: [
     (Story) => (
@@ -522,12 +542,12 @@ Configure story behavior:
 ```tsx
 export const FullWidth: Story = {
   parameters: {
-    layout: 'fullscreen',
+    layout: "fullscreen",
     viewport: {
-      defaultViewport: 'desktop',
+      defaultViewport: "desktop",
     },
     backgrounds: {
-      default: 'light',
+      default: "light",
     },
   },
 };
@@ -539,8 +559,8 @@ export const FullWidth: Story = {
 // Use args for simple prop passing
 export const WithArgs: Story = {
   args: {
-    variant: 'primary',
-    children: 'Click me',
+    variant: "primary",
+    children: "Click me",
   },
 };
 
@@ -553,7 +573,7 @@ export const WithRender: Story = {
     </div>
   ),
   args: {
-    children: 'Click me',
+    children: "Click me",
   },
 };
 ```
@@ -561,19 +581,19 @@ export const WithRender: Story = {
 ### Play Function (Interaction Testing)
 
 ```tsx
-import { userEvent, within } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
+import { userEvent, within } from "@storybook/testing-library";
+import { expect } from "@storybook/jest";
 
 export const TestInteraction: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    
+
     // Find button
-    const button = canvas.getByRole('button', { name: /click me/i });
-    
+    const button = canvas.getByRole("button", { name: /click me/i });
+
     // Click it
     await userEvent.click(button);
-    
+
     // Assert something changed
     await expect(canvas.getByText(/clicked/i)).toBeInTheDocument();
   },
@@ -586,12 +606,12 @@ export const TestInteraction: Story = {
 
 ```tsx
 // .storybook/preview.tsx
-import type { Preview } from '@storybook/react';
-import '../src/styles.css';
+import type { Preview } from "@storybook/react";
+import "../src/styles.css";
 
 const preview: Preview = {
   parameters: {
-    actions: { argTypesRegex: '^on[A-Z].*' },
+    actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -601,12 +621,12 @@ const preview: Preview = {
   },
   globalTypes: {
     theme: {
-      description: 'Global theme for components',
-      defaultValue: 'light',
+      description: "Global theme for components",
+      defaultValue: "light",
       toolbar: {
-        title: 'Theme',
-        icon: 'circlehollow',
-        items: ['light', 'dark'],
+        title: "Theme",
+        icon: "circlehollow",
+        items: ["light", "dark"],
         dynamicTitle: true,
       },
     },
@@ -622,7 +642,7 @@ export default preview;
 
 ```tsx
 const meta: Meta<typeof Button> = {
-  title: 'Primitives/Button',
+  title: "Primitives/Button",
   component: Button,
   parameters: {
     docs: {
