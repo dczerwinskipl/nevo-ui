@@ -149,12 +149,13 @@ jobs:
           path: apps/admin/test-results/
           retention-days: 7
 
-  # Build job
+  # Build job (runs on PRs and main branch pushes)
   build:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: [quality, test]
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
     # For PRs to main, also depend on branch policy
     # Note: GitHub will handle the branch-policy dependency automatically via required status checks
 
@@ -195,19 +196,15 @@ jobs:
           fi
 
       - name: Initialize MSW for admin app
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: pnpm --filter @nevo/ecommerce-admin-app run msw:init
 
       - name: Build admin app
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: pnpm --filter @nevo/ecommerce-admin-app run build
 
       - name: Build Storybook
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: pnpm --filter @nevo/design-system run storybook:build
 
       - name: Upload admin build artifacts
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: admin-dist
@@ -215,19 +212,19 @@ jobs:
           retention-days: 1
 
       - name: Upload Storybook build artifacts
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: storybook-dist
           path: packages/design-system/storybook-static/
           retention-days: 1
 
-  # Manual preview deployment (only for PRs)
+  # Preview deployment (only for PRs)
+  # E2E tests run in parallel - preview deploys as soon as build is ready
   preview-deploy:
     name: 🚀 Deploy Preview
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    needs: [build, e2e-tests]
+    needs: [build]
     environment:
       name: preview
       url: ${{ steps.deploy.outputs.url }}
@@ -370,7 +367,8 @@ jobs:
             echo "Tests failed"
             exit 1
           fi
-          if [[ "${{ needs.build.result }}" != "success" ]]; then
+          # Build job runs on PRs and main branch only
+          if [[ "${{ needs.build.result }}" != "success" && "${{ needs.build.result }}" != "skipped" ]]; then
             echo "Build failed"
             exit 1
           fi
