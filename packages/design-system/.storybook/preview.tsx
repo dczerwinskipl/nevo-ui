@@ -7,6 +7,104 @@ import {
 } from "@nevo/api-mocks/storybook";
 import "../src/styles.css";
 
+// Initialize MSW for Storybook
+if (typeof window !== "undefined") {
+  // Dynamically import and start MSW
+  import("@nevo/api-mocks/browser")
+    .then(async ({ setupMocks }) => {
+      const { http, HttpResponse, delay } = await import("msw");
+      const { withScenarios, getCurrentScenario } = await import(
+        "@nevo/api-mocks"
+      );
+
+      const handlers = [
+        http.get(
+          "/api/products",
+          withScenarios(async () => {
+            const scenario = getCurrentScenario();
+
+            // Handle different scenarios
+            switch (scenario) {
+              case "empty":
+                await delay(300);
+                return HttpResponse.json({
+                  data: [],
+                  totalCount: 0,
+                  page: 1,
+                  limit: 10,
+                  totalPages: 0,
+                });
+
+              case "loading-slow":
+                await delay(3000);
+                return HttpResponse.json({
+                  data: [
+                    { id: "1", name: "Product 1", price: 100 },
+                    { id: "2", name: "Product 2", price: 200 },
+                    { id: "3", name: "Product 3", price: 300 },
+                  ],
+                  totalCount: 3,
+                  page: 1,
+                  limit: 10,
+                  totalPages: 1,
+                });
+
+              case "rate-limit":
+                await delay(300);
+                return HttpResponse.json(
+                  { error: "Too many requests. Please try again later." },
+                  { status: 429 }
+                );
+
+              case "server-error":
+                await delay(300);
+                return HttpResponse.json(
+                  { error: "Internal server error" },
+                  { status: 500 }
+                );
+
+              case "validation-error":
+                await delay(300);
+                return HttpResponse.json(
+                  {
+                    error: "Validation failed",
+                    details: ["Invalid product data"],
+                  },
+                  { status: 422 }
+                );
+
+              case "network-error":
+                await delay(300);
+                return HttpResponse.error();
+
+              case "success":
+              default:
+                await delay(300);
+                return HttpResponse.json({
+                  data: [
+                    { id: "1", name: "Product 1", price: 100 },
+                    { id: "2", name: "Product 2", price: 200 },
+                    { id: "3", name: "Product 3", price: 300 },
+                  ],
+                  totalCount: 3,
+                  page: 1,
+                  limit: 10,
+                  totalPages: 1,
+                });
+            }
+          })
+        ),
+      ];
+
+      const mockService = setupMocks(handlers);
+      await mockService.start();
+      console.log("[Storybook MSW] Service worker started");
+    })
+    .catch((error) => {
+      console.error("[Storybook MSW] Failed to start:", error);
+    });
+}
+
 // Component to sync Storybook's theme toggle with ThemeProvider
 function ThemeSynchronizer({ isDark }: { isDark: boolean }) {
   const theme = useTheme();
@@ -21,6 +119,8 @@ function ThemeSynchronizer({ isDark }: { isDark: boolean }) {
 // Global decorator to wrap all stories with ThemeProvider
 const withTheme = (Story: any, context: any) => {
   const isDark = context.globals.theme === "dark";
+
+  console.log("[withTheme] Wrapping story:", context.title, context.name);
 
   return (
     <ThemeProvider initialDark={isDark}>

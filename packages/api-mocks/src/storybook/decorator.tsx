@@ -49,20 +49,30 @@ import type { Scenario } from "../foundation/scenarios";
  * ```
  */
 export const withMockScenario: any = (Story: any, context: any) => {
-  const scenario = (context.globals.mockScenario as Scenario) || "success";
+  // Story-level parameters take precedence over global toolbar
+  const scenario =
+    ((context.parameters.mockScenario ||
+      context.globals.mockScenario) as Scenario) || "success";
 
-  // We use dynamic require to avoid React dependency at build time
-  // React will be available in the Storybook environment
+  console.log(
+    "[withMockScenario] Setting scenario:",
+    scenario,
+    "for story:",
+    context.title,
+    context.name
+  );
+
+  // Set the scenario synchronously
+  scenarios.set(scenario);
+
+  // Return the Story as JSX to preserve the React component tree
+  // Using React.createElement to avoid React import
   if (typeof window !== "undefined" && "React" in window) {
     const React = (window as any).React;
-    React.useEffect(() => {
-      scenarios.set(scenario);
-    }, [scenario]);
-  } else {
-    // Fallback if React hooks are not available
-    scenarios.set(scenario);
+    return React.createElement(Story);
   }
 
+  // Fallback
   return Story();
 };
 

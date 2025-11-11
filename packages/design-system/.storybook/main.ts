@@ -15,6 +15,7 @@ const config: StorybookConfig = {
   core: {
     disableTelemetry: true,
   },
+  staticDirs: ["./public"],
   viteFinal: async (config) => {
     return mergeConfig(config, {
       // Ensure Tailwind CSS is processed
