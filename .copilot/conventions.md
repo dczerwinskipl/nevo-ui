@@ -278,6 +278,193 @@ Button.defaultProps = {
 
 ---
 
+## 🎨 Theme Helper Functions
+
+### Overview
+
+**IMPORTANT**: Before creating custom Tailwind classes or inline styles, **ALWAYS** check if a helper function exists in `@nevo/design-system/theme`.
+
+Theme helpers provide:
+
+- ✅ Consistent styling across all components
+- ✅ Automatic theme switching (light/dark mode)
+- ✅ Single source of truth for colors and shadows
+- ✅ Type-safe intent-based styling
+- ✅ Reusable shadow depths
+
+### Available Helper Functions
+
+#### 1. Intent + Variant Classes
+
+**Use for**: Buttons, Badges, interactive elements with semantic meaning
+
+```typescript
+import { getIntentVariantClasses } from '@nevo/design-system';
+
+// ✅ GOOD - Use helper for consistent intent styling
+<button
+  className={clsx(
+    'px-4 py-2 rounded-lg',
+    getIntentVariantClasses('primary', 'subtle')
+  )}
+>
+
+// ❌ BAD - Manual classes (hard to maintain, inconsistent)
+<button
+  className="px-4 py-2 rounded-lg bg-intent-primary-bg border-intent-primary text-intent-primary-text"
+>
+```
+
+**Available combinations**:
+
+- **Intents**: `primary`, `success`, `error`, `warning`, `info`, `neutral`
+- **Variants**: `solid`, `outline`, `ghost`, `subtle`
+
+#### 2. Shadow Classes
+
+**Use for**: Elevation, depth, active states, overlays
+
+```typescript
+import { getShadowClasses } from '@nevo/design-system';
+
+// ✅ GOOD - Use helper for consistent shadows
+<div
+  className={clsx(
+    'bg-card border border-border',
+    isActive ? getShadowClasses('lg') : getShadowClasses('sm')
+  )}
+>
+
+// ❌ BAD - Custom shadow (hard to maintain)
+<div
+  className="bg-card border border-border shadow-[0_4px_8px_var(--shadow-color)]"
+>
+```
+
+**Available sizes**:
+
+- `sm` - Subtle shadow for default states
+- `md` - Medium shadow for slightly elevated elements
+- `lg` - Large shadow for active/focused states
+- `xl` - Extra large for modals and overlays
+
+#### 3. Text Color Classes
+
+**Use for**: Typography, text with semantic meaning
+
+```typescript
+import { getTextColor } from '@nevo/design-system';
+
+// ✅ GOOD - Intent-aware text color
+<span className={getTextColor('error')}>Error message</span>
+<span className={getTextColor(undefined, true)}>Muted text</span>
+
+// ❌ BAD - Hardcoded color
+<span className="text-intent-error-text">Error message</span>
+```
+
+#### 4. Background Color Classes
+
+**Use for**: Cards, panels, surfaces
+
+```typescript
+import { getBgColor } from '@nevo/design-system';
+
+// ✅ GOOD - Intent-aware background
+<div className={getBgColor('primary')}>Primary background</div>
+<div className={getBgColor(undefined, true)}>Raised surface</div>
+
+// ❌ BAD - Hardcoded background
+<div className="bg-intent-primary-bg">Primary background</div>
+```
+
+#### 5. Border Color Classes
+
+**Use for**: Borders with semantic meaning
+
+```typescript
+import { getBorderColor } from '@nevo/design-system';
+
+// ✅ GOOD - Intent-aware border
+<div className={getBorderColor('error', 'bottom')}>
+<div className={getBorderColor()}>Default border all sides</div>
+
+// ❌ BAD - Manual border
+<div className="border-b border-intent-error">
+```
+
+### Real-World Example: Sidebar Navigation
+
+```typescript
+// ✅ EXCELLENT - Uses helpers for consistency
+import { getIntentVariantClasses, getShadowClasses } from '@nevo/design-system';
+
+<button
+  className={clsx(
+    'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg',
+    'text-sm font-medium transition-all duration-200',
+    'border',
+    getShadowClasses('sm'),
+    isActive
+      ? clsx(
+          getIntentVariantClasses('primary', 'subtle'),
+          getShadowClasses('lg')
+        )
+      : 'bg-transparent border-border hover:bg-raised/50'
+  )}
+>
+
+// ❌ BAD - Manual classes everywhere
+<button
+  className={clsx(
+    'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg',
+    'text-sm font-medium transition-all duration-200',
+    'border shadow-[0_1px_3px_var(--shadow-color)]',
+    isActive
+      ? 'bg-intent-primary-bg border-intent-primary text-intent-primary-text shadow-[0_4px_8px_var(--shadow-color)]'
+      : 'bg-transparent border-border'
+  )}
+>
+```
+
+### Decision Tree
+
+**When styling a component, follow this order:**
+
+1. ✅ **Check for existing helper function** in `theme/classNames.ts`
+2. ✅ **Use config-based Tailwind class** (e.g., `bg-card`, `text-text`)
+3. ⚠️ **Create new helper** if pattern repeats 3+ times
+4. ❌ **Avoid custom arbitrary values** unless absolutely necessary
+
+### Adding New Helpers
+
+If you need a new helper function:
+
+1. Add to `packages/design-system/src/theme/classNames.ts`
+2. Export from `packages/design-system/src/theme/index.ts`
+3. Add JSDoc with examples
+4. Update this conventions guide
+
+````typescript
+// Example: Adding a new helper
+/**
+ * Get focus ring classes for interactive elements
+ *
+ * @param intent - Optional semantic intent
+ * @returns Tailwind focus ring classes
+ *
+ * @example
+ * ```tsx
+ * <button className={getFocusRing('primary')}>
+ * ```
+ */
+export function getFocusRing(intent?: ComponentIntent): string {
+  // Implementation
+}
+````
+
+---
+
 ## 📐 Design System Patterns
 
 ### Component API Consistency
@@ -597,6 +784,7 @@ className = "bg-[var(--color-card)]"; // Use bg-card instead
 ## 📚 Documentation
 
 ### Design System Documentation
+
 All design system architecture decisions and migration guides are in `/spec/003-design-system-cleanup/`:
 
 - **QUICK-REFERENCE.md** - Developer quick reference for theme-aware classes ⭐ START HERE

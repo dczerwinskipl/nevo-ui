@@ -1,11 +1,7 @@
 import React from "react";
 import { clsx } from "clsx";
 import { TableColumn } from "./types";
-import {
-  getBgColor,
-  getBorderColor,
-  getTextColor,
-} from "../../theme";
+import { getBgColor, getBorderColor, getTextColor } from "../../theme";
 
 export interface TableHeaderProps<T> {
   columns: TableColumn<T>[];

@@ -1,6 +1,7 @@
 import React, { useState, Suspense } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useTheme, Topbar, Sidebar } from "@nevo/design-system";
+import { Topbar, Sidebar } from "@nevo/design-system";
+import { ADMIN_NAVIGATION } from "../config/navigation";
 
 // Loading fallback component
 function PageLoader() {
@@ -16,7 +17,6 @@ function PageLoader() {
 
 export function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { tokens } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -29,16 +29,11 @@ export function Layout() {
   };
 
   return (
-    <div
-      className="min-h-screen flex flex-col"
-      style={{
-        backgroundColor: tokens.page,
-        color: tokens.text,
-      }}
-    >
+    <div className="min-h-screen flex flex-col bg-page text-primary">
       <Topbar onMenu={() => setSidebarOpen(true)} />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar
+          items={ADMIN_NAVIGATION}
           route={currentRoute}
           onNavigate={handleNavigate}
           open={sidebarOpen}

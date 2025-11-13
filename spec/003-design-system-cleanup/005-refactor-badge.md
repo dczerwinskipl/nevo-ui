@@ -119,6 +119,7 @@
 ### Migration Pattern
 
 **Before:**
+
 ```tsx
 <span
   style={{
@@ -130,10 +131,9 @@
 ```
 
 **After:**
+
 ```tsx
-<span
-  className="bg-intent-primary-bg text-intent-primary-text"
-/>
+<span className="bg-intent-primary-bg text-intent-primary-text" />
 ```
 
 ### Benefits

@@ -143,6 +143,7 @@ style={{
 ### Migration Pattern
 
 **Before:**
+
 ```tsx
 <button
   style={{
@@ -154,10 +155,9 @@ style={{
 ```
 
 **After:**
+
 ```tsx
-<button
-  className="bg-intent-primary-bg text-intent-primary-text"
-/>
+<button className="bg-intent-primary-bg text-intent-primary-text" />
 ```
 
 ### Benefits
@@ -173,6 +173,7 @@ style={{
 ### Documentation
 
 See these files for complete implementation details:
+
 - `spec/003-design-system-cleanup/CONFIG-BASED-TAILWIND-MIGRATION.md`
 - `spec/003-design-system-cleanup/FINAL-MIGRATION-SUMMARY.md`
 - `spec/003-design-system-cleanup/QUICK-REFERENCE.md`

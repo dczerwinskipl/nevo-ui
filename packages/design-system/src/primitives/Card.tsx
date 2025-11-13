@@ -113,10 +113,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
 }) => {
   return (
     <div
-      className={clsx(
-        "mb-4 pb-4 border-b border-border",
-        className
-      )}
+      className={clsx("mb-4 pb-4 border-b border-border", className)}
       {...rest}
     >
       {children}
@@ -139,10 +136,7 @@ export const CardBody: React.FC<CardBodyProps> = ({
   ...rest
 }) => {
   return (
-    <div
-      className={clsx("text-text", className)}
-      {...rest}
-    >
+    <div className={clsx("text-text", className)} {...rest}>
       {children}
     </div>
   );

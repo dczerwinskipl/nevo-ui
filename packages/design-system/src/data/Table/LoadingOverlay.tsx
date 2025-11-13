@@ -1,11 +1,7 @@
 import React from "react";
 import { clsx } from "clsx";
 import { LoadingOverlayProps } from "./types";
-import {
-  getBgColor,
-  getBorderColor,
-  getTextColor,
-} from "../../theme";
+import { getBgColor, getBorderColor, getTextColor } from "../../theme";
 
 /**
  * LoadingOverlay component displays a loading indicator over existing content.

@@ -27,10 +27,7 @@ export const TableSkeleton = <T,>({
       )}
     >
       <div
-        className={clsx(
-          getCommonPattern("pulse"),
-          "rounded h-4 bg-raised"
-        )}
+        className={clsx(getCommonPattern("pulse"), "rounded h-4 bg-raised")}
       />
     </td>
   );

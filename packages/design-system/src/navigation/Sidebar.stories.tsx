@@ -1,9 +1,87 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import { Sidebar } from "./Sidebar";
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  Users,
+  Home,
+  Settings,
+  TrendingUp,
+} from "lucide-react";
+import { Sidebar, type NavigationItem } from "./Sidebar";
 import { Button } from "../primitives/Button";
 import { Card } from "../primitives/Card";
 import { Typography } from "../primitives/Typography";
+
+// Sample navigation items for stories
+const SAMPLE_NAVIGATION: NavigationItem[] = [
+  {
+    key: "dashboard",
+    label: "Dashboard",
+    icon: <LayoutDashboard className="w-4 h-4" />,
+  },
+  {
+    key: "products",
+    label: "Products",
+    icon: <Package className="w-4 h-4" />,
+    children: [
+      { key: "products-list", label: "All Products" },
+      { key: "products-new", label: "Add Product" },
+    ],
+  },
+  {
+    key: "orders",
+    label: "Orders",
+    icon: <ShoppingCart className="w-4 h-4" />,
+    children: [
+      { key: "orders-list", label: "All Orders" },
+      { key: "orders-stats", label: "Statistics" },
+    ],
+  },
+  {
+    key: "users",
+    label: "Users",
+    icon: <Users className="w-4 h-4" />,
+  },
+];
+
+const MINIMAL_NAVIGATION: NavigationItem[] = [
+  {
+    key: "home",
+    label: "Home",
+    icon: <Home className="w-4 h-4" />,
+  },
+  {
+    key: "settings",
+    label: "Settings",
+    icon: <Settings className="w-4 h-4" />,
+  },
+];
+
+const EXTENDED_NAVIGATION: NavigationItem[] = [
+  ...SAMPLE_NAVIGATION,
+  {
+    key: "analytics",
+    label: "Analytics",
+    icon: <TrendingUp className="w-4 h-4" />,
+    children: [
+      { key: "analytics-overview", label: "Overview" },
+      { key: "analytics-sales", label: "Sales" },
+      { key: "analytics-traffic", label: "Traffic" },
+    ],
+  },
+  {
+    key: "settings",
+    label: "Settings",
+    icon: <Settings className="w-4 h-4" />,
+    children: [
+      { key: "settings-general", label: "General" },
+      { key: "settings-security", label: "Security" },
+      { key: "settings-billing", label: "Billing" },
+    ],
+  },
+];
 
 const meta: Meta<typeof Sidebar> = {
   title: "Navigation/Sidebar",
@@ -29,7 +107,11 @@ export const Default: Story = {
 
     return (
       <div style={{ height: "600px", display: "flex" }}>
-        <Sidebar route={route} onNavigate={setRoute} />
+        <Sidebar
+          navigation={SAMPLE_NAVIGATION}
+          route={route}
+          onNavigate={setRoute}
+        />
         <div className="flex-1 p-8">
           <Typography type="section-title" className="mb-4">
             Current Route: {route}
@@ -49,7 +131,11 @@ export const WithActiveChild: Story = {
 
     return (
       <div style={{ height: "600px", display: "flex" }}>
-        <Sidebar route={route} onNavigate={setRoute} />
+        <Sidebar
+          navigation={SAMPLE_NAVIGATION}
+          route={route}
+          onNavigate={setRoute}
+        />
         <div className="flex-1 p-8">
           <Typography type="section-title" className="mb-4">
             Current Route: {route}
@@ -70,13 +156,17 @@ export const MinimalNavigation: Story = {
 
     return (
       <div style={{ height: "600px", display: "flex" }}>
-        <Sidebar route={route} onNavigate={setRoute} />
+        <Sidebar
+          navigation={MINIMAL_NAVIGATION}
+          route={route}
+          onNavigate={setRoute}
+        />
         <div className="flex-1 p-8">
           <Typography type="section-title" className="mb-4">
             Current Route: {route}
           </Typography>
           <Typography type="caption" intent="neutral">
-            Minimal sidebar with 3 items.
+            Minimal sidebar with 2 items.
           </Typography>
         </div>
       </div>
@@ -90,7 +180,11 @@ export const ExtendedNavigation: Story = {
 
     return (
       <div style={{ height: "600px", display: "flex" }}>
-        <Sidebar route={route} onNavigate={setRoute} />
+        <Sidebar
+          navigation={EXTENDED_NAVIGATION}
+          route={route}
+          onNavigate={setRoute}
+        />
         <div className="flex-1 p-8">
           <Typography type="section-title" className="mb-4">
             Current Route: {route}
@@ -112,6 +206,7 @@ export const MobileOverlay: Story = {
     return (
       <div style={{ height: "600px", display: "flex" }}>
         <Sidebar
+          navigation={SAMPLE_NAVIGATION}
           route={route}
           onNavigate={setRoute}
           open={isOpen}
@@ -166,6 +261,7 @@ export const Interactive: Story = {
         </Card>
         <div style={{ height: "600px", display: "flex" }}>
           <Sidebar
+            navigation={SAMPLE_NAVIGATION}
             route={route}
             onNavigate={handleNavigate}
             open={mobileOpen}
@@ -259,7 +355,11 @@ export const WithContentArea: Story = {
 
     return (
       <div style={{ height: "600px", display: "flex" }}>
-        <Sidebar route={route} onNavigate={setRoute} />
+        <Sidebar
+          navigation={SAMPLE_NAVIGATION}
+          route={route}
+          onNavigate={setRoute}
+        />
         <div className="flex-1 p-8 overflow-auto">{renderContent()}</div>
       </div>
     );

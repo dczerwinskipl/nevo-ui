@@ -1,37 +1,6 @@
 import React, { useState } from "react";
 import { useTheme, Tokens } from "../theme";
-import {
-  LayoutGrid,
-  Package,
-  ShoppingCart,
-  User,
-  ChevronDown,
-  ChevronRight,
-} from "lucide-react";
-
-// TODO: TASK-020 - Move sections array outside component to prevent recreation on each render
-
-// Extracted constants - no recreation on each render
-const NAVIGATION_SECTIONS: NavigationItem[] = [
-  {
-    key: "dashboard",
-    label: "Dashboard",
-    icon: <LayoutGrid className="w-4 h-4" />,
-  },
-  {
-    key: "products",
-    label: "Produkty",
-    icon: <Package className="w-4 h-4" />,
-    children: [{ key: "products", label: "Lista" }],
-  },
-  {
-    key: "orders",
-    label: "Zamówienia",
-    icon: <ShoppingCart className="w-4 h-4" />,
-    children: [{ key: "orders", label: "Szczegóły" }],
-  },
-  { key: "users", label: "Użytkownicy", icon: <User className="w-4 h-4" /> },
-] as const;
+import { ChevronDown, ChevronRight } from "lucide-react";
 
 export interface NavigationChild {
   key: string;
@@ -46,6 +15,8 @@ export interface NavigationItem {
 }
 
 export interface SidebarProps {
+  navigation: NavigationItem[];
+  bottomItems?: NavigationItem[];
   route: string;
   onNavigate: (key: string) => void;
   open?: boolean;
@@ -54,7 +25,8 @@ export interface SidebarProps {
 
 export interface NavListProps {
   tokens: Tokens;
-  sections: NavigationItem[];
+  navigation: NavigationItem[];
+  bottomItems?: NavigationItem[];
   route: string;
   onNavigate: (key: string) => void;
   openMap: Record<string, boolean>;
@@ -62,17 +34,15 @@ export interface NavListProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
+  navigation,
+  bottomItems = [],
   route,
   onNavigate,
   open,
   onClose,
 }) => {
-  const sections = NAVIGATION_SECTIONS;
   const { tokens } = useTheme();
-  const [openMap, setOpenMap] = useState<Record<string, boolean>>({
-    products: true,
-    orders: true,
-  });
+  const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
 
   return (
     <>
@@ -103,7 +73,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <div className="p-4 h-full overflow-y-auto">
               <NavList
                 tokens={tokens}
-                sections={sections}
+                navigation={navigation}
+                bottomItems={bottomItems}
                 route={route}
                 onNavigate={(k: string) => {
                   onNavigate(k);
@@ -129,7 +100,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="p-4 flex-1 overflow-y-auto custom-scrollbar">
           <NavList
             tokens={tokens}
-            sections={sections}
+            navigation={navigation}
+            bottomItems={bottomItems}
             route={route}
             onNavigate={onNavigate}
             openMap={openMap}
@@ -143,7 +115,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
 function NavList({
   tokens,
-  sections,
+  navigation,
+  bottomItems = [],
   route,
   onNavigate,
   openMap,
@@ -151,7 +124,7 @@ function NavList({
 }: NavListProps) {
   return (
     <nav className="space-y-2">
-      {sections.map((s: NavigationItem) => {
+      {navigation.map((s: NavigationItem) => {
         const hasChildren = !!s.children;
         const isActive = route === s.key;
         const isChildActive =
@@ -248,6 +221,41 @@ function NavList({
           </div>
         );
       })}
+      
+      {/* Bottom Items */}
+      {bottomItems && bottomItems.length > 0 && (
+        <>
+          <div className="my-4 border-t" style={{ borderColor: tokens.border }} />
+          {bottomItems.map((item: NavigationItem) => {
+            const isActive = route === item.key;
+            return (
+              <button
+                key={item.key}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 md:hover:scale-[1.02] touch-manipulation"
+                style={{
+                  background: isActive
+                    ? "rgba(109,106,255,.15)"
+                    : "transparent",
+                  color: isActive ? tokens.text : tokens.text,
+                  border: `1px solid ${
+                    isActive ? "rgba(109,106,255,.3)" : tokens.border
+                  }`,
+                  boxShadow: isActive
+                    ? `0 4px 8px ${tokens.shadow.color}, 0 2px 4px ${tokens.shadow.color}`
+                    : `0 1px 3px ${tokens.shadow.color}, 0 1px 2px ${tokens.shadow.color}`,
+                }}
+                onClick={() => onNavigate(item.key)}
+                onTouchStart={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                {item.icon && <span className="flex-shrink-0">{item.icon}</span>}
+                <span className="flex-1 text-left">{item.label}</span>
+              </button>
+            );
+          })}
+        </>
+      )}
     </nav>
   );
 }

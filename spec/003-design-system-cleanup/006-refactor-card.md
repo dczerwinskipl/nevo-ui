@@ -135,17 +135,15 @@
 ### Migration Pattern
 
 **Before:**
+
 ```tsx
-<div
-  className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
-/>
+<div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700" />
 ```
 
 **After:**
+
 ```tsx
-<div
-  className="bg-card border border-border"
-/>
+<div className="bg-card border border-border" />
 ```
 
 ### Benefits
@@ -161,6 +159,7 @@
 ### Documentation
 
 See these files for complete implementation details:
+
 - `spec/003-design-system-cleanup/CONFIG-BASED-TAILWIND-MIGRATION.md`
 - `spec/003-design-system-cleanup/CRITICAL-FIX-HARDCODED-DARK-MODE.md`
 - `spec/003-design-system-cleanup/FINAL-MIGRATION-SUMMARY.md`

@@ -375,3 +375,149 @@ export function getCommonPattern(
       return CSS_VAR_CLASSES.backdrop;
   }
 }
+
+/**
+ * =========================================================================
+ * INTERACTION & ANIMATION UTILITIES
+ * ============================================================================
+ * Common patterns for transitions, animations, and interactive states
+ */
+
+/**
+ * Common transition classes
+ * Use for smooth transitions on interactive elements
+ */
+export const TRANSITION_CLASSES = {
+  /** Standard transition for most interactive elements */
+  base: "transition-all duration-200",
+  /** Fast transition for quick feedback */
+  fast: "transition-all duration-150",
+  /** Slow transition for complex animations */
+  slow: "transition-all duration-300",
+} as const;
+
+/**
+ * Interactive element classes
+ * Common patterns for buttons, clickable cards, etc.
+ */
+export const INTERACTIVE_CLASSES = {
+  /** Standard interactive button with scale effect */
+  button: "transition-all duration-200 hover:scale-105 touch-manipulation",
+  /** Subtle scale for cards and larger elements */
+  card: "transition-all duration-200 hover:scale-[1.02] touch-manipulation",
+  /** Interactive element with glow effect */
+  glow: "transition-all duration-200 hover:shadow-md",
+} as const;
+
+/**
+ * Accessibility touch target classes
+ * Ensures WCAG 2.1 AA compliance (minimum 44x44px)
+ */
+export const TOUCH_TARGET_CLASSES = {
+  /** Standard touch target (44x44px) */
+  standard: "min-h-[44px] min-w-[44px]",
+  /** Small touch target (40x40px) - use with caution */
+  small: "min-h-[40px] min-w-[40px]",
+  /** Large touch target (48x48px) */
+  large: "min-h-[48px] min-w-[48px]",
+} as const;
+
+export type TransitionSpeed = keyof typeof TRANSITION_CLASSES;
+export type InteractionStyle = keyof typeof INTERACTIVE_CLASSES;
+export type TouchTargetSize = keyof typeof TOUCH_TARGET_CLASSES;
+
+/**
+ * Get transition classes for animations
+ *
+ * @param speed - The transition speed
+ * @returns Transition Tailwind class string
+ *
+ * @example
+ * ```tsx
+ * <div className={getTransitionClasses('base')}>
+ * ```
+ */
+export function getTransitionClasses(speed: TransitionSpeed = "base"): string {
+  return TRANSITION_CLASSES[speed];
+}
+
+/**
+ * Get interactive element classes
+ *
+ * @param style - The interaction style
+ * @returns Interactive Tailwind class string
+ *
+ * @example
+ * ```tsx
+ * // Button with scale effect
+ * <button className={clsx('px-4 py-2', getInteractiveClasses('button'))}>
+ *
+ * // Card with subtle scale
+ * <div className={clsx('p-4', getInteractiveClasses('card'))}>
+ * ```
+ */
+export function getInteractiveClasses(
+  style: InteractionStyle = "button"
+): string {
+  return INTERACTIVE_CLASSES[style];
+}
+
+/**
+ * Get touch target classes for accessibility
+ *
+ * @param size - The touch target size
+ * @returns Touch target Tailwind class string
+ *
+ * @example
+ * ```tsx
+ * // Icon button with proper touch target
+ * <button className={clsx('p-2', getTouchTargetClasses('standard'))}>
+ * ```
+ */
+export function getTouchTargetClasses(
+  size: TouchTargetSize = "standard"
+): string {
+  return TOUCH_TARGET_CLASSES[size];
+}
+
+/**
+ * =========================================================================
+ * SHADOW UTILITIES
+ * ============================================================================
+ */
+
+/**
+ * Shadow depth classes using theme shadow color
+ * Provides consistent shadow styling across components
+ */
+export const SHADOW_CLASSES = {
+  /** Subtle shadow for default/inactive states */
+  sm: "shadow-[0_1px_3px_var(--shadow-color)]",
+  /** Medium shadow for slightly elevated elements */
+  md: "shadow-[0_2px_6px_var(--shadow-color)]",
+  /** Large shadow for active/focused states */
+  lg: "shadow-[0_4px_8px_var(--shadow-color),0_2px_4px_var(--shadow-color)]",
+  /** Extra large shadow for modals and overlays */
+  xl: "shadow-[0_10px_30px_var(--shadow-color),0_6px_10px_var(--shadow-color)]",
+} as const;
+
+export type ShadowSize = keyof typeof SHADOW_CLASSES;
+
+/**
+ * Get shadow classes for consistent elevation styling
+ *
+ * @param size - The shadow depth size
+ * @returns Shadow Tailwind class string
+ *
+ * @example
+ * ```tsx
+ * // Default shadow
+ * <div className={getShadowClasses('sm')}>
+ *
+ * // Active state shadow
+ * <button className={clsx('...', isActive && getShadowClasses('lg'))}>
+ * ```
+ */
+export function getShadowClasses(size: ShadowSize): string {
+  return SHADOW_CLASSES[size];
+}
