@@ -144,7 +144,7 @@ export const Typography: React.FC<TypographyProps> = ({
       className={clsx(
         // Base typography styles
         "m-0", // Reset default margins
-        "text-gray-900 dark:text-gray-100", // Default text color (fallback)
+        "text-text", // Default text color using config-based class
         // Size and weight
         SIZE_CLASSES[finalSize],
         WEIGHT_CLASSES[finalWeight],

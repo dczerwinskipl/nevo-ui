@@ -1,6 +1,6 @@
 import React from "react";
 import { clsx } from "clsx";
-import { useTheme, ComponentIntent, getIntentStyle } from "../theme";
+import { ComponentIntent, getIntentVariantClasses } from "../theme";
 import { X, AlertCircle, CheckCircle, AlertTriangle, Info } from "lucide-react";
 
 export interface ToastProps {
@@ -50,25 +50,17 @@ export function Toast({
   icon = true,
   position = "top-right",
 }: ToastProps) {
-  const { tokens } = useTheme();
-  const style = getIntentStyle(tokens, intent, "subtle");
-
   const IconComponent =
     typeof icon === "boolean" && icon ? INTENT_ICONS[intent] : null;
 
   return (
     <div
       className={clsx(
-        "p-4 rounded-lg shadow-lg border flex gap-3 min-w-80 max-w-md",
+        "p-4 rounded-lg shadow-lg flex gap-3 min-w-80 max-w-md",
+        getIntentVariantClasses(intent, "subtle"),
         POSITION_CLASSES[position],
         className
       )}
-      style={{
-        backgroundColor: style.background,
-        borderColor: style.border,
-        color: style.color,
-        boxShadow: `0 10px 30px ${tokens.shadow.color}, 0 6px 10px ${tokens.shadow.color}`,
-      }}
       role="alert"
       aria-live="polite"
     >
@@ -94,7 +86,10 @@ export function Toast({
       {dismissible && (
         <button
           onClick={onDismiss}
-          className="flex-shrink-0 p-1 rounded hover:bg-black hover:bg-opacity-10 transition-colors"
+          className={clsx(
+            "flex-shrink-0 p-1 rounded transition-colors",
+            "hover:bg-raised/50"
+          )}
           aria-label="Dismiss notification"
         >
           <X className="w-4 h-4" />

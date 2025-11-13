@@ -1,18 +1,20 @@
 /**
  * CSS Variables System for Theme-Aware Styling
- * 
+ *
  * This module generates CSS variables from theme tokens, enabling:
- * 1. Theme-aware Tailwind classes (e.g., `bg-[var(--color-primary)]`)
+ * 1. Theme-aware config-based Tailwind classes (e.g., `bg-primary`, `text-intent-primary-text`)
  * 2. Dynamic theme switching without page reload
  * 3. Integration with existing ThemeProvider
- * 
+ *
  * @example
  * ```tsx
  * // In ThemeProvider, inject CSS variables
  * <style dangerouslySetInnerHTML={{ __html: generateCSSVariables(tokens) }} />
- * 
- * // In components, use Tailwind with CSS variables
- * <div className="bg-[var(--color-intent-primary-bg)] text-[var(--color-intent-primary-text)]">
+ *
+ * // In components, use config-based Tailwind classes
+ * <div className="bg-intent-primary-bg text-intent-primary-text">
+ *   Primary content
+ * </div>
  * ```
  */
 

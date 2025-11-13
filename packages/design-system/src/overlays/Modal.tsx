@@ -1,13 +1,11 @@
 import React from "react";
-import { useTheme, elevatedStyle } from "../theme";
+import { clsx } from "clsx";
 
 export const Modal: React.FC<{
   title: string;
   onClose: () => void;
   children: React.ReactNode;
 }> = ({ title, onClose, children }) => {
-  const { tokens } = useTheme();
-
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === "Escape") {
       onClose();
@@ -44,30 +42,29 @@ export const Modal: React.FC<{
         aria-label="Close modal overlay"
       />
       <div
-        className="relative w-full max-w-xl rounded-2xl p-4"
+        className={clsx(
+          "relative w-full max-w-xl rounded-2xl p-4",
+          "bg-raised border border-border",
+          "shadow-[2px_2px_8px_var(--shadow-color),-1px_-1px_4px_var(--shadow-highlight),0_10px_20px_rgba(0,0,0,.35)]"
+        )}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        style={{
-          ...elevatedStyle(tokens),
-          boxShadow: `${
-            elevatedStyle(tokens).boxShadow
-          }, 0 10px 20px rgba(0,0,0,.35)`,
-        }}
       >
         <div className="flex items-center justify-between">
-          <h2 id="modal-title" className="text-lg font-semibold">
+          <h2 id="modal-title" className="text-lg font-semibold text-text">
             {title}
           </h2>
           <button
             onClick={onClose}
-            className="px-2 py-1 rounded-lg"
+            className={clsx(
+              "px-2 py-1 rounded-lg border",
+              "bg-raised border-border",
+              "text-text hover:bg-card",
+              "transition-colors duration-150"
+            )}
             aria-label="Close modal"
             type="button"
-            style={{
-              background: tokens.raised,
-              border: `1px solid ${tokens.border}`,
-            }}
           >
             ✕
           </button>

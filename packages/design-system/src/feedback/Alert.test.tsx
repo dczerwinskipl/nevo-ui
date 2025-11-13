@@ -52,8 +52,9 @@ describe("Alert", () => {
 
     it("should render with custom className", () => {
       const { container } = renderAlert({ className: "custom-class" });
-      const alert = container.firstChild;
-      expect(alert).toHaveClass("custom-class");
+      const alert = container.querySelector('[role="alert"]') as HTMLElement;
+      expect(alert).toBeInTheDocument();
+      expect(alert.className).toContain("custom-class");
     });
 
     it("should render children content", () => {

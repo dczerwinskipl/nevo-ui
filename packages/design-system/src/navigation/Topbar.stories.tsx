@@ -157,33 +157,33 @@ export const AllFeatures: Story = {
       <div className="p-8">
         <h1 className="text-2xl font-bold mb-4">Topbar Features</h1>
         <div className="space-y-4">
-          <Card className="p-4 bg-blue-50 dark:bg-blue-900/20">
+          <Card className="p-4 bg-intent-info-bg border-intent-info">
             <h3 className="font-semibold mb-2">🔍 Search</h3>
             <p className="text-sm">
               Full-width search bar on desktop, button on mobile with keyboard
               shortcut (⌘K)
             </p>
           </Card>
-          <Card className="p-4 bg-purple-50 dark:bg-purple-900/20">
+          <Card className="p-4 bg-intent-primary-bg border-intent-primary">
             <h3 className="font-semibold mb-2">🎨 Theme Toggle</h3>
             <p className="text-sm">
               Click the sun/moon icon to switch between light and dark modes
             </p>
           </Card>
-          <Card className="p-4 bg-green-50 dark:bg-green-900/20">
+          <Card className="p-4 bg-intent-success-bg border-intent-success">
             <h3 className="font-semibold mb-2">🔔 Notifications</h3>
             <p className="text-sm">
               Bell icon for accessing notifications (functionality not
               implemented in stories)
             </p>
           </Card>
-          <Card className="p-4 bg-orange-50 dark:bg-orange-900/20">
+          <Card className="p-4 bg-intent-warning-bg border-intent-warning">
             <h3 className="font-semibold mb-2">📱 Mobile Menu</h3>
             <p className="text-sm">
               Hamburger menu button visible on mobile to toggle sidebar
             </p>
           </Card>
-          <Card className="p-4 bg-indigo-50 dark:bg-indigo-900/20">
+          <Card className="p-4 bg-intent-info-bg border-intent-info">
             <h3 className="font-semibold mb-2">🏷️ Branding</h3>
             <p className="text-sm">
               Application logo and name with gradient styling

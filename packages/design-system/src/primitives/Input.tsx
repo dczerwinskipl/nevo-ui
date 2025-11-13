@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import { clsx } from "clsx";
-import {
-  useTheme,
-  ComponentIntent,
-  ComponentSize,
-  concaveStyle,
-} from "../theme";
+import { ComponentIntent, ComponentSize } from "../theme";
 
 // TODO: TASK-019 - Replace string interpolation with clsx utility for better className merging
 
@@ -48,54 +43,38 @@ export const Input: React.FC<InputProps> = ({
   className = "",
   ...rest
 }) => {
-  const { tokens } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
-
-  // Get intent colors for validation states
-  const intentColors = intent !== "neutral" ? tokens.intent[intent] : null;
-
-  const baseStyle =
-    variant === "filled"
-      ? {
-          background: tokens.raised,
-          border: `1px solid ${tokens.border}`,
-          boxShadow: "",
-        }
-      : concaveStyle(tokens);
-
-  const focusRingColor = intentColors?.border || tokens.intent.primary.border;
-  const borderColor = intentColors?.border || tokens.border;
-
-  // Dynamic styles based on focus state
-  const containerStyle = {
-    ...baseStyle,
-    borderColor: isFocused ? focusRingColor : borderColor,
-    boxShadow: isFocused
-      ? `inset 2px 2px 4px ${tokens.intent.primary.bg}, ` +
-        `inset -1px -1px 2px ${tokens.shadow.highlight}`
-      : baseStyle.boxShadow || "",
-    color: tokens.text,
-  } as React.CSSProperties;
 
   return (
     <label className={clsx("grid gap-1 text-sm", className)}>
-      {label && <span style={{ color: tokens.muted }}>{label}</span>}
+      {label && <span className="text-muted">{label}</span>}
       <div
         className={clsx(
-          "flex items-center gap-2 rounded-lg transition-all duration-200 group",
-          SIZE_CLASSES[size]
+          "flex items-center gap-2 rounded-lg transition-all duration-200 group border",
+          "text-text",
+          SIZE_CLASSES[size],
+          // Variant styles
+          variant === "filled"
+            ? "bg-raised border-border"
+            : "bg-card shadow-[inset_2px_2px_4px_var(--shadow-color),inset_-1px_-1px_2px_var(--shadow-highlight)] border-border",
+          // Intent styles
+          intent === "primary" && "bg-intent-primary-bg border-intent-primary",
+          intent === "success" && "bg-intent-success-bg border-intent-success",
+          intent === "warning" && "bg-intent-warning-bg border-intent-warning",
+          intent === "error" && "bg-intent-error-bg border-intent-error",
+          intent === "info" && "bg-intent-info-bg border-intent-info",
+          // Focus state
+          isFocused &&
+            "shadow-[inset_2px_2px_4px_var(--color-intent-primary-bg),inset_-1px_-1px_2px_var(--shadow-highlight)]"
         )}
-        style={containerStyle}
       >
         {left}
         <input
           {...rest}
-          className={clsx(INPUT_RESET_CLASSES, "focus:border-opacity-100")}
-          style={{
-            color: tokens.text,
-            ...getInputResetStyles(rest.type),
-            ...rest.style,
-          }}
+          className={clsx(
+            INPUT_RESET_CLASSES,
+            "focus:border-opacity-100 text-text"
+          )}
           onFocus={(e) => {
             setIsFocused(true);
             rest.onFocus?.(e);
@@ -104,14 +83,20 @@ export const Input: React.FC<InputProps> = ({
             setIsFocused(false);
             rest.onBlur?.(e);
           }}
+          style={getInputResetStyles(rest.type)}
         />
       </div>
       {helperText && (
         <span
-          className="text-xs"
-          style={{
-            color: intentColors?.text || tokens.muted,
-          }}
+          className={clsx(
+            "text-xs",
+            intent === "primary" && "text-intent-primary-text",
+            intent === "success" && "text-intent-success-text",
+            intent === "warning" && "text-intent-warning-text",
+            intent === "error" && "text-intent-error-text",
+            intent === "info" && "text-intent-info-text",
+            intent === "neutral" && "text-muted"
+          )}
         >
           {helperText}
         </span>

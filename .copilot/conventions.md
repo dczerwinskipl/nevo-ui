@@ -9,6 +9,7 @@ This document defines the coding standards, naming conventions, and style guidel
 **Rule**: All code, comments, documentation, and specifications must be written in **English**.
 
 **Applies to**:
+
 - Source code (`.ts`, `.tsx`, `.js`, `.jsx`)
 - Comments and JSDoc
 - README files and markdown documentation
@@ -18,6 +19,7 @@ This document defines the coding standards, naming conventions, and style guidel
 - Storybook stories and examples
 
 **Exceptions**:
+
 - User-facing content (if specifically required for Polish users)
 - Test data that simulates user input
 
@@ -46,6 +48,7 @@ interface ButtonProps {
 ### Files and Folders
 
 #### React Components
+
 ```
 PascalCase.tsx
 Button.tsx
@@ -54,6 +57,7 @@ FormField.tsx
 ```
 
 #### Non-component TypeScript
+
 ```
 camelCase.ts
 useFilters.ts
@@ -62,18 +66,21 @@ themeHelpers.ts
 ```
 
 #### Test Files
+
 ```
 ComponentName.test.tsx
 hookName.test.ts
 ```
 
 #### Storybook Stories
+
 ```
 ComponentName.stories.tsx
 Button.stories.tsx
 ```
 
 #### Folders
+
 ```
 kebab-case/
 design-system/
@@ -84,6 +91,7 @@ form-fields/
 ### TypeScript Naming
 
 #### Interfaces and Types
+
 ```typescript
 // Interfaces: PascalCase with "Props" suffix for component props
 interface ButtonProps {
@@ -101,9 +109,10 @@ type FormValues<TData> = { ... }
 ```
 
 #### Variables and Functions
+
 ```typescript
 // camelCase for variables, functions, and methods
-const currentTheme = 'light';
+const currentTheme = "light";
 const handleClick = () => {};
 const isDisabled = false;
 
@@ -115,6 +124,7 @@ const shouldRender = false;
 ```
 
 #### Constants
+
 ```typescript
 // UPPER_SNAKE_CASE for true constants
 const MAX_RETRY_COUNT = 3;
@@ -128,13 +138,14 @@ const themeConfig = {
 ```
 
 #### Enums
+
 ```typescript
 // PascalCase for enum name, PascalCase for members
 enum LoadingState {
-  Idle = 'idle',
-  Loading = 'loading',
-  Success = 'success',
-  Error = 'error',
+  Idle = "idle",
+  Loading = "loading",
+  Success = "success",
+  Error = "error",
 }
 ```
 
@@ -145,6 +156,7 @@ enum LoadingState {
 ### TypeScript
 
 #### Strict Mode
+
 ```typescript
 // tsconfig.json - always use strict mode
 {
@@ -162,14 +174,15 @@ enum LoadingState {
 ```
 
 #### No Any Types
+
 ```typescript
 // ❌ AVOID
 const data: any = fetchData();
-function process(input: any): any { }
+function process(input: any): any {}
 
 // ✅ PREFER
 const data: UserData = fetchData();
-function process(input: FormData): ProcessedData { }
+function process(input: FormData): ProcessedData {}
 
 // ✅ ACCEPTABLE - with explicit justification
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -177,6 +190,7 @@ const dynamicValue: any = JSON.parse(response); // OK: parsing unknown JSON
 ```
 
 #### Prefer Interfaces Over Types for Objects
+
 ```typescript
 // ✅ PREFER interfaces for object shapes
 interface User {
@@ -186,12 +200,13 @@ interface User {
 }
 
 // ✅ PREFER types for unions, intersections, primitives
-type Status = 'active' | 'inactive' | 'pending';
+type Status = "active" | "inactive" | "pending";
 type ID = string | number;
 type WithTimestamps = { createdAt: Date; updatedAt: Date };
 ```
 
 #### Export Types
+
 ```typescript
 // ✅ ALWAYS export component prop types
 export interface ButtonProps {
@@ -209,6 +224,7 @@ export function Button({ intent, variant, size, children }: ButtonProps) {
 ### React Components
 
 #### Function Components with TypeScript
+
 ```typescript
 // ✅ PREFER named function exports
 export function Button({ intent = 'neutral', variant = 'solid', children }: ButtonProps) {
@@ -220,9 +236,16 @@ export const Button: React.FC<ButtonProps> = ({ intent, variant }) => { };
 ```
 
 #### Props Destructuring
+
 ```typescript
 // ✅ GOOD - destructure in function signature
-export function Button({ intent, variant, size, children, className }: ButtonProps) {
+export function Button({
+  intent,
+  variant,
+  size,
+  children,
+  className,
+}: ButtonProps) {
   // ...
 }
 
@@ -234,12 +257,13 @@ export function Button(props: ButtonProps) {
 ```
 
 #### Default Props
+
 ```typescript
 // ✅ PREFER default parameters
 export function Button({
-  intent = 'neutral',
-  variant = 'solid',
-  size = 'md',
+  intent = "neutral",
+  variant = "solid",
+  size = "md",
   children,
 }: ButtonProps) {
   // ...
@@ -247,8 +271,8 @@ export function Button({
 
 // ❌ AVOID defaultProps (deprecated in function components)
 Button.defaultProps = {
-  intent: 'neutral',
-  variant: 'solid',
+  intent: "neutral",
+  variant: "solid",
 };
 ```
 
@@ -261,49 +285,52 @@ Button.defaultProps = {
 All design system components should follow these patterns:
 
 #### Standard Props
+
 ```typescript
 interface ComponentProps {
   // Intent - semantic meaning
   intent?: ComponentIntent; // 'primary' | 'success' | 'error' | ...
-  
+
   // Variant - visual style
-  variant?: 'solid' | 'outline' | 'ghost' | 'subtle';
-  
+  variant?: "solid" | "outline" | "ghost" | "subtle";
+
   // Size - physical dimensions
   size?: ComponentSize; // 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-  
+
   // Custom styling
   className?: string;
   style?: React.CSSProperties;
-  
+
   // Accessibility
-  'aria-label'?: string;
-  'aria-labelledby'?: string;
-  'aria-describedby'?: string;
-  
+  "aria-label"?: string;
+  "aria-labelledby"?: string;
+  "aria-describedby"?: string;
+
   // Standard HTML attributes
   id?: string;
   disabled?: boolean;
-  
+
   // Content
   children?: React.ReactNode;
 }
 ```
 
 #### Intent-based Theming
+
 ```typescript
-type ComponentIntent = 
-  | 'primary'   // Main actions, brand colors
-  | 'success'   // Positive actions, confirmations
-  | 'error'     // Destructive actions, errors
-  | 'warning'   // Cautionary actions
-  | 'info'      // Informational
-  | 'neutral';  // Default, secondary actions
+type ComponentIntent =
+  | "primary" // Main actions, brand colors
+  | "success" // Positive actions, confirmations
+  | "error" // Destructive actions, errors
+  | "warning" // Cautionary actions
+  | "info" // Informational
+  | "neutral"; // Default, secondary actions
 ```
 
 #### Size Scale
+
 ```typescript
-type ComponentSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+type ComponentSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 // Minimum touch target: 44px (WCAG 2.1 AA)
 // - xs: 32px (use sparingly, ensure adequate spacing)
@@ -316,6 +343,7 @@ type ComponentSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 ### Using Primitives
 
 #### In Stories
+
 ```typescript
 // ✅ ALWAYS use design system primitives in stories
 export const Example: Story = {
@@ -346,653 +374,234 @@ export const Example: Story = {
 
 ---
 
-## 🔍 Import Organization
+## 🎨 Styling Conventions
 
-### Import Order
-```typescript
-// 1. External dependencies
-import React, { useState, useEffect } from 'react';
-import { clsx } from 'clsx';
+### Token-Driven Design System
 
-// 2. Internal packages (monorepo)
-import { useTheme } from '@nevo/design-system';
-import { productsApi } from '@nevo/api-client';
+All design system components use a **centralized token system** defined in `packages/design-system/src/theme/tokens.ts`. Tokens are injected as CSS variables by the `ThemeProvider` and referenced via config-based Tailwind classes.
 
-// 3. Relative imports - types first
-import type { ButtonProps } from './types';
-import type { ThemeTokens } from '../theme';
+#### Core Principles
 
-// 4. Relative imports - components and utilities
-import { Button } from './Button';
-import { formatDate } from '../utils/date';
+1. **No hardcoded colors** - All colors come from theme tokens
+2. **CSS variables for theme switching** - Supports light/dark modes
+3. **Config-based Tailwind classes** - Use `bg-card` instead of `bg-[var(--color-card)]`
+4. **Centralized styling logic** - Intent-based styles in `classNames.ts`
+5. **Type-safe theme tokens** - TypeScript ensures token consistency
 
-// 5. Styles (if separate)
-import './Button.css';
+### Tailwind Configuration
+
+The `tailwind.config.cjs` maps all color tokens to CSS variables:
+
+```javascript
+// packages/design-system/tailwind.config.cjs
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        // Base surface colors
+        page: "var(--color-page)",
+        card: "var(--color-card)",
+        raised: "var(--color-raised)",
+
+        // Text colors
+        text: "var(--color-text)",
+        muted: "var(--color-muted)",
+
+        // Border colors
+        border: "var(--color-border)",
+
+        // Primary brand colors
+        primary: {
+          DEFAULT: "var(--color-primary-base)",
+          hover: "var(--color-primary-hover)",
+        },
+
+        // Intent colors - use intent-{type}-{variant} pattern
+        "intent-primary": "var(--color-intent-primary-border)",
+        "intent-primary-bg": "var(--color-intent-primary-bg)",
+        "intent-primary-text": "var(--color-intent-primary-text)",
+        // ... (success, warning, error, info, neutral)
+      },
+    },
+  },
+};
 ```
 
-### Named vs Default Exports
-```typescript
-// ✅ PREFER named exports
-export function Button() { }
-export { Button };
+### Using Config-Based Tailwind Classes
 
-// ❌ AVOID default exports (harder to refactor, rename, find)
-export default Button;
-```
+**Always use config-based classes** instead of arbitrary value syntax:
 
----
-
-## ✅ Accessibility (a11y)
-
-### Semantic HTML
-```typescript
-// ✅ GOOD - semantic HTML
-export function Alert({ children }: AlertProps) {
-  return (
-    <div role="alert" aria-live="polite">
-      {children}
-    </div>
-  );
-}
-
-// ❌ BAD - non-semantic
-export function Alert({ children }: AlertProps) {
-  return <div>{children}</div>;
-}
-```
-
-### ARIA Attributes
-```typescript
-// ✅ GOOD - proper ARIA labels
-<button
-  aria-label="Close dialog"
-  aria-expanded={isOpen}
-  aria-controls="dialog-content"
->
-  <XIcon />
-</button>
-
-// ❌ BAD - no accessible label for icon button
-<button>
-  <XIcon />
-</button>
-```
-
-### Keyboard Navigation
-```typescript
-// ✅ GOOD - keyboard support
-<div
-  role="button"
-  tabIndex={0}
-  onClick={handleClick}
-  onKeyDown={(e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleClick();
-    }
-  }}
->
-  Click me
+```tsx
+// ✅ GOOD - Config-based classes (clean, IDE-supported, validated)
+<div className="bg-card border border-border text-text">
+  <p className="text-muted">Secondary text</p>
+  <button className="bg-intent-primary-bg border-intent-primary text-intent-primary-text">
+    Primary Button
+  </button>
 </div>
 
-// ❌ BAD - no keyboard support
-<div onClick={handleClick}>
-  Click me
+// ❌ BAD - Arbitrary value syntax (verbose, no IDE support, error-prone)
+<div className="bg-[var(--color-card)] border border-[var(--color-border)] text-[var(--color-text)]">
+  <p className="text-[var(--color-muted)]">Secondary text</p>
+  <button className="bg-[var(--color-intent-primary-bg)] border-[var(--color-intent-primary-border)]">
+    Primary Button
+  </button>
 </div>
 ```
 
----
+### Available Color Classes
 
-## 🧪 Testing Conventions
+#### Base Colors
 
-### Test File Structure
-```typescript
-describe('ComponentName', () => {
-  describe('Rendering', () => {
-    it('renders without crashing', () => { });
-    it('renders with default props', () => { });
-    it('renders all variants correctly', () => { });
-  });
+```tsx
+// Surface/background colors
+bg - page; // Darkest background (page)
+bg - card; // Card background
+bg - raised; // Raised elements (buttons, inputs)
 
-  describe('Interactions', () => {
-    it('calls onClick when clicked', () => { });
-    it('handles keyboard events', () => { });
-  });
+// Text colors
+text - text; // Primary text
+text - muted; // Secondary/muted text
 
-  describe('Accessibility', () => {
-    it('has no accessibility violations', () => { });
-    it('has proper ARIA attributes', () => { });
-  });
-
-  describe('Edge Cases', () => {
-    it('handles loading state', () => { });
-    it('handles error state', () => { });
-  });
-});
+// Border colors
+border - border; // Default border color
 ```
 
----
+#### Primary Brand Colors
 
-## 📦 Git Conventions
-
-### Branch Naming
-```
-features/<epic>/<task>-<description>
-features/000-devops/001-ci-cd-tests
-features/001-ui/002-button-component
+```tsx
+bg - primary; // Primary brand color
+bg - primary - hover; // Primary hover state
+text - primary;
+border - primary;
 ```
 
-### Commit Messages
-Follow [Conventional Commits](https://www.conventionalcommits.org/):
+#### Intent Colors
 
+For each intent (primary, success, warning, error, info, neutral):
+
+```tsx
+// Background
+bg - intent - { intent } - bg; // e.g., bg-intent-success-bg
+
+// Border
+border - intent - { intent }; // e.g., border-intent-error
+
+// Text
+text - intent - { intent } - text; // e.g., text-intent-warning-text
 ```
-<type>(<scope>): <description>
-
-[optional body]
-
-[optional footer]
-```
-
-**Types**:
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation changes
-- `style`: Code style changes (formatting, semicolons, etc.)
-- `refactor`: Code refactoring
-- `test`: Adding or updating tests
-- `chore`: Maintenance tasks
 
 **Examples**:
-```
-feat(button): add loading state support
-fix(theme): resolve token inheritance issue
-docs(readme): update installation instructions
-test(modal): add accessibility tests
-refactor(table): extract row component
-```
 
----
-
-## 🚫 Anti-Patterns to Avoid
-
-### TypeScript
-```typescript
-// ❌ AVOID any without justification
-const data: any = response;
-
-// ❌ AVOID non-null assertion without verification
-const user = users.find(u => u.id === id)!;
-
-// ❌ AVOID type casting
-const button = document.querySelector('button') as HTMLButtonElement;
-
-// ✅ PREFER proper typing
-const user = users.find(u => u.id === id);
-if (!user) throw new Error('User not found');
-```
-
-### React
-```typescript
-// ❌ AVOID inline object/array creation in render
-<Component config={{ foo: 'bar' }} items={[1, 2, 3]} />
-
-// ✅ PREFER extracted constants
-const config = { foo: 'bar' };
-const items = [1, 2, 3];
-<Component config={config} items={items} />
-
-// ❌ AVOID unnecessary useEffect
-useEffect(() => {
-  setCount(count + 1);
-}, [count]);
-
-// ✅ PREFER direct state updates
-setCount(prev => prev + 1);
-```
-
----
-
-## ⚡ Performance Best Practices
-
-### Component Performance
-
-**Use React.memo() for expensive components**:
 ```tsx
-// ✅ Good - memoized component
-export const ExpensiveList = React.memo<ExpensiveListProps>(({ items, onItemClick }) => {
-  return (
-    <ul>
-      {items.map(item => (
-        <ExpensiveListItem key={item.id} item={item} onClick={onItemClick} />
-      ))}
-    </ul>
-  );
-});
+<Badge intent="success">
+  <span className="bg-intent-success-bg border-intent-success text-intent-success-text">
+    Success Badge
+  </span>
+</Badge>
 
-// ❌ Bad - re-renders unnecessarily
-export const ExpensiveList = ({ items, onItemClick }) => {
-  // Component re-renders even when props haven't changed
-  return <ul>...</ul>;
-};
+<Alert intent="error">
+  <div className="bg-intent-error-bg border-intent-error text-intent-error-text">
+    Error Alert
+  </div>
+</Alert>
 ```
 
-**Avoid inline object/function creation in render**:
+### Component Styling Patterns
+
+#### Intent-Based Styling
+
+Use explicit conditionals for intent-based styles:
+
 ```tsx
-// ❌ Bad - creates new object/function on every render
-<Component 
-  config={{ foo: 'bar' }} 
-  onClick={() => handleClick(id)}
+// ✅ GOOD - Explicit conditionals with config-based classes
+<div className={clsx(
+  "border rounded-lg p-4",
+  intent === "primary" && "bg-intent-primary-bg border-intent-primary text-intent-primary-text",
+  intent === "success" && "bg-intent-success-bg border-intent-success text-intent-success-text",
+  intent === "error" && "bg-intent-error-bg border-intent-error text-intent-error-text",
+)} />
+
+<!-- ❌ BAD - String interpolation with arbitrary values
+<div className={clsx(
+  "border rounded-lg p-4",
+  intent !== "neutral" && `bg-[var(--color-intent-${intent}-bg)] border-[var(--color-intent-${intent}-border)]`
+)} />
+```
+
+#### Variant-Based Styling
+
+```tsx
+// ✅ GOOD - Clear variant logic
+<button
+  className={clsx(
+    "rounded-lg px-4 py-2 transition-colors",
+    variant === "solid" && "bg-primary text-white",
+    variant === "outline" &&
+      "bg-transparent border-2 border-primary text-primary",
+    variant === "ghost" && "bg-transparent text-primary hover:bg-primary/10"
+  )}
 />
-
-// ✅ Good - extracted constants and memoized functions
-const config = { foo: 'bar' }; // Outside component or useMemo
-
-export const MyComponent = ({ id }) => {
-  const handleClickMemo = useCallback(() => {
-    handleClick(id);
-  }, [id]);
-  
-  return <Component config={config} onClick={handleClickMemo} />;
-};
 ```
 
-**Use useMemo and useCallback judiciously**:
+#### Size-Based Styling
+
+Use size constants for consistency:
+
 ```tsx
-// ✅ Good - expensive computation memoized
-const sortedItems = useMemo(() => {
-  return items
-    .filter(item => item.active)
-    .sort((a, b) => a.name.localeCompare(b.name));
-}, [items]);
-
-// ✅ Good - callback memoized for child component
-const handleItemClick = useCallback((itemId: string) => {
-  setSelectedId(itemId);
-  onItemSelect?.(itemId);
-}, [onItemSelect]);
-
-// ❌ Bad - unnecessary memoization (simple value)
-const displayName = useMemo(() => `${firstName} ${lastName}`, [firstName, lastName]);
-
-// ✅ Good - just compute directly
-const displayName = `${firstName} ${lastName}`;
-```
-
-**Define objects/arrays outside components when possible**:
-```tsx
-// ✅ Good - constant defined outside component
-const STATUS_COLOR_MAP = {
-  completed: 'success',
-  pending: 'warning',
-  cancelled: 'error'
-} as const;
-
-export const OrderStatus = ({ status }) => {
-  const intent = STATUS_COLOR_MAP[status];
-  return <Badge intent={intent}>{status}</Badge>;
+const SIZE_CLASSES: Record<ComponentSize, string> = {
+  xs: "px-2.5 py-2 text-xs min-h-[36px]",
+  sm: "px-3 py-2.5 text-sm min-h-[44px]",
+  md: "px-3 py-3 text-base min-h-[44px]",
+  lg: "px-4 py-4 text-lg min-h-[48px]",
+  xl: "px-5 py-5 text-xl min-h-[52px]",
 };
 
-// ❌ Bad - recreated on every render
-export const OrderStatus = ({ status }) => {
-  const statusMap = {
-    completed: 'success',
-    pending: 'warning',
-    cancelled: 'error'
-  };
-  return <Badge intent={statusMap[status]}>{status}</Badge>;
-};
+<button className={clsx("rounded-lg", SIZE_CLASSES[size])} />;
 ```
 
-**Implement proper dependency arrays in hooks**:
-```tsx
-// ✅ Good - all dependencies listed
-useEffect(() => {
-  fetchUserData(userId);
-}, [userId, fetchUserData]);
+### Shadow Effects
 
-// ❌ Bad - missing dependencies (ESLint will warn)
-useEffect(() => {
-  fetchUserData(userId);
-}, []); // userId and fetchUserData are missing!
-
-```
-
-//  Good - no dependencies needed
-useEffect(() => {
-  const timer = setInterval(() => {
-    console.log('Tick');
-  }, 1000);
-  
-  return () => clearInterval(timer);
-}, []); // Correct - no external dependencies
-```
-
-### Bundle Optimization
-
-**Use dynamic imports for route-based code splitting**:
-```tsx
-//  Good - lazy load route components
-const Dashboard = lazy(() => import('./features/dashboard/DashboardPage'));
-const Orders = lazy(() => import('./features/orders/OrdersPage'));
-const Products = lazy(() => import('./features/products/ProductsPage'));
-
-export const router = createBrowserRouter([
-  {
-    path: '/',
-    element: (
-      <Suspense fallback={<Loading />}>
-        <Dashboard />
-      </Suspense>
-    ),
-  },
-  // ...
-]);
-```
-
-**Implement lazy loading for heavy components**:
-```tsx
-//  Good - lazy load heavy chart library
-const HeavyChart = lazy(() => import('./components/HeavyChart'));
-
-export const Dashboard = () => (
-  <Suspense fallback={<Loading />}>
-    <HeavyChart data={chartData} />
-  </Suspense>
-);
-```
-
-**Tree-shaking friendly exports**:
-```tsx
-//  Good - named exports enable tree-shaking
-export { Button } from './Button';
-export { Card } from './Card';
-export { Modal } from './Modal';
-
-//  Bad - default export of all components
-export default { Button, Card, Modal };
-```
-
-**Avoid large dependencies**:
-```tsx
-//  Bad - importing entire lodash library
-import _ from 'lodash';
-_.debounce(fn, 300);
-
-//  Good - import only what you need
-import debounce from 'lodash/debounce';
-debounce(fn, 300);
-
-//  Better - use native alternatives when possible
-const debounce = (fn, delay) => {
-  let timeout;
-  return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => fn(...args), delay);
-  };
-};
-```
-
-### Runtime Performance
-
-**Minimize re-renders with proper memoization**:
-```tsx
-//  Good - memoized list items
-const MemoizedItem = React.memo(({ item, onClick }) => (
-  <li onClick={() => onClick(item.id)}>
-    {item.name}
-  </li>
-));
-
-export const ItemList = ({ items }) => {
-  const handleClick = useCallback((id) => {
-    console.log('Clicked:', id);
-  }, []);
-  
-  return (
-    <ul>
-      {items.map(item => (
-        <MemoizedItem key={item.id} item={item} onClick={handleClick} />
-      ))}
-    </ul>
-  );
-};
-```
-
-**Implement virtualization for long lists**:
-```tsx
-//  Good - virtualized list for 1000+ items
-import { useVirtualizer } from '@tanstack/react-virtual';
-
-export const VirtualizedProductList = ({ products }) => {
-  const parentRef = useRef<HTMLDivElement>(null);
-  
-  const virtualizer = useVirtualizer({
-    count: products.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 50, // Row height
-  });
-  
-  return (
-    <div ref={parentRef} className="h-96 overflow-auto">
-      <div style={{ height: `px` }}>
-        {virtualizer.getVirtualItems().map(virtualRow => (
-          <ProductRow
-            key={virtualRow.key}
-            product={products[virtualRow.index]}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: `px`,
-              transform: `translateY(px)`,
-            }}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
-```
-
-**Use React DevTools Profiler to identify bottlenecks**:
-1. Install React DevTools extension
-2. Open DevTools > Profiler tab
-3. Click "Record" and interact with your app
-4. Analyze flame graph for slow components
-5. Optimize components with most render time
-
-**When to optimize**:
--  Optimize when you measure a performance issue
--  Optimize list rendering with many items (100+)
--  Optimize expensive computations
--  Don't optimize prematurely
--  Don't memoize everything by default
-
----
-
-##  Responsive Design
-
-### Breakpoint System
-
-**Use Tailwind's default breakpoints**:
+Use CSS variable references for shadow effects (these stay as arbitrary values since they involve complex calculations):
 
 ```tsx
-// Tailwind breakpoints
-sm: 640px   // Small devices (landscape phones)
-md: 768px   // Medium devices (tablets)
-lg: 1024px  // Large devices (desktops)
-xl: 1280px  // Extra large devices
-2xl: 1536px // Extra extra large devices
+// ✅ GOOD - Shadow with CSS variables (complex, not suitable for config)
+className =
+  "shadow-[2px_2px_4px_var(--shadow-color),-1px_-1px_2px_var(--shadow-highlight)]";
+
+// Inset shadow for neumorphic design
+className =
+  "shadow-[inset_2px_2px_4px_var(--shadow-color),inset_-1px_-1px_2px_var(--shadow-highlight)]";
 ```
 
-### Mobile-First Approach
+### When to Use Arbitrary Values
 
-**Rule**: Design for mobile first, then add styles for larger screens.
+Use arbitrary values **only** for:
+
+- Complex shadows with CSS variables
+- One-off spacing/sizing that doesn't fit the scale
+- Transform values and animations
+- Gradients with CSS variables
 
 ```tsx
-//  Good - mobile first
-<div className="text-sm md:text-base lg:text-lg">
-  Responsive text
-</div>
+// ✅ ACCEPTABLE - Complex shadow
+className = "shadow-[0_10px_20px_rgba(0,0,0,.35)]";
 
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-  {/* 1 column on mobile, 2 on tablet, 3 on desktop */}
-</div>
+// ✅ ACCEPTABLE - Custom transform
+className = "translate-x-[calc(100%+8px)]";
 
-<div className="p-4 md:p-6 lg:p-8">
-  {/* Smaller padding on mobile, larger on desktop */}
-</div>
-
-//  Bad - desktop first
-<div className="text-lg lg:text-base md:text-sm">
-  Wrong approach
-</div>
+// ❌ BAD - Color should use config
+className = "bg-[var(--color-card)]"; // Use bg-card instead
 ```
 
-### Responsive Utilities
+## 📚 Documentation
 
-**Common responsive patterns**:
+### Design System Documentation
+All design system architecture decisions and migration guides are in `/spec/003-design-system-cleanup/`:
 
-```tsx
-// Show/hide elements
-<div className="hidden md:block">Desktop only</div>
-<div className="block md:hidden">Mobile only</div>
-
-// Responsive spacing
-<div className="space-y-2 md:space-y-4 lg:space-y-6">
-  {/* Items */}
-</div>
-
-// Responsive flex direction
-<div className="flex flex-col md:flex-row">
-  {/* Stack on mobile, row on desktop */}
-</div>
-
-// Responsive grid
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-  {/* Responsive grid with gaps */}
-</div>
-```
-
----
-
-##  State Management
-
-### Local Component State: useState / useReducer
-
-**Use for**: Component-level state that doesn't need to be shared.
-
-```tsx
-//  Good - simple state
-const [isOpen, setIsOpen] = useState(false);
-const [count, setCount] = useState(0);
-
-//  Good - complex state with useReducer
-type State = {
-  filters: ProductFilters;
-  pagination: { page: number; pageSize: number };
-  sorting: { column: string; direction: 'asc' | 'desc' };
-};
-
-type Action =
-  | { type: 'SET_FILTER'; payload: Partial<ProductFilters> }
-  | { type: 'SET_PAGE'; payload: number }
-  | { type: 'SET_SORT'; payload: { column: string; direction: 'asc' | 'desc' } };
-
-const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case 'SET_FILTER':
-      return { ...state, filters: { ...state.filters, ...action.payload } };
-    case 'SET_PAGE':
-      return { ...state, pagination: { ...state.pagination, page: action.payload } };
-    case 'SET_SORT':
-      return { ...state, sorting: action.payload };
-    default:
-      return state;
-  }
-};
-
-const [state, dispatch] = useReducer(reducer, initialState);
-```
-
-### Server State: TanStack Query
-
-**Use for**: API data fetching, caching, and synchronization.
-
-```tsx
-//  Good - use TanStack Query for server data
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
-// Fetching data
-const { data, isLoading, error, refetch } = useQuery({
-  queryKey: ['products', filters],
-  queryFn: () => fetchProducts(filters),
-  staleTime: 5 * 60 * 1000, // 5 minutes
-});
-
-// Mutations
-const queryClient = useQueryClient();
-
-const updateProductMutation = useMutation({
-  mutationFn: (product: Product) => updateProduct(product),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['products'] });
-  },
-});
-
-//  Bad - managing server state with useState
-const [data, setData] = useState(null);
-const [loading, setLoading] = useState(false);
-
-useEffect(() => {
-  setLoading(true);
-  fetchProducts().then(setData).finally(() => setLoading(false));
-}, []);
-```
-
-### Global App State: Zustand (if needed)
-
-**Use for**: Truly global application state (user preferences, theme, etc.).
-
-```tsx
-//  Good - Zustand for global state
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-
-interface AppState {
-  theme: 'light' | 'dark';
-  sidebarOpen: boolean;
-  setTheme: (theme: 'light' | 'dark') => void;
-  toggleSidebar: () => void;
-}
-
-export const useAppStore = create<AppState>()(
-  persist(
-    (set) => ({
-      theme: 'light',
-      sidebarOpen: true,
-      setTheme: (theme) => set({ theme }),
-      toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
-    }),
-    {
-      name: 'app-storage',
-    }
-  )
-);
-
-// Usage
-const { theme, setTheme } = useAppStore();
-```
-
-**When to use each**:
-- **useState**: Simple component state (open/close, current tab)
-- **useReducer**: Complex component state with multiple actions
-- **TanStack Query**: All server data (GET, POST, PUT, DELETE)
-- **Zustand**: Global app state (theme, user preferences, sidebar state)
-
- **Avoid**: Using global state for everything. Keep state as local as possible.
-
----
-
-##  VS Code Configuration
+- **QUICK-REFERENCE.md** - Developer quick reference for theme-aware classes ⭐ START HERE
+- **COLOR-CLASSES-REFERENCE.md** - Complete list of available color classes
+- **CONFIG-BASED-TAILWIND-MIGRATION.md** - Migration guide and rationale
+- **CLASSNAMES-MIGRATION.md** - Utility function reference
+- **FINAL-MIGRATION-SUMMARY.md** - Complete migration overview
+- **VISUAL-VERIFICATION-CHECKLIST.md** - Manual testing checklist

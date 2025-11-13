@@ -146,7 +146,9 @@ describe("Typography Component", () => {
       );
       const element = container.firstChild as HTMLElement;
       // Should use success color variable instead of error
-      expect(element).toHaveStyle({ color: "var(--color-intent-success-text)" });
+      expect(element).toHaveStyle({
+        color: "var(--color-intent-success-text)",
+      });
     });
   });
 
@@ -282,13 +284,13 @@ describe("Typography Component", () => {
     it("applies default text color", () => {
       const { container } = render(<Typography>Content</Typography>);
       const element = container.firstChild as HTMLElement;
-      expect(element).toHaveClass("text-gray-900");
+      expect(element).toHaveClass("text-text");
     });
 
-    it("applies dark mode text color", () => {
+    it("applies theme-aware text color", () => {
       const { container } = render(<Typography>Content</Typography>);
       const element = container.firstChild as HTMLElement;
-      expect(element.className).toContain("dark:text-gray-100");
+      expect(element.className).toContain("text-text");
     });
   });
 
@@ -312,7 +314,9 @@ describe("Typography Component", () => {
       expect(element).toHaveClass("text-2xl");
       expect(element).toHaveClass("font-bold");
       expect(element).toHaveClass("text-center");
-      expect(element).toHaveStyle({ color: "var(--color-intent-primary-text)" });
+      expect(element).toHaveStyle({
+        color: "var(--color-intent-primary-text)",
+      });
       expect(element).toHaveClass("custom-class");
     });
   });

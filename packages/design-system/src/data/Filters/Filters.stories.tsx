@@ -365,7 +365,7 @@ export const Interactive: Story = {
           hasAppliedFilters={hasApplied}
         />
         {hasApplied && (
-          <Card className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20">
+          <Card className="mt-4 p-4 bg-intent-info-bg border-intent-info">
             <p className="text-sm">
               Found <strong>{results}</strong> products matching your filters
             </p>

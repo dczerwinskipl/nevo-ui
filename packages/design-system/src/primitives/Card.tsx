@@ -4,13 +4,10 @@ import { clsx } from "clsx";
 export type CardVariant = "default" | "bordered" | "elevated" | "flat";
 
 const VARIANT_CLASSES: Record<CardVariant, string> = {
-  default:
-    "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-sm",
-  bordered:
-    "bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-600",
-  elevated:
-    "bg-white dark:bg-gray-900 shadow-lg border border-gray-100 dark:border-gray-800",
-  flat: "bg-gray-50 dark:bg-gray-800",
+  default: "bg-card border border-border shadow-sm",
+  bordered: "bg-card border-2 border-border",
+  elevated: "bg-card shadow-lg border border-border",
+  flat: "bg-raised",
 } as const;
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -90,8 +87,8 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
         onKeyDown={clickable ? handleKeyDown : undefined}
       >
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/50 dark:bg-black/50 rounded-xl z-10">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-blue-400" />
+          <div className="absolute inset-0 flex items-center justify-center bg-page/50 rounded-xl z-10">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
           </div>
         )}
         {children}
@@ -117,7 +114,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
   return (
     <div
       className={clsx(
-        "mb-4 pb-4 border-b border-gray-200 dark:border-gray-700",
+        "mb-4 pb-4 border-b border-border",
         className
       )}
       {...rest}
@@ -143,7 +140,7 @@ export const CardBody: React.FC<CardBodyProps> = ({
 }) => {
   return (
     <div
-      className={clsx("text-gray-700 dark:text-gray-300", className)}
+      className={clsx("text-text", className)}
       {...rest}
     >
       {children}
@@ -168,7 +165,7 @@ export const CardFooter: React.FC<CardFooterProps> = ({
   return (
     <div
       className={clsx(
-        "mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2",
+        "mt-4 pt-4 border-t border-border flex items-center gap-2",
         className
       )}
       {...rest}

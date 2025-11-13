@@ -13,7 +13,7 @@ describe("Card Component", () => {
     it("renders with default variant", () => {
       const { container } = render(<Card>Content</Card>);
       const card = container.firstChild as HTMLElement;
-      expect(card).toHaveClass("bg-white", "border", "shadow-sm");
+      expect(card).toHaveClass("bg-card", "border", "shadow-sm");
     });
 
     it("forwards ref correctly", () => {
@@ -52,29 +52,29 @@ describe("Card Component", () => {
 
         switch (variant) {
           case "default":
-            expect(card).toHaveClass("bg-white", "border", "shadow-sm");
+            expect(card).toHaveClass("bg-card", "border", "shadow-sm");
             break;
           case "bordered":
-            expect(card).toHaveClass("bg-white", "border-2");
+            expect(card).toHaveClass("bg-card", "border-2");
             break;
           case "elevated":
-            expect(card).toHaveClass("bg-white", "shadow-lg");
+            expect(card).toHaveClass("bg-card", "shadow-lg");
             break;
           case "flat":
-            expect(card).toHaveClass("bg-gray-50");
+            expect(card).toHaveClass("bg-raised");
             break;
         }
       });
     });
 
-    it("applies dark mode classes for all variants", () => {
+    it("applies theme-aware background classes for all variants", () => {
       variants.forEach((variant) => {
         const { container } = render(<Card variant={variant}>Content</Card>);
         const card = container.firstChild as HTMLElement;
 
-        // All variants should have dark mode background classes
+        // All variants should have theme-aware background classes
         const className = card.className;
-        expect(className).toMatch(/dark:bg-gray-/);
+        expect(className).toMatch(/bg-(card|raised)/);
       });
     });
   });
@@ -299,7 +299,7 @@ describe("Card Component", () => {
       it("applies default text color styles", () => {
         const { container } = render(<CardBody>Body</CardBody>);
         const body = container.firstChild as HTMLElement;
-        expect(body).toHaveClass("text-gray-700");
+        expect(body).toHaveClass("text-text");
       });
 
       it("applies custom className", () => {

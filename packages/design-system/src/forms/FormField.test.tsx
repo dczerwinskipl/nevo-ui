@@ -49,8 +49,9 @@ describe("FormField", () => {
 
     it("should render with custom className", () => {
       const { container } = renderFormField({ className: "custom-field" });
-      const wrapper = container.firstChild;
-      expect(wrapper).toHaveClass("custom-field");
+      const wrapper = container.querySelector(".space-y-1") as HTMLElement;
+      expect(wrapper).toBeInTheDocument();
+      expect(wrapper.className).toContain("custom-field");
     });
   });
 
@@ -208,7 +209,7 @@ describe("FormField", () => {
         error: "Error message",
       });
       const error = screen.getByText("Error message");
-      expect(error).toHaveClass("text-xs");
+      expect(error.className).toContain("text-xs");
     });
   });
 });

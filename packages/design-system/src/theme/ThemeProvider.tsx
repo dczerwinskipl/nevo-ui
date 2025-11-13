@@ -48,7 +48,9 @@ export function ThemeProvider({
   return (
     <ThemeCtx.Provider value={{ dark, setDark, tokens: themeTokens }}>
       {/* Inject CSS variables for theme-aware styling */}
-      <style dangerouslySetInnerHTML={{ __html: generateCSSVariables(themeTokens) }} />
+      <style
+        dangerouslySetInnerHTML={{ __html: generateCSSVariables(themeTokens) }}
+      />
       {children}
     </ThemeCtx.Provider>
   );

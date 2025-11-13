@@ -72,7 +72,7 @@ describe("EmptyState", () => {
       });
       const iconContainer = container.querySelector(".text-4xl");
       expect(iconContainer).toBeInTheDocument();
-      expect(iconContainer).toHaveClass("opacity-50");
+      expect(iconContainer?.className).toContain("opacity-50");
     });
   });
 
@@ -109,20 +109,24 @@ describe("EmptyState", () => {
   describe("Styling", () => {
     it("should have centered layout", () => {
       const { container } = renderEmptyState(defaultProps);
-      const wrapper = container.firstChild;
-      expect(wrapper).toHaveClass("flex", "flex-col", "items-center");
+      const wrapper = container.querySelector(".flex.flex-col") as HTMLElement;
+      expect(wrapper).toBeInTheDocument();
+      expect(wrapper.className).toContain("flex");
+      expect(wrapper.className).toContain("flex-col");
+      expect(wrapper.className).toContain("items-center");
     });
 
     it("should have proper spacing", () => {
       const { container } = renderEmptyState(defaultProps);
-      const wrapper = container.firstChild;
-      expect(wrapper).toHaveClass("py-16", "px-4");
+      const wrapper = container.querySelector(".flex.flex-col") as HTMLElement;
+      expect(wrapper.className).toContain("py-16");
+      expect(wrapper.className).toContain("px-4");
     });
 
     it("should have text-center alignment", () => {
       const { container } = renderEmptyState(defaultProps);
-      const wrapper = container.firstChild;
-      expect(wrapper).toHaveClass("text-center");
+      const wrapper = container.querySelector(".flex.flex-col") as HTMLElement;
+      expect(wrapper.className).toContain("text-center");
     });
   });
 
@@ -135,7 +139,8 @@ describe("EmptyState", () => {
 
     it("should be keyboard accessible", () => {
       const { container } = renderEmptyState(defaultProps);
-      const wrapper = container.firstChild;
+      const wrapper = container.querySelector(".flex.flex-col") as HTMLElement;
+      expect(wrapper).toBeInTheDocument();
       expect(wrapper).toBeVisible();
     });
   });

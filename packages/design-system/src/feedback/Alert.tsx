@@ -1,11 +1,11 @@
 import React from "react";
 import { clsx } from "clsx";
-import { useTheme, ComponentIntent, getIntentStyle } from "../theme";
+import { ComponentIntent, getIntentVariantClasses } from "../theme";
 import { X, AlertCircle, CheckCircle, AlertTriangle, Info } from "lucide-react";
 
 export interface AlertProps {
   intent?: ComponentIntent;
-  variant?: "subtle" | "solid" | "outline";
+  variant?: "subtle" | "solid" | "outline" | "ghost";
   title?: string;
   children: React.ReactNode;
   dismissible?: boolean;
@@ -33,22 +33,16 @@ export function Alert({
   className,
   icon = true,
 }: AlertProps) {
-  const { tokens } = useTheme();
-  const style = getIntentStyle(tokens, intent, variant);
-
   const IconComponent =
     typeof icon === "boolean" && icon ? INTENT_ICONS[intent] : null;
 
   return (
     <div
-      className={clsx("p-4 rounded-lg flex gap-3", className)}
-      style={{
-        backgroundColor: style.background,
-        borderColor: style.border,
-        color: style.color,
-        borderWidth: variant === "outline" ? "1px" : "0",
-        borderStyle: "solid",
-      }}
+      className={clsx(
+        "p-4 rounded-lg flex gap-3",
+        getIntentVariantClasses(intent, variant),
+        className
+      )}
       role="alert"
     >
       {/* Icon */}
@@ -68,7 +62,10 @@ export function Alert({
       {dismissible && (
         <button
           onClick={onDismiss}
-          className="flex-shrink-0 p-1 rounded hover:bg-black hover:bg-opacity-10 transition-colors"
+          className={clsx(
+            "flex-shrink-0 p-1 rounded transition-colors",
+            "hover:bg-raised/50"
+          )}
           aria-label="Dismiss alert"
         >
           <X className="w-4 h-4" />

@@ -7,6 +7,19 @@ export type {
   ComponentSize,
 } from "./theme/types";
 
+// Theme utilities
+export {
+  getTextColor,
+  getBgColor,
+  getBorderColor,
+  getPrimaryColor,
+  getIntentVariantClasses,
+  getVariantBaseClasses,
+  getSizeClasses,
+  getIntentTextColor,
+  getCommonPattern,
+} from "./theme/classNames";
+
 // Hooks
 export * from "./hooks";
 
