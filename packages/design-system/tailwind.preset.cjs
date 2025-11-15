@@ -171,13 +171,17 @@ module.exports = {
     "duration-200",
     "duration-300",
     // Interactive classes from getInteractiveClasses() helper
-    {
-      pattern: /hover:scale-\[(1\.02|105)\]/,
-    },
+    "hover:scale-[1.02]",
+    "hover:scale-105",
     // Touch target classes from getTouchTargetClasses() helper
-    {
-      pattern: /min-[hw]-\[(36|40|44|48)px\]/,
-    },
+    "min-h-[36px]",
+    "min-h-[40px]",
+    "min-h-[44px]",
+    "min-h-[48px]",
+    "min-w-[36px]",
+    "min-w-[40px]",
+    "min-w-[44px]",
+    "min-w-[48px]",
     "touch-manipulation",
   ],
 };

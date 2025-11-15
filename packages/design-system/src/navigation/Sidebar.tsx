@@ -108,7 +108,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Desktop Sidebar */}
       <aside
-        className="hidden md:flex md:flex-col w-64 h-screen"
+        className="hidden md:flex md:flex-col w-64 h-full flex-shrink-0"
         style={{
           background: tokens.gradients.card,
           borderRight: `1px solid ${tokens.border}`,

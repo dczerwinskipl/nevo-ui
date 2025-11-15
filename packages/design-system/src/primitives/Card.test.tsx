@@ -13,7 +13,12 @@ describe("Card Component", () => {
     it("renders with default variant", () => {
       const { container } = render(<Card>Content</Card>);
       const card = container.firstChild as HTMLElement;
-      expect(card).toHaveClass("bg-card", "border", "shadow-sm");
+      expect(card).toHaveClass(
+        "bg-gradient-card",
+        "shadow-card-depth",
+        "border",
+        "border-border"
+      );
     });
 
     it("forwards ref correctly", () => {
@@ -52,13 +57,23 @@ describe("Card Component", () => {
 
         switch (variant) {
           case "default":
-            expect(card).toHaveClass("bg-card", "border", "shadow-sm");
+            expect(card).toHaveClass(
+              "bg-gradient-card",
+              "shadow-card-depth",
+              "border",
+              "border-border"
+            );
             break;
           case "bordered":
             expect(card).toHaveClass("bg-card", "border-2");
             break;
           case "elevated":
-            expect(card).toHaveClass("bg-card", "shadow-lg");
+            expect(card).toHaveClass(
+              "bg-gradient-elevated",
+              "shadow-elevated-depth",
+              "border",
+              "border-border"
+            );
             break;
           case "flat":
             expect(card).toHaveClass("bg-raised");
@@ -74,7 +89,9 @@ describe("Card Component", () => {
 
         // All variants should have theme-aware background classes
         const className = card.className;
-        expect(className).toMatch(/bg-(card|raised)/);
+        expect(className).toMatch(
+          /bg-(gradient-card|gradient-elevated|card|raised)/
+        );
       });
     });
   });
@@ -235,7 +252,7 @@ describe("Card Component", () => {
         </Card>
       );
       const card = container.firstChild as HTMLElement;
-      expect(card).toHaveClass("shadow-lg", "transition-all");
+      expect(card).toHaveClass("shadow-elevated-depth", "transition-all");
     });
 
     it("supports all props together", () => {

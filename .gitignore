@@ -94,6 +94,9 @@ storybook-static
 tmp/
 temp/
 
+# Vite dev cache
+.vite-dev/
+
 # Editor directories and files
 .vscode/
 !.vscode/settings.json

@@ -144,52 +144,54 @@ This project demonstrates advanced AI-assisted development techniques:
 # Install dependencies
 pnpm install
 
-# Start all development servers (Admin app + Storybook)
-pnpm dev
+# Development
+pnpm dev                    # Start all dev servers (Admin app + Design system watch mode)
+pnpm dev:admin             # Run only admin app (http://localhost:5173)
+pnpm storybook             # Run Storybook (http://localhost:6006)
 
-# Run only the admin app
-pnpm --filter @nevo/ecommerce-admin-app dev
+# Build
+pnpm build                 # Build all packages
+pnpm build:design-system   # Build design system only
+pnpm build:admin           # Build admin app only
+pnpm storybook:build       # Build Storybook for deployment
 
-# Run only Storybook
-pnpm --filter @nevo/design-system storybook
+# Testing
+pnpm test                           # Run all tests
+pnpm test:design-system            # Run design system Jest tests
+pnpm test:design-system:ui         # Run design system tests with UI
+pnpm --filter @nevo/admin test:e2e # Run Playwright E2E tests
 
-# Build all packages
-pnpm build
-
-# Build specific package
-pnpm --filter @nevo/design-system build
-pnpm --filter @nevo/ecommerce-admin-app build
-
-# Run tests
-pnpm test                                    # All tests
-pnpm --filter @nevo/design-system test      # Design system tests
-pnpm --filter @nevo/ecommerce-admin-app test:e2e  # Playwright E2E tests
-
-# Build Storybook for deployment
-pnpm --filter @nevo/design-system storybook:build
+# Utilities
+pnpm dev:fresh             # Clean cache and start fresh dev server
+pnpm clean-cache           # Clear Vite cache
 ```
 
 ## Project Structure Highlights
 
 ### `/spec` - Architecture Specifications
+
 Detailed planning documents that guided AI-assisted development:
+
 - Testing infrastructure design
 - Component audit reports
 - Feature implementation plans
 - Progress summaries and completion documents
 
 ### `/packages/design-system` - Complete Component Library
+
 - 50+ production-ready components
 - Full Storybook documentation
 - Comprehensive test coverage
 - Accessibility-first design
 
 ### `/packages/api-mocks` - MSW Integration
+
 - Realistic API mocking for development
 - Scenario-based testing support
 - Browser, Node, and Playwright integrations
 
 ### `/apps/admin` - Production Application
+
 - Feature-based architecture
 - TanStack Query for data management
 - React Router for navigation

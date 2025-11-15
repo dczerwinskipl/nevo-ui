@@ -29,7 +29,7 @@ export function Layout() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-page text-primary">
+    <div className="h-screen flex flex-col bg-page text-primary overflow-hidden">
       <Topbar onMenu={() => setSidebarOpen(true)} />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar

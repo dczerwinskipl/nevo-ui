@@ -42,10 +42,11 @@ export const tokens = {
       color: "rgba(0,0,0,0.4)", // main shadow color for dark theme (legacy)
       highlight: "rgba(255,255,255,0.08)", // inner highlight color
       // Dedicated shadow colors for different elevation levels (dark theme)
-      inset: "rgba(0, 0, 0, 0.5)", // Strong dark for inset
-      card: "rgba(0, 0, 0, 0.6)", // Dark shadow for cards
-      elevated: "rgba(0, 0, 0, 0.7)", // Stronger for elevated
-      raised: "rgba(0, 0, 0, 0.8)", // Strongest for highest elevation
+      // Subtle shadows - lower opacity for better visual hierarchy
+      inset: "rgba(0, 0, 0, 0.3)", // Subtle inset shadow
+      card: "rgba(0, 0, 0, 0.25)", // Gentle shadow for default cards
+      elevated: "rgba(0, 0, 0, 0.3)", // Medium shadow for elevated elements
+      raised: "rgba(0, 0, 0, 0.35)", // Slightly stronger for highest elevation
     },
     intent: {
       primary: {
