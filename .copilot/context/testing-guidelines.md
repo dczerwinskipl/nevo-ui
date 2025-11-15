@@ -335,7 +335,7 @@ it("should use theme context", () => {
 ### Testing Component Variants
 
 ```typescript
-const variants = ["primary", "secondary", "error"] as const;
+const variants = ["primary", "neutral", "error"] as const;
 
 variants.forEach((variant) => {
   it(`should render ${variant} variant`, () => {

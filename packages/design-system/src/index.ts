@@ -86,9 +86,11 @@ export type {
   TableProps,
   TableColumn,
   TableAction,
+  TablePaginationConfig,
   CellRenderer,
 } from "./data/Table";
 export * from "./data/Pagination";
+export type { PaginationProps, PaginationMode } from "./data/Pagination";
 export * from "./data";
 export * from "./overlays/Modal";
 export * from "./forms";

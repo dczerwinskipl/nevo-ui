@@ -22,13 +22,19 @@ export const ADMIN_NAVIGATION: NavigationItem[] = [
     key: "products",
     label: "Produkty",
     icon: <Package className="w-4 h-4" />,
-    children: [{ key: "products", label: "Lista produktów" }],
+    children: [
+      { key: "products", label: "Lista produktów" },
+      { key: "products-paginated", label: "Produkty (Paginated)" },
+    ],
   },
   {
     key: "orders",
     label: "Zamówienia",
     icon: <ShoppingCart className="w-4 h-4" />,
-    children: [{ key: "orders", label: "Lista zamówień" }],
+    children: [
+      { key: "orders", label: "Lista zamówień" },
+      { key: "orders-cursor", label: "Orders (Cursor)" },
+    ],
   },
   {
     key: "users",

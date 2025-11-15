@@ -2,6 +2,8 @@ import React from "react";
 import { RouteObject } from "react-router-dom";
 import { Layout } from "./Layout";
 import { ProductsList } from "../features/products";
+import { ProductsPaginatedList } from "../features/products-paginated";
+import { OrdersCursorList } from "../features/orders";
 import { ROUTES } from "../shared/constants";
 
 // Simple placeholder components for routes that don't exist yet
@@ -51,12 +53,20 @@ export const routes: RouteObject[] = [
         element: <ProductsList />,
       },
       {
+        path: ROUTES.PRODUCTS_PAGINATED,
+        element: <ProductsPaginatedList />,
+      },
+      {
         path: `${ROUTES.PRODUCTS}/:id`,
         element: <ProductDetail />,
       },
       {
         path: ROUTES.ORDERS,
         element: <Orders />,
+      },
+      {
+        path: ROUTES.ORDERS_CURSOR,
+        element: <OrdersCursorList />,
       },
       {
         path: ROUTES.USERS,

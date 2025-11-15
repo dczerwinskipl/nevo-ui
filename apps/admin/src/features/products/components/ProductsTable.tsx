@@ -5,6 +5,7 @@ import {
   Table,
   TableColumn,
   TableAction,
+  TablePaginationConfig,
   Badge,
   ViewIcon,
   EditIcon,
@@ -19,6 +20,7 @@ export interface ProductsTableProps {
   isFetching?: boolean;
   error?: Error | null;
   onRetry?: () => void;
+  pagination?: TablePaginationConfig;
 }
 
 export function ProductsTable({
@@ -27,6 +29,7 @@ export function ProductsTable({
   isFetching = false,
   error,
   onRetry,
+  pagination,
 }: ProductsTableProps) {
   const { tokens } = useTheme();
 
@@ -134,6 +137,7 @@ export function ProductsTable({
         emptyTitle="No products found"
         emptyDescription="Try adjusting your filters or search criteria"
         fetchingMessage="Updating products..."
+        {...(pagination && { pagination })}
       />
     </Card>
   );

@@ -1,11 +1,23 @@
-import { useQuery } from '@tanstack/react-query';
-import type { Product, ProductFilters } from '../features/products/types/Product';
-import { fetchProducts, type ProductsQueryParams, type ProductsResponse } from '../services/productsApi';
+import { useQuery } from "@tanstack/react-query";
+import type {
+  Product,
+  ProductFilters,
+} from "../features/products/types/Product";
+import {
+  fetchProducts,
+  type ProductsQueryParams,
+  type ProductsResponse,
+} from "../services/productsApi";
 
-export function useProducts(filters: ProductFilters = {}) {
+export interface ProductFiltersWithPagination extends ProductFilters {
+  page?: number;
+  limit?: number;
+}
+
+export function useProducts(filters: ProductFiltersWithPagination = {}) {
   // Transform ProductFilters to ProductsQueryParams
   const apiParams: ProductsQueryParams = {};
-  
+
   if (filters.search) {
     apiParams.search = filters.search;
   }
@@ -18,15 +30,15 @@ export function useProducts(filters: ProductFilters = {}) {
   if (filters.status) {
     apiParams.status = filters.status;
   }
+  if (filters.page !== undefined) {
+    apiParams.page = filters.page;
+  }
+  if (filters.limit !== undefined) {
+    apiParams.limit = filters.limit;
+  }
 
-  const {
-    data,
-    isLoading,
-    isFetching,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ['products', apiParams],
+  const { data, isLoading, isFetching, error, refetch } = useQuery({
+    queryKey: ["products", apiParams],
     queryFn: () => fetchProducts(apiParams),
     staleTime: 1 * 60 * 1000, // 1 minute
   });
@@ -37,7 +49,7 @@ export function useProducts(filters: ProductFilters = {}) {
       totalCount: data?.totalCount ?? 0,
       page: data?.page ?? 1,
       limit: data?.limit ?? 10,
-      totalPages: data?.totalPages ?? 0
+      totalPages: data?.totalPages ?? 0,
     },
     isLoading,
     isFetching,
