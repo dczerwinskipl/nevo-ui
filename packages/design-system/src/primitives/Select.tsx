@@ -1,11 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { clsx } from "clsx";
-import {
-  useTheme,
-  ComponentIntent,
-  ComponentSize,
-  concaveStyle,
-} from "../theme";
+import { ComponentIntent, ComponentSize, getElevationClasses } from "../theme";
 import { ChevronDown } from "lucide-react";
 
 // TODO: TASK-019 - Replace conditional className logic with clsx utility for better readability
@@ -55,21 +50,10 @@ export const Select: React.FC<SelectProps> = ({
   allowClear = true,
   clearLabel = "None",
 }) => {
-  const { tokens } = useTheme();
-  const intentColors = intent !== "neutral" ? tokens.intent[intent] : null;
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const selectedOption = options.find((opt) => opt.value === value);
-
-  // Get base style based on variant
-  const baseStyle =
-    variant === "filled"
-      ? { background: tokens.raised, border: `1px solid ${tokens.border}` }
-      : concaveStyle(tokens);
-
-  const focusRingColor = intentColors?.border || tokens.intent.primary.border;
-  const borderColor = intentColors?.border || tokens.border;
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -104,50 +88,57 @@ export const Select: React.FC<SelectProps> = ({
       className={clsx("relative grid gap-1 text-sm", className)}
       ref={containerRef}
     >
-      {label && <span style={{ color: tokens.muted }}>{label}</span>}
+      {label && <span className="text-muted">{label}</span>}
       <button
         type="button"
         disabled={disabled}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         className={clsx(
-          "rounded-lg flex items-center justify-between transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-inset",
+          "rounded-lg flex items-center justify-between transition-all duration-200",
+          "focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-inset",
+          "text-text border",
           SIZE_CLASSES[size],
+          // Variant styles
+          variant === "filled"
+            ? "bg-raised border-border"
+            : clsx("bg-card border-border", getElevationClasses("inset")),
+          // Intent styles
+          intent === "primary" &&
+            "bg-intent-primary-bg border-intent-primary focus:ring-intent-primary",
+          intent === "success" &&
+            "bg-intent-success-bg border-intent-success focus:ring-intent-success",
+          intent === "warning" &&
+            "bg-intent-warning-bg border-intent-warning focus:ring-intent-warning",
+          intent === "error" &&
+            "bg-intent-error-bg border-intent-error focus:ring-intent-error",
+          intent === "info" &&
+            "bg-intent-info-bg border-intent-info focus:ring-intent-info",
+          // Disabled styles
           disabled
             ? "cursor-not-allowed opacity-50"
             : "cursor-pointer hover:scale-[1.01]"
         )}
-        style={
-          {
-            ...baseStyle,
-            color: tokens.text,
-            borderColor,
-            "--tw-ring-color": focusRingColor,
-            ...(intentColors && {
-              backgroundColor: intentColors.bg,
-              borderColor: intentColors.border,
-            }),
-          } as React.CSSProperties & { "--tw-ring-color": string }
-        }
       >
-        <span style={{ color: selectedOption ? tokens.text : tokens.muted }}>
+        <span className={clsx(selectedOption ? "text-text" : "text-muted")}>
           {selectedOption?.label ?? placeholder}
         </span>
         <ChevronDown
-          className={clsx("w-4 h-4 transition-transform duration-200", {
-            "rotate-180": isOpen,
-          })}
-          style={{ color: tokens.muted }}
+          className={clsx(
+            "w-4 h-4 transition-transform duration-200 text-muted",
+            {
+              "rotate-180": isOpen,
+            }
+          )}
         />
       </button>
 
       {isOpen && (
         <div
           role="listbox"
-          className="absolute top-full left-0 right-0 z-50 mt-1 rounded-lg shadow-lg border max-h-60 overflow-auto"
-          style={{
-            backgroundColor: tokens.card,
-            borderColor: tokens.border,
-          }}
+          className={clsx(
+            "absolute top-full left-0 right-0 z-50 mt-1 rounded-lg shadow-lg border max-h-60 overflow-auto",
+            "bg-card border-border"
+          )}
         >
           {allOptions.map((option) => (
             <button
@@ -161,24 +152,15 @@ export const Select: React.FC<SelectProps> = ({
                 )
               }
               className={clsx(
-                "w-full text-left px-3 py-2 text-sm transition-colors duration-150 first:rounded-t-lg last:rounded-b-lg",
+                "w-full text-left px-3 py-2 text-sm transition-colors duration-150",
+                "first:rounded-t-lg last:rounded-b-lg",
+                "text-text",
+                "hover:bg-raised",
                 {
-                  "font-medium": option.value === value,
+                  "font-medium bg-raised": option.value === value,
                   "italic text-opacity-70": option.value === CLEAR_OPTION_VALUE,
                 }
               )}
-              style={{
-                color: tokens.text,
-                backgroundColor:
-                  option.value === value ? tokens.raised : "transparent",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = tokens.raised;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor =
-                  option.value === value ? tokens.raised : "transparent";
-              }}
             >
               {option.label}
             </button>
@@ -188,10 +170,15 @@ export const Select: React.FC<SelectProps> = ({
 
       {helperText && (
         <span
-          className="text-xs"
-          style={{
-            color: intentColors?.text || tokens.muted,
-          }}
+          className={clsx(
+            "text-xs",
+            intent === "primary" && "text-intent-primary-text",
+            intent === "success" && "text-intent-success-text",
+            intent === "warning" && "text-intent-warning-text",
+            intent === "error" && "text-intent-error-text",
+            intent === "info" && "text-intent-info-text",
+            intent === "neutral" && "text-muted"
+          )}
         >
           {helperText}
         </span>

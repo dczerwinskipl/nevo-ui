@@ -5,16 +5,20 @@ This document outlines accessibility standards and best practices for the Nevo U
 ## Core Principles
 
 ### WCAG 2.1 AA Compliance
+
 All components MUST meet WCAG 2.1 Level AA standards as a minimum baseline.
 
 ### Semantic HTML First
+
 - Use semantic HTML elements before ARIA attributes
 - Proper heading hierarchy (h1 → h6)
 - Native form controls with proper labels
 - Landmark regions (header, nav, main, aside, footer)
 
 ### Keyboard Navigation
+
 All interactive elements must be fully keyboard accessible:
+
 - **Tab**: Move forward through focusable elements
 - **Shift+Tab**: Move backward through focusable elements
 - **Enter/Space**: Activate buttons and links
@@ -24,6 +28,7 @@ All interactive elements must be fully keyboard accessible:
 ## Component-Specific Guidelines
 
 ### Buttons
+
 ```tsx
 // ✅ Good: Accessible button
 <Button variant="primary" aria-label="Save changes">
@@ -35,6 +40,7 @@ All interactive elements must be fully keyboard accessible:
 ```
 
 ### Forms
+
 ```tsx
 // ✅ Good: Proper label association
 <FormGroup>
@@ -47,6 +53,7 @@ All interactive elements must be fully keyboard accessible:
 ```
 
 ### Modals & Dialogs
+
 ```tsx
 // ✅ Good: Accessible modal
 <Modal
@@ -65,6 +72,7 @@ All interactive elements must be fully keyboard accessible:
 ```
 
 ### Navigation
+
 ```tsx
 // ✅ Good: Semantic navigation
 <nav aria-label="Main navigation">
@@ -80,6 +88,7 @@ All interactive elements must be fully keyboard accessible:
 ```
 
 ### Tables
+
 ```tsx
 // ✅ Good: Accessible table with proper structure
 <Table>
@@ -90,15 +99,14 @@ All interactive elements must be fully keyboard accessible:
       <th scope="col">Price</th>
     </tr>
   </thead>
-  <tbody>
-    {/* rows */}
-  </tbody>
+  <tbody>{/* rows */}</tbody>
 </Table>
 ```
 
 ## ARIA Patterns
 
 ### When to Use ARIA
+
 1. **Only when necessary**: Native HTML is always preferred
 2. **Complex widgets**: When building custom components (tabs, accordions, comboboxes)
 3. **Dynamic content**: Live regions for status updates
@@ -107,6 +115,7 @@ All interactive elements must be fully keyboard accessible:
 ### Common ARIA Attributes
 
 #### Roles
+
 - `role="dialog"`: Modal dialogs
 - `role="alertdialog"`: Confirmation dialogs
 - `role="alert"`: Important time-sensitive information
@@ -115,6 +124,7 @@ All interactive elements must be fully keyboard accessible:
 - `role="tab"`, `role="tabpanel"`: Tab interfaces
 
 #### States & Properties
+
 - `aria-expanded`: For collapsible sections
 - `aria-hidden`: Hide decorative elements from screen readers
 - `aria-label`: Provide accessible name
@@ -126,13 +136,10 @@ All interactive elements must be fully keyboard accessible:
 - `aria-busy`: Indicate loading state
 
 ### ARIA Example: Accordion
+
 ```tsx
 <div>
-  <button
-    aria-expanded={isExpanded}
-    aria-controls="panel-1"
-    onClick={toggle}
-  >
+  <button aria-expanded={isExpanded} aria-controls="panel-1" onClick={toggle}>
     Section Title
   </button>
   <div id="panel-1" hidden={!isExpanded} role="region">
@@ -144,7 +151,9 @@ All interactive elements must be fully keyboard accessible:
 ## Focus Management
 
 ### Visible Focus Indicators
+
 All focusable elements must have a visible focus indicator:
+
 ```css
 /* Global focus styles in design-system */
 *:focus-visible {
@@ -154,7 +163,9 @@ All focusable elements must have a visible focus indicator:
 ```
 
 ### Focus Trapping
+
 For modals and overlays, trap focus within the component:
+
 ```tsx
 // Modal should trap focus
 <Modal isOpen={isOpen}>
@@ -163,7 +174,9 @@ For modals and overlays, trap focus within the component:
 ```
 
 ### Focus Restoration
+
 When closing modals or navigating, restore focus to the triggering element:
+
 ```tsx
 const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -180,12 +193,14 @@ const closeModal = () => {
 ## Color & Contrast
 
 ### Contrast Ratios (WCAG AA)
+
 - **Normal text**: Minimum 4.5:1
 - **Large text** (18pt+ or 14pt+ bold): Minimum 3:1
 - **UI components**: Minimum 3:1
 - **Focus indicators**: Minimum 3:1
 
 ### Color-Blind Safe
+
 - Never rely on color alone to convey information
 - Use icons, labels, or patterns in addition to color
 - Test with color-blind simulators
@@ -203,6 +218,7 @@ const closeModal = () => {
 ## Screen Reader Considerations
 
 ### Meaningful Content
+
 ```tsx
 // ✅ Good: Descriptive link
 <a href="/products">View all products</a>
@@ -212,6 +228,7 @@ const closeModal = () => {
 ```
 
 ### Live Regions
+
 ```tsx
 // Announce status updates
 <div role="status" aria-live="polite">
@@ -225,6 +242,7 @@ const closeModal = () => {
 ```
 
 ### Visually Hidden Text
+
 ```tsx
 // Provide context for screen readers
 <button>
@@ -236,6 +254,7 @@ const closeModal = () => {
 ## Testing Checklist
 
 ### Manual Testing
+
 - [ ] Keyboard navigation works for all interactions
 - [ ] Focus visible on all interactive elements
 - [ ] Focus order is logical
@@ -245,20 +264,25 @@ const closeModal = () => {
 - [ ] Skip links work properly
 
 ### Automated Testing
+
 - [ ] Run axe-core or similar tool
 - [ ] Check color contrast ratios
 - [ ] Validate HTML semantics
 - [ ] Test with browser extensions (axe DevTools, WAVE)
 
 ### Screen Reader Testing
+
 Test with at least one screen reader:
+
 - **NVDA** (Windows, free)
 - **JAWS** (Windows, commercial)
 - **VoiceOver** (macOS/iOS, built-in)
 - **TalkBack** (Android, built-in)
 
 ### Browser Testing
+
 Test keyboard navigation in:
+
 - Chrome/Edge
 - Firefox
 - Safari
@@ -266,17 +290,20 @@ Test keyboard navigation in:
 ## Resources
 
 ### Official Standards
+
 - [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
 - [ARIA Authoring Practices Guide](https://www.w3.org/WAI/ARIA/apg/)
 - [MDN Accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility)
 
 ### Tools
+
 - [axe DevTools](https://www.deque.com/axe/devtools/)
 - [WAVE Browser Extension](https://wave.webaim.org/extension/)
 - [Color Contrast Checker](https://webaim.org/resources/contrastchecker/)
 - [Lighthouse](https://developers.google.com/web/tools/lighthouse)
 
 ### Component Libraries for Reference
+
 - [Radix UI](https://www.radix-ui.com/) - Accessible primitives
 - [Headless UI](https://headlessui.com/) - Accessible components
 - [React Aria](https://react-spectrum.adobe.com/react-aria/) - Adobe's accessible hooks

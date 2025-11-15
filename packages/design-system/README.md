@@ -111,6 +111,7 @@ All components have Storybook stories demonstrating:
 - ✅ Accessibility features
 
 **Latest Audit**: All stories updated to use design-system primitives (November 2025)
+
 - Card, Typography, Alert, and Button components consistently used
 - No raw HTML elements in story demonstrations
 - Proper semantic markup throughout
@@ -174,6 +175,7 @@ To add stories for a new component:
    - Use `<Button>` for all interactive actions
 
 Example:
+
 ```typescript
 export const ExampleStory: Story = {
   render: () => (
@@ -190,6 +192,7 @@ export const ExampleStory: Story = {
 ```
 
 See completed stories for reference:
+
 - `src/primitives/Card.stories.tsx` - Comprehensive card examples
 - `src/navigation/Sidebar.stories.tsx` - Navigation patterns
 - `src/data/Pagination.stories.tsx` - Data display examples

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
 import type { Tokens } from "./types";
 import { tokens } from "./tokens";
+import { generateCSSVariables } from "./cssVariables";
 
 const ThemeCtx = createContext<{
   dark: boolean;
@@ -46,6 +47,10 @@ export function ThemeProvider({
 
   return (
     <ThemeCtx.Provider value={{ dark, setDark, tokens: themeTokens }}>
+      {/* Inject CSS variables for theme-aware styling */}
+      <style
+        dangerouslySetInnerHTML={{ __html: generateCSSVariables(themeTokens) }}
+      />
       {children}
     </ThemeCtx.Provider>
   );

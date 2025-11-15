@@ -13,11 +13,105 @@ This document describes the development workflow, processes, and procedures for 
 **File Naming Convention**: `<task-number>-<task-name>.md`
 
 **Examples**:
+
 - `spec/000-devops/001-ci-cd-tests.md`
 - `spec/000-devops/002-repository-governance.md`
 - `spec/000-devops/003-cloudflare-preview-deployments.md`
 - `spec/001-ui-components/001-button-component.md`
 - `spec/002-testing-infrastructure/001-introduce-modular-api-mocks.md`
+
+### Epic and Story Structure
+
+**Epic**: Large body of work that can be broken down into stories
+
+**Story**: Discrete unit of work that can be completed in 1-3 days
+
+**Format**:
+
+```
+spec/
+└── <epic-number>-<epic-name>/
+    ├── README.md                        # Epic overview
+    ├── <story-number>-<story-name>.md   # Story details
+    └── ...
+```
+
+**Example**:
+
+```
+spec/
+└── 003-design-system-cleanup/
+    ├── README.md                              # Epic overview
+    ├── 001-audit-components.md                # Story 001
+    ├── 002-refactor-primitives.md             # Story 002
+    ├── 003-refactor-data-components.md        # Story 003
+    └── 001-audit-report.md                    # Deliverables
+```
+
+### Creating Granular, Verifiable Tasks
+
+**Rule**: Break stories into small, verifiable tasks that can be checked off incrementally.
+
+**Good Task Characteristics**:
+
+- ✅ Clear, specific action ("Audit Button.tsx for inline styles")
+- ✅ Measurable outcome ("All inline styles documented")
+- ✅ Estimated time (15 min, 1 hour, 2 hours)
+- ✅ Can be completed independently
+- ✅ Easy to verify completion
+
+**Bad Task Characteristics**:
+
+- ❌ Too vague ("Improve Button component")
+- ❌ No clear outcome ("Look at styling")
+- ❌ No estimate
+- ❌ Depends on too many other tasks
+- ❌ Difficult to verify
+
+**Example - Good Task Breakdown**:
+
+```markdown
+### Task 002-1: Audit Button Component
+
+**Estimate**: 30 minutes
+
+- [ ] Count lines of code (target: < 200)
+- [ ] Identify all inline styles (list line numbers)
+- [ ] Document constants not extracted (if any)
+- [ ] Check test coverage (target: > 80%)
+- [ ] Verify Storybook stories coverage
+- [ ] List accessibility issues (if any)
+
+**Deliverable**: Audit checklist completed in story document
+
+### Task 002-2: Replace Inline Styles with Tailwind
+
+**Estimate**: 1-2 hours
+**Depends on**: Task 002-1
+
+- [ ] Convert `background` style to Tailwind classes
+- [ ] Convert `color` style to Tailwind classes
+- [ ] Convert `border` style to Tailwind classes
+- [ ] Convert `boxShadow` style to Tailwind classes
+- [ ] Remove inline `style={{}}` prop
+- [ ] Test all variants still render correctly
+- [ ] Verify dark mode still works
+
+**Deliverable**: Button.tsx with zero inline styles (except dynamic values)
+
+### Task 002-3: Improve Loading State
+
+**Estimate**: 30 minutes
+**Depends on**: Task 002-2
+
+- [ ] Import Spinner component
+- [ ] Replace "Loading..." text with <Spinner />
+- [ ] Add size prop to match button size
+- [ ] Update tests for loading state
+- [ ] Update Storybook story for loading state
+
+**Deliverable**: Button shows proper loading indicator
+```
 
 ### Branch Naming Convention
 
@@ -26,13 +120,16 @@ This document describes the development workflow, processes, and procedures for 
 **Format**: `features/<epic-number>-<epic-name>/<task-number>-<task-description>`
 
 **Examples**:
+
 - `features/000-devops/001-ci-cd-tests`
 - `features/000-devops/002-repository-governance`
 - `features/000-devops/003-cloudflare-preview-deployments`
 - `features/001-ui-components/001-button-component`
 - `features/002-testing-infrastructure/001-introduce-modular-api-mocks`
+- `features/003-design-system-cleanup/001-audit-components`
 
 **Alternative branch naming** (for smaller tasks):
+
 - Feature: `feature/component-name` or `feature/feature-description`
 - Bug fix: `fix/issue-description`
 - Refactor: `refactor/area-being-refactored`
@@ -79,14 +176,17 @@ Each specification should include:
 # Epic 001 - UI Components / Task 001 - Button Component
 
 ## Overview
+
 Create a reusable Button component for the design system with support for multiple intents, variants, sizes, and states.
 
 ## Objectives
+
 - Provide a consistent button interface across the application
 - Support theming and accessibility requirements
 - Ensure full test coverage and Storybook documentation
 
 ## Technical Requirements
+
 - TypeScript with full type safety
 - Radix UI Primitives for accessibility
 - Tailwind CSS for styling
@@ -94,6 +194,7 @@ Create a reusable Button component for the design system with support for multip
 - WCAG 2.1 Level AA compliance
 
 ## Implementation Tasks
+
 - [ ] Define ButtonProps interface
 - [ ] Implement Button component with variants
 - [ ] Add loading state support
@@ -103,6 +204,7 @@ Create a reusable Button component for the design system with support for multip
 - [ ] Document usage with JSDoc
 
 ## Success Criteria
+
 - All tests passing (unit, a11y, visual regression)
 - Storybook documentation complete
 - TypeScript types fully defined
@@ -110,6 +212,7 @@ Create a reusable Button component for the design system with support for multip
 - Peer review approved
 
 ## Testing Strategy
+
 - Unit tests: Test all props, states, and event handlers
 - Accessibility tests: Verify ARIA attributes, keyboard navigation, screen reader support
 - Visual regression: Storybook snapshots for all variants
@@ -133,6 +236,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 ```
 
 **Types**:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -145,11 +249,13 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 - `build`: Build system changes
 
 **Scopes** (optional but recommended):
+
 - Component name: `button`, `modal`, `table`
 - Package: `design-system`, `api-client`, `admin`
 - Area: `theme`, `a11y`, `routing`, `state`
 
 **Examples**:
+
 ```bash
 feat(button): add loading state support
 fix(theme): resolve token inheritance issue
@@ -161,6 +267,7 @@ ci: add Playwright E2E tests to CI pipeline
 ```
 
 **Good commit practices**:
+
 - Keep commits atomic (one logical change per commit)
 - Write clear, descriptive commit messages
 - Reference issue numbers when applicable (`fixes #123`, `relates to #456`)
@@ -182,11 +289,12 @@ Follow [Semantic Versioning](https://semver.org/) (SemVer):
 ### Release Steps
 
 1. **Prepare Release**
+
    ```bash
    # Ensure you're on main branch and up to date
    git checkout main
    git pull origin main
-   
+
    # Create release branch
    git checkout -b release/v1.2.0
    ```
@@ -217,6 +325,7 @@ Follow [Semantic Versioning](https://semver.org/) (SemVer):
    - Merge to `main` using "Create a merge commit" (not squash)
 
 6. **Tag Release**
+
    ```bash
    git checkout main
    git pull origin main
@@ -239,6 +348,7 @@ Follow [Semantic Versioning](https://semver.org/) (SemVer):
 For urgent bug fixes in production:
 
 1. Create hotfix branch from latest release tag:
+
    ```bash
    git checkout -b hotfix/v1.2.1 v1.2.0
    ```
@@ -342,6 +452,7 @@ pnpm --filter @nevo/ecommerce-admin test:e2e:ui
 ### Getting Help
 
 **For questions or issues**:
+
 1. Check existing documentation in `.copilot/` and `docs/`
 2. Search GitHub issues and PRs
 3. Ask in team chat or Slack for urgent matters
@@ -354,6 +465,7 @@ pnpm --filter @nevo/ecommerce-admin test:e2e:ui
 ### Escalation
 
 **For urgent production issues**:
+
 1. Notify team lead immediately
 2. Create hotfix branch
 3. Follow hotfix process (see Release Process)

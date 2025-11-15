@@ -1,13 +1,76 @@
 export * from "./theme/ThemeProvider";
+
+// Theme types
+export type {
+  ComponentIntent,
+  ComponentVariant,
+  ComponentSize,
+} from "./theme/types";
+
+// Theme utilities
+export {
+  getTextColor,
+  getBgColor,
+  getBorderColor,
+  getPrimaryColor,
+  getIntentVariantClasses,
+  getVariantBaseClasses,
+  getSizeClasses,
+  getIntentTextColor,
+  getCommonPattern,
+} from "./theme/classNames";
+
+// Hooks
+export * from "./hooks";
+
+// Layout primitives
+export * from "./layout";
+export type {
+  StackProps,
+  StackDirection,
+  StackGap,
+  StackAlign,
+  StackJustify,
+} from "./layout/Stack";
+export type {
+  FlexProps,
+  FlexDirection,
+  FlexGap,
+  FlexAlign,
+  FlexJustify,
+  FlexWrap,
+} from "./layout/Flex";
+export type {
+  GridProps,
+  GridCols,
+  GridGap,
+  GridRows,
+  GridAlignItems,
+  GridJustifyItems,
+} from "./layout/Grid";
+export type {
+  ContainerProps,
+  ContainerSize,
+  ContainerPadding,
+} from "./layout/Container";
+
+// Primitives
 export * from "./primitives/Button";
 export type { ButtonProps } from "./primitives/Button";
-export * from "./primitives/Card";
+export { Card, CardHeader, CardBody, CardFooter } from "./primitives/Card";
+export type {
+  CardProps,
+  CardVariant,
+  CardHeaderProps,
+  CardBodyProps,
+  CardFooterProps,
+} from "./primitives/Card";
 export * from "./primitives/Input";
 export type { InputProps } from "./primitives/Input";
 export * from "./primitives/Select";
 export type { SelectProps } from "./primitives/Select";
 export * from "./primitives/Badge";
-export type { BadgeIntent, BadgeVariant, BadgeProps } from "./primitives/Badge";
+export type { BadgeProps } from "./primitives/Badge";
 export * from "./primitives/Typography";
 export type { TypographyProps, TypographyType } from "./primitives/Typography";
 export * from "./primitives/Spinner";

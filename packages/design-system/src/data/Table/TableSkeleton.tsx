@@ -1,7 +1,8 @@
 import React from "react";
-import { useTheme } from "../../theme";
+import { clsx } from "clsx";
 import { TableSkeletonProps } from "./types";
 import { TableHeader } from "./TableHeader";
+import { getBorderColor, getCommonPattern } from "../../theme";
 
 /**
  * TableSkeleton component displays a skeleton loading state that matches
@@ -13,19 +14,20 @@ export const TableSkeleton = <T,>({
   hasActions,
   actionsHeaderText = "Actions",
 }: TableSkeletonProps<T>) => {
-  const { tokens } = useTheme();
   const SkeletonRow = ({
     column,
   }: {
     column: { align?: "left" | "center" | "right" };
   }) => (
-    <td className="px-4 py-3" style={{ textAlign: column.align || "left" }}>
+    <td
+      className={clsx(
+        "px-4 py-3",
+        column.align === "center" && "text-center",
+        column.align === "right" && "text-right"
+      )}
+    >
       <div
-        className="animate-pulse rounded"
-        style={{
-          height: "16px",
-          backgroundColor: tokens.border,
-        }}
+        className={clsx(getCommonPattern("pulse"), "rounded h-4 bg-raised")}
       />
     </td>
   );
@@ -42,11 +44,11 @@ export const TableSkeleton = <T,>({
           {Array.from({ length: rows }).map((_, rowIndex) => (
             <tr
               key={rowIndex}
-              style={{
-                borderBottom: `1px solid ${tokens.border}`,
-                background:
-                  rowIndex % 2 === 0 ? "transparent" : `${tokens.raised}10`,
-              }}
+              className={clsx(
+                getBorderColor(undefined, "bottom"),
+                rowIndex % 2 !== 0 &&
+                  "bg-[color-mix(in_srgb,_var(--color-raised)_10%,_transparent)]"
+              )}
             >
               {columns.map((column) => (
                 <SkeletonRow key={column.key} column={column} />
@@ -58,12 +60,10 @@ export const TableSkeleton = <T,>({
                       {[1, 2, 3].map((i) => (
                         <div
                           key={i}
-                          className="animate-pulse rounded"
-                          style={{
-                            width: "32px",
-                            height: "32px",
-                            backgroundColor: tokens.border,
-                          }}
+                          className={clsx(
+                            getCommonPattern("pulse"),
+                            "rounded w-8 h-8 bg-raised"
+                          )}
                         />
                       ))}
                     </div>

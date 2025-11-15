@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Badge } from "./Badge";
 import { ComponentIntent, ComponentVariant } from "../theme";
+import { Flex } from "../layout/Flex";
+import { Stack } from "../layout/Stack";
 import React from "react";
 
 const meta = {
@@ -34,6 +36,14 @@ const meta = {
       options: ["solid", "outline", "ghost", "subtle"] as ComponentVariant[],
       description: "The visual style variant",
     },
+    dot: {
+      control: "boolean",
+      description: "Display a dot indicator before the text",
+    },
+    icon: {
+      control: false,
+      description: "Optional icon to display before the text",
+    },
   },
 } satisfies Meta<typeof Badge>;
 
@@ -52,16 +62,15 @@ export const Default: Story = {
 // All intents showcase
 export const AllIntents: Story = {
   render: () => (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+    <Flex wrap gap={2}>
       <Badge intent="primary">Primary</Badge>
       <Badge intent="success">Success</Badge>
       <Badge intent="warning">Warning</Badge>
       <Badge intent="error">Error</Badge>
       <Badge intent="info">Info</Badge>
       <Badge intent="neutral">Neutral</Badge>
-    </div>
+    </Flex>
   ),
-  args: { children: "Badge" },
   parameters: {
     docs: {
       description: {
@@ -74,11 +83,9 @@ export const AllIntents: Story = {
 // All variants showcase
 export const AllVariants: Story = {
   render: () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-        <span className="text-sm" style={{ minWidth: "80px" }}>
-          Solid:
-        </span>
+    <Stack gap={4}>
+      <Flex gap={2} align="center">
+        <span className="text-sm min-w-[80px]">Solid:</span>
         <Badge variant="solid" intent="primary">
           Solid
         </Badge>
@@ -88,11 +95,9 @@ export const AllVariants: Story = {
         <Badge variant="solid" intent="error">
           Solid
         </Badge>
-      </div>
-      <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-        <span className="text-sm" style={{ minWidth: "80px" }}>
-          Outline:
-        </span>
+      </Flex>
+      <Flex gap={2} align="center">
+        <span className="text-sm min-w-[80px]">Outline:</span>
         <Badge variant="outline" intent="primary">
           Outline
         </Badge>
@@ -102,11 +107,9 @@ export const AllVariants: Story = {
         <Badge variant="outline" intent="error">
           Outline
         </Badge>
-      </div>
-      <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-        <span className="text-sm" style={{ minWidth: "80px" }}>
-          Ghost:
-        </span>
+      </Flex>
+      <Flex gap={2} align="center">
+        <span className="text-sm min-w-[80px]">Ghost:</span>
         <Badge variant="ghost" intent="primary">
           Ghost
         </Badge>
@@ -116,11 +119,9 @@ export const AllVariants: Story = {
         <Badge variant="ghost" intent="error">
           Ghost
         </Badge>
-      </div>
-      <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-        <span className="text-sm" style={{ minWidth: "80px" }}>
-          Subtle:
-        </span>
+      </Flex>
+      <Flex gap={2} align="center">
+        <span className="text-sm min-w-[80px]">Subtle:</span>
         <Badge variant="subtle" intent="primary">
           Subtle
         </Badge>
@@ -130,10 +131,9 @@ export const AllVariants: Story = {
         <Badge variant="subtle" intent="error">
           Subtle
         </Badge>
-      </div>
-    </div>
+      </Flex>
+    </Stack>
   ),
-  args: { children: "Badge" },
   parameters: {
     docs: {
       description: {
@@ -146,7 +146,7 @@ export const AllVariants: Story = {
 // Status badges
 export const StatusBadges: Story = {
   render: () => (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+    <Flex wrap gap={2}>
       <Badge intent="success" variant="subtle">
         Active
       </Badge>
@@ -162,9 +162,8 @@ export const StatusBadges: Story = {
       <Badge intent="neutral" variant="subtle">
         Archived
       </Badge>
-    </div>
+    </Flex>
   ),
-  args: { children: "Badge" },
   parameters: {
     docs: {
       description: {
@@ -177,35 +176,27 @@ export const StatusBadges: Story = {
 // Count badges
 export const CountBadges: Story = {
   render: () => (
-    <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: "1rem",
-        alignItems: "center",
-      }}
-    >
-      <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+    <Flex wrap gap={4} align="center">
+      <Flex gap={2} align="center">
         <span>Messages</span>
         <Badge intent="primary" variant="solid">
           5
         </Badge>
-      </div>
-      <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+      </Flex>
+      <Flex gap={2} align="center">
         <span>Notifications</span>
         <Badge intent="error" variant="solid">
           12
         </Badge>
-      </div>
-      <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+      </Flex>
+      <Flex gap={2} align="center">
         <span>Updates</span>
         <Badge intent="info" variant="solid">
           3
         </Badge>
-      </div>
-    </div>
+      </Flex>
+    </Flex>
   ),
-  args: { children: "Badge" },
   parameters: {
     docs: {
       description: {
@@ -218,7 +209,7 @@ export const CountBadges: Story = {
 // Category badges
 export const CategoryBadges: Story = {
   render: () => (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+    <Flex wrap gap={2}>
       <Badge intent="primary" variant="outline">
         Electronics
       </Badge>
@@ -234,9 +225,8 @@ export const CategoryBadges: Story = {
       <Badge intent="info" variant="outline">
         Featured
       </Badge>
-    </div>
+    </Flex>
   ),
-  args: { children: "Badge" },
   parameters: {
     docs: {
       description: {
@@ -249,7 +239,7 @@ export const CategoryBadges: Story = {
 // Inline with text
 export const InlineWithText: Story = {
   render: () => (
-    <div style={{ maxWidth: "400px" }}>
+    <div className="max-w-md">
       <p>
         This product is{" "}
         <Badge intent="success" variant="subtle">
@@ -267,7 +257,6 @@ export const InlineWithText: Story = {
       </p>
     </div>
   ),
-  args: { children: "Badge" },
   parameters: {
     docs: {
       description: {
@@ -280,19 +269,72 @@ export const InlineWithText: Story = {
 // Different text lengths
 export const DifferentLengths: Story = {
   render: () => (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+    <Flex wrap gap={2}>
       <Badge>1</Badge>
       <Badge>New</Badge>
       <Badge>Badge</Badge>
       <Badge>Medium Length</Badge>
       <Badge>This is a longer badge text</Badge>
-    </div>
+    </Flex>
   ),
-  args: { children: "Badge" },
   parameters: {
     docs: {
       description: {
         story: "Badges with different text lengths",
+      },
+    },
+  },
+};
+
+// Badges with dots
+export const WithDots: Story = {
+  render: () => (
+    <Flex wrap gap={2}>
+      <Badge intent="success" dot>
+        Online
+      </Badge>
+      <Badge intent="error" dot>
+        Offline
+      </Badge>
+      <Badge intent="warning" dot>
+        Away
+      </Badge>
+      <Badge intent="info" dot>
+        Busy
+      </Badge>
+    </Flex>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: "Badges with dot indicators for status",
+      },
+    },
+  },
+};
+
+// Badges with icons
+export const WithIcons: Story = {
+  render: () => (
+    <Flex wrap gap={2}>
+      <Badge intent="success" icon={<span>✓</span>}>
+        Verified
+      </Badge>
+      <Badge intent="primary" icon={<span>⭐</span>}>
+        Featured
+      </Badge>
+      <Badge intent="warning" icon={<span>⚠</span>}>
+        Warning
+      </Badge>
+      <Badge intent="error" icon={<span>✕</span>}>
+        Error
+      </Badge>
+    </Flex>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: "Badges with icon indicators",
       },
     },
   },

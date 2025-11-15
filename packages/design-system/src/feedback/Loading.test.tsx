@@ -40,8 +40,9 @@ describe("Loading", () => {
 
     it("should render with custom className", () => {
       const { container } = renderLoading({ className: "custom-loader" });
-      const loader = container.firstChild;
-      expect(loader).toHaveClass("custom-loader");
+      const loader = container.querySelector(".flex") as HTMLElement;
+      expect(loader).toBeInTheDocument();
+      expect(loader.className).toContain("custom-loader");
     });
   });
 
@@ -126,8 +127,9 @@ describe("Loading", () => {
 
     it("should have appropriate structure for loading state", () => {
       const { container } = renderLoading({ text: "Loading..." });
-      const wrapper = container.firstChild;
-      expect(wrapper).toHaveClass("flex");
+      const wrapper = container.querySelector(".flex") as HTMLElement;
+      expect(wrapper).toBeInTheDocument();
+      expect(wrapper.className).toContain("flex");
     });
   });
 });

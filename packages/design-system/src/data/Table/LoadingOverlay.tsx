@@ -1,6 +1,7 @@
 import React from "react";
-import { useTheme } from "../../theme";
+import { clsx } from "clsx";
 import { LoadingOverlayProps } from "./types";
+import { getBgColor, getBorderColor, getTextColor } from "../../theme";
 
 /**
  * LoadingOverlay component displays a loading indicator over existing content.
@@ -12,15 +13,15 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
   children,
   headerOffset = 50, // Default offset to avoid covering headers, but configurable
 }) => {
-  const { tokens } = useTheme();
-
   return (
     <div className="relative">
       {children}
       <div
-        className="absolute flex items-center justify-center backdrop-blur-sm"
+        className={clsx(
+          "absolute flex items-center justify-center",
+          "backdrop-blur-sm bg-[color-mix(in_srgb,_var(--color-raised)_80%,_transparent)]"
+        )}
         style={{
-          backgroundColor: `${tokens.raised}80`,
           top: `${headerOffset}px`,
           left: "0",
           right: "0",
@@ -28,21 +29,14 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
         }}
       >
         <div
-          className="flex items-center gap-3 px-4 py-2 rounded-lg shadow-lg"
-          style={{
-            background: tokens.raised,
-            border: `1px solid ${tokens.border}`,
-            color: tokens.text,
-          }}
+          className={clsx(
+            "flex items-center gap-3 px-4 py-2 rounded-lg shadow-lg",
+            getBgColor(undefined, true),
+            getBorderColor(),
+            getTextColor()
+          )}
         >
-          <div
-            className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin"
-            style={{
-              borderColor:
-                `${tokens.primary.base} transparent ` +
-                `${tokens.primary.base} ${tokens.primary.base}`,
-            }}
-          />
+          <div className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin border-primary" />
           <span className="text-sm font-medium">{message}</span>
         </div>
       </div>

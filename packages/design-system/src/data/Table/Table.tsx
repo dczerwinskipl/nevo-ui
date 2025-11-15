@@ -1,11 +1,12 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { useTheme } from "../../theme";
+import { clsx } from "clsx";
 import { EmptyState, ErrorState } from "../../feedback";
 import { TableSkeleton } from "./TableSkeleton";
 import { LoadingOverlay } from "./LoadingOverlay";
 import { TableHeader } from "./TableHeader";
 import { TableRow } from "./TableRow";
 import { TableProps, TableAction } from "./types";
+import { getTextColor } from "../../theme";
 
 /**
  * Generic Table component with built-in loading, empty, and error states.
@@ -28,7 +29,6 @@ export const Table = <T extends Record<string, any>>({
   emptyIcon,
   actionsHeaderText = "Actions",
 }: TableProps<T>): React.ReactElement => {
-  const { tokens } = useTheme();
   const [snapshotData, setSnapshotData] = useState<T[]>([]);
   const [prevIsLoading, setPrevIsLoading] = useState(isLoading);
 
@@ -39,7 +39,6 @@ export const Table = <T extends Record<string, any>>({
       setSnapshotData(data || []);
     }
     setPrevIsLoading(isLoading);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, prevIsLoading, data]);
 
   const handleActionClick = (action: TableAction<T>, row: T) => {
@@ -93,8 +92,10 @@ export const Table = <T extends Record<string, any>>({
   const tableContent = (
     <div className="overflow-x-auto custom-scrollbar">
       <table
-        className="w-full text-sm min-w-[600px] md:min-w-full"
-        style={{ color: tokens.text }}
+        className={clsx(
+          "w-full text-sm min-w-[600px] md:min-w-full",
+          getTextColor()
+        )}
       >
         <TableHeader
           columns={columns}

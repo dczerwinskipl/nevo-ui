@@ -4,9 +4,17 @@
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./tailwind.preset.cjs": "./tailwind.preset.cjs"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "dev": "echo 'UI has no dev server'",
+    "build:watch": "tsc -p tsconfig.build.json --watch",
+    "dev": "tsc -p tsconfig.build.json --watch",
     "lint": "eslint src --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,json}\"",

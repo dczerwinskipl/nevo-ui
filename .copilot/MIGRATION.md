@@ -9,6 +9,7 @@ The monolithic `project-guidelines.md` file has been **replaced** with a special
 All content from `project-guidelines.md` has been distributed to appropriate files:
 
 ### Core Standards
+
 - **Language Requirements** → `conventions.md` (Language & Documentation section)
 - **Git Workflow** → `workflow.md` + `conventions.md` (Git Conventions section)
 - **Code Quality Standards** → `conventions.md` (TypeScript, ESLint sections)
@@ -20,6 +21,7 @@ All content from `project-guidelines.md` has been distributed to appropriate fil
 - **VS Code Configuration** → `conventions.md` (VS Code Configuration section)
 
 ### Workflow & Processes
+
 - **Specification Management** → `workflow.md` (Specification Management section)
 - **Branch Naming Convention** → `workflow.md` + `conventions.md`
 - **Getting Started** → `workflow.md` (Getting Started section)
@@ -31,6 +33,7 @@ All content from `project-guidelines.md` has been distributed to appropriate fil
 - **Tooling & Infrastructure** → `workflow.md`
 
 ### Architecture & Design
+
 - **Project Structure & Responsibilities** → `context/architecture.md`
 - **Color System & Theming** → `context/ds-api-guidelines.md`
 - **Component Design Patterns** → `context/ds-api-guidelines.md`
@@ -39,6 +42,7 @@ All content from `project-guidelines.md` has been distributed to appropriate fil
 - **Routing Architecture** → `context/architecture.md`
 
 ### Component Development
+
 - **Component Simplicity and Modularity** → `conventions.md` (Component Design Principles)
 - **Extract Complex Logic to Hooks** → `conventions.md`
 - **Extract Subcomponents** → `conventions.md`
@@ -46,11 +50,13 @@ All content from `project-guidelines.md` has been distributed to appropriate fil
 - **Tailwind CSS First** → `conventions.md` (Styling section)
 
 ### Testing
+
 - **Testing Requirements** → `context/testing-strategy.md`
 - **Test Structure** → `context/testing-strategy.md`
 - **Testing Standards** → `context/testing-strategy.md`
 
 ### Accessibility
+
 - **Accessibility Standards** → `context/a11y-guidelines.md`
 - **WCAG 2.1 AA Compliance** → `context/a11y-guidelines.md`
 
@@ -83,6 +89,7 @@ All content from `project-guidelines.md` has been distributed to appropriate fil
 ## 🎯 Benefits of New Structure
 
 ### Before (project-guidelines.md)
+
 - ❌ 1156 lines in single file
 - ❌ Hard to navigate
 - ❌ Mix of different concerns
@@ -90,6 +97,7 @@ All content from `project-guidelines.md` has been distributed to appropriate fil
 - ❌ Information overload
 
 ### After (Specialized Files)
+
 - ✅ Clear separation of concerns
 - ✅ Easy to find information
 - ✅ Focused, task-specific content
@@ -98,20 +106,21 @@ All content from `project-guidelines.md` has been distributed to appropriate fil
 
 ## 📚 How to Find Information
 
-| What you need | Where to look |
-|---------------|---------------|
-| Coding standards | `conventions.md` |
-| Development workflow | `workflow.md` |
-| Git/PR process | `workflow.md` + `checklists/pr_submission.md` |
-| Component creation | `recipes/component.md` |
-| Architecture | `context/architecture.md` |
-| API patterns | `context/ds-api-guidelines.md` |
-| Testing | `context/testing-strategy.md` |
-| Accessibility | `context/a11y-guidelines.md` |
+| What you need        | Where to look                                 |
+| -------------------- | --------------------------------------------- |
+| Coding standards     | `conventions.md`                              |
+| Development workflow | `workflow.md`                                 |
+| Git/PR process       | `workflow.md` + `checklists/pr_submission.md` |
+| Component creation   | `recipes/component.md`                        |
+| Architecture         | `context/architecture.md`                     |
+| API patterns         | `context/ds-api-guidelines.md`                |
+| Testing              | `context/testing-strategy.md`                 |
+| Accessibility        | `context/a11y-guidelines.md`                  |
 
 ## 🔄 For AI Assistants
 
 When referencing guidelines, use:
+
 - `conventions.md` for coding standards
 - `workflow.md` for processes
 - `recipes/*.md` for how-to guides

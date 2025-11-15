@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
-import { useTheme } from "../../theme";
+import { clsx } from "clsx";
 import { TableColumn, TableAction } from "./types";
 import { TableActions } from "./TableActions";
+import { getBorderColor, getTextColor } from "../../theme";
 
 export interface TableRowProps<T> {
   row: T;
@@ -26,8 +27,6 @@ export const TableRow = <T,>({
   onActionClick,
   keyExtractor,
 }: TableRowProps<T>): React.ReactElement => {
-  const { tokens } = useTheme();
-
   const getCellValue = useCallback((row: T, column: TableColumn<T>) => {
     if (typeof column.accessor === "function") {
       return column.accessor(row);
@@ -55,23 +54,24 @@ export const TableRow = <T,>({
   return (
     <tr
       key={keyExtractor(row)}
-      className={`transition-all duration-200 hover:bg-opacity-50 ${
-        onRowClick ? "cursor-pointer" : ""
-      }`}
-      style={{
-        borderBottom: `1px solid ${tokens.border}`,
-        background: index % 2 === 0 ? "transparent" : `${tokens.raised}10`,
-      }}
+      className={clsx(
+        "transition-all duration-200 hover:bg-opacity-50",
+        getBorderColor(undefined, "bottom"),
+        onRowClick && "cursor-pointer",
+        index % 2 !== 0 &&
+          "bg-[color-mix(in_srgb,_var(--color-raised)_10%,_transparent)]"
+      )}
       onClick={handleRowClick}
     >
       {columns.map((column) => (
         <td
           key={column.key}
-          className="px-4 py-3"
-          style={{
-            color: tokens.text,
-            textAlign: column.align || "left",
-          }}
+          className={clsx(
+            "px-4 py-3",
+            getTextColor(),
+            column.align === "center" && "text-center",
+            column.align === "right" && "text-right"
+          )}
         >
           {renderCell(row, column)}
         </td>

@@ -1,6 +1,12 @@
 import React from "react";
-import { useTheme, raisedStyle } from "../../theme";
+import { clsx } from "clsx";
 import { TableColumn } from "./types";
+import {
+  getBgColor,
+  getBorderColor,
+  getTextColor,
+  getElevationClasses,
+} from "../../theme";
 
 export interface TableHeaderProps<T> {
   columns: TableColumn<T>[];
@@ -17,31 +23,32 @@ export const TableHeader = <T,>({
   hasActions,
   actionsHeaderText = "Actions",
 }: TableHeaderProps<T>): React.ReactElement => {
-  const { tokens } = useTheme();
-
   return (
     <thead>
       <tr
-        style={{
-          ...raisedStyle(tokens),
-          borderBottom: `1px solid ${tokens.border}`,
-        }}
+        className={clsx(
+          getBgColor(undefined, true),
+          getBorderColor(undefined, "bottom"),
+          getElevationClasses("raised")
+        )}
       >
         {columns.map((column) => (
           <th
             key={column.key}
-            className="text-center px-4 py-3 font-medium text-sm"
-            style={{
-              color: tokens.muted,
-            }}
+            className={clsx(
+              "text-center px-4 py-3 font-medium text-sm",
+              getTextColor(undefined, true)
+            )}
           >
             {column.header}
           </th>
         ))}
         {hasActions && (
           <th
-            className="text-center px-4 py-3 font-medium text-sm"
-            style={{ color: tokens.muted }}
+            className={clsx(
+              "text-center px-4 py-3 font-medium text-sm",
+              getTextColor(undefined, true)
+            )}
           >
             {actionsHeaderText}
           </th>
