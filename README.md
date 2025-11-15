@@ -22,6 +22,205 @@ Modern React admin interface with comprehensive design system, built entirely th
 3. `pnpm dev` to run development servers in parallel
 4. Open `http://localhost:5173` (or other port if busy)
 
+## 🤖 AI-Assisted Development Workflow
+
+This project uses GitHub Copilot with custom workspace prompts to streamline development. All prompts follow project standards automatically.
+
+### Prerequisites
+
+- **VS Code**: Version 1.85.0 or higher
+- **Extensions**:
+  - `GitHub.copilot` - GitHub Copilot
+  - `GitHub.copilot-chat` - GitHub Copilot Chat
+
+### Initial Setup (One-Time)
+
+1. **Install Extensions**
+
+   VS Code will prompt you to install recommended extensions when you open the workspace, or install manually from the Extensions marketplace.
+
+2. **Enable Prompt Files**
+
+   Open VS Code settings (`Ctrl+,` / `Cmd+,`) and verify:
+
+   ```json
+   {
+     "chat.promptFiles": true,
+     "chat.promptFilesRecommendations": true
+   }
+   ```
+
+   These settings are already configured in `.vscode/settings.json`.
+
+3. **Verify Copilot Connection**
+   - Open Copilot Chat (`Ctrl+Shift+I` / `Cmd+Shift+I`)
+   - Type `/help` to see available commands
+   - You should see custom prompts: `/spec`, `/tasks`, `/implement`, `/review`
+
+4. **Test Setup**
+
+   ```
+   You: /spec Test feature - add a simple button component
+   Copilot: [Should respond using project standards and reference conventions]
+   ```
+
+### Development Workflow with AI
+
+#### 1. **Creating a Specification** 📝
+
+Use when starting a new feature or task.
+
+```
+/spec [Feature description or GitHub issue link]
+```
+
+**Example**:
+
+```
+/spec Add ability to filter products by category in the products table
+```
+
+**What happens**:
+
+- AI analyzes existing codebase for patterns
+- References `.copilot/recipes/spec-creation.md` for template
+- Creates spec file in `spec/XXX-epic-name/YYY-story-name.md`
+- Asks clarifying questions before finalizing
+
+#### 2. **Breaking Down into Tasks** 📋
+
+Use after spec is created to plan implementation.
+
+```
+/tasks [Path to spec file]
+```
+
+**Example**:
+
+```
+/tasks spec/003-product-filtering/001-category-filter.md
+```
+
+**What happens**:
+
+- AI reads the spec
+- Breaks down into atomic, verifiable tasks (1-4 hours each)
+- Creates checklist with dependencies
+- Estimates complexity and effort
+
+#### 3. **Implementing Features** 💻
+
+Use to generate code following project conventions.
+
+```
+/implement [Path to spec file or task description]
+```
+
+**Example**:
+
+```
+/implement spec/003-product-filtering/001-category-filter.md
+```
+
+**What happens**:
+
+- AI follows `.copilot/conventions.md` strictly
+- Uses design system primitives only (never raw HTML)
+- Generates tests alongside implementation
+- Creates Storybook stories with variants
+
+#### 4. **Reviewing Code** 🔍
+
+Use to validate changes against project standards.
+
+```
+/review [Optional: PR number or file paths]
+```
+
+**Example**:
+
+```
+/review
+```
+
+**What happens**:
+
+- AI checks against `.copilot/checklists/pr_review.md`
+- Verifies conventions, accessibility, test coverage
+- Identifies design system violations
+- Suggests improvements
+
+### Quick Reference
+
+| Command      | Purpose               | When to Use                       |
+| ------------ | --------------------- | --------------------------------- |
+| `/spec`      | Create specification  | Starting new feature/task         |
+| `/tasks`     | Break down into tasks | After spec created, before coding |
+| `/implement` | Generate code         | Implementing features/components  |
+| `/review`    | Review code quality   | Before submitting PR, during CR   |
+
+### Project Context Available to AI
+
+All AI assistants automatically have access to:
+
+- **`.github/copilot-instructions.md`** - Core project assumptions
+- **`.copilot/conventions.md`** - Coding standards
+- **`.copilot/glossary.md`** - Domain terminology
+- **`.copilot/context/architecture.md`** - System architecture
+- **`.copilot/recipes/`** - Step-by-step guides
+- **`.copilot/checklists/`** - Quality verification
+
+👉 **Read [`.github/prompts/README.md`](.github/prompts/README.md) for detailed prompt usage guide**
+
+👉 **Read [`.copilot/README.md`](.copilot/README.md) for comprehensive project documentation**
+
+### Troubleshooting
+
+#### Prompts not appearing
+
+- Verify `chat.promptFiles: true` in VS Code settings
+- Restart VS Code
+- Check Copilot extension is up to date
+
+#### AI not following project conventions
+
+- Prompts automatically reference `.copilot/` docs
+- If output doesn't match standards, point it out explicitly
+- Copilot learns from corrections within the session
+
+#### Can't find a specific prompt
+
+- Type `/` in Copilot Chat to see all available prompts
+- All custom prompts are in `.github/prompts/`
+
+### Best Practices
+
+✅ **Do**:
+
+- Use prompts for repetitive tasks (specs, task breakdown, boilerplate)
+- Verify AI-generated code against `.copilot/checklists/`
+- Ask follow-up questions to refine output
+- Reference existing components when asking for new ones
+
+❌ **Don't**:
+
+- Blindly accept AI suggestions without review
+- Skip reading generated specs before implementing
+- Forget to run tests on AI-generated code
+- Use AI for critical security or business logic without thorough review
+
+### New Joiner Onboarding Checklist
+
+- [ ] Install VS Code extensions (Copilot + Copilot Chat)
+- [ ] Verify prompt files are enabled in settings
+- [ ] Test `/spec` with a sample feature request
+- [ ] Read `.copilot/README.md` and `.copilot/instructions.md`
+- [ ] Review `.copilot/conventions.md` for coding standards
+- [ ] Complete first task using full AI workflow (spec → tasks → implement → review)
+- [ ] Review `.copilot/checklists/definition_of_done.md`
+
+---
+
 ## AI Development Methodology
 
 This project exemplifies effective AI-assisted software development through:
