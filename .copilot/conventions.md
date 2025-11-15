@@ -11,38 +11,8 @@ This document defines the coding standards, naming conventions, and style guidel
 **Applies to**:
 
 - Source code (`.ts`, `.tsx`, `.js`, `.jsx`)
-- Comments and JS#### 4. Text Color Classes
-
-#### 5. Background Color Classes
-
-**Use for**: Cards, panels, surfaces
-
-```typescript
-import { getBgColor } from '@nevo/design-system';
-
-// ✅ GOOD - Intent-aware background
-<div className={getBgColor('primary')}>Primary background</div>
-<div className={getBgColor(undefined, true)}>Raised surface</div>
-
-// ❌ BAD - Hardcoded background
-<div className="bg-intent-primary-bg">Primary background</div>
-```
-
-#### 6. Border Color Classespography, text with semantic meaning
-
-```typescript
-import { getTextColor } from '@nevo/design-system';
-
-// ✅ GOOD - Intent-aware text color
-<span className={getTextColor('error')}>Error message</span>
-<span className={getTextColor(undefined, true)}>Muted text</span>
-
-// ❌ BAD - Hardcoded color
-<span className="text-intent-error-text">Error message</span>
-```
-
-#### 5. Background Color Classesles and markdown documentation
-
+- Comments and JSDoc
+- Markdown files and markdown documentation
 - Commit messages and PR descriptions
 - Error messages and console logs
 - Type definitions and interfaces
@@ -70,6 +40,123 @@ interface ButtonProps {
   loading?: boolean;
 }
 ```
+
+---
+
+## 🎨 Design System First Approach
+
+**CRITICAL RULE**: All UI must be built using design system primitives. Raw HTML elements are forbidden except in primitive component implementations.
+
+### What This Means
+
+**✅ ALWAYS USE - Design System Primitives:**
+- `Card` - Instead of `<div>` for containers
+- `Button` - Instead of `<button>` for actions
+- `Typography` - Instead of `<h1>`, `<h2>`, `<p>`, `<span>` for text
+- `Stack` - Instead of `<div style={{display: 'flex'}}>` for layout
+- `Box` - Instead of `<div>` for spacing/layout
+- Other primitives from `@nevo/design-system`
+
+**❌ NEVER USE - Raw HTML Elements:**
+- `<div>` - Use `Card`, `Stack`, or `Box`
+- `<button>` - Use `Button`
+- `<h1>`, `<h2>`, `<h3>`, `<p>`, `<span>` - Use `Typography`
+- `<input>`, `<select>`, `<textarea>` - Use form primitives
+- Any raw HTML where a primitive exists
+
+**✅ ALWAYS USE - Theme Tokens:**
+- Use utility functions: `getTextColor()`, `getBgColor()`, `getSpacing()`
+- Use Tailwind config classes: `bg-card`, `text-text`, `border-border`
+
+**❌ NEVER USE - Hardcoded Values:**
+- No hardcoded colors: `bg-blue-500`, `text-red-600`
+- No inline styles for colors/spacing (except dynamic values)
+- No arbitrary Tailwind values: `bg-[#ff0000]`
+
+### Examples
+
+```typescript
+// ✅ GOOD - Uses design system primitives
+import { Card, Typography, Button, Stack } from '@nevo/design-system';
+
+export function ProductCard({ product }: ProductCardProps) {
+  return (
+    <Card>
+      <Stack direction="column" gap="4">
+        <Typography variant="h3">{product.name}</Typography>
+        <Typography variant="body">{product.description}</Typography>
+        <Button intent="primary" onClick={handleClick}>
+          Add to Cart
+        </Button>
+      </Stack>
+    </Card>
+  );
+}
+
+// ❌ BAD - Uses raw HTML elements
+export function ProductCard({ product }: ProductCardProps) {
+  return (
+    <div className="card">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <h3>{product.name}</h3>
+        <p>{product.description}</p>
+        <button onClick={handleClick}>Add to Cart</button>
+      </div>
+    </div>
+  );
+}
+```
+
+```typescript
+// ✅ GOOD - Uses theme tokens
+import { getTextColor, getBgColor } from '@nevo/design-system';
+
+<Card className={getBgColor('primary')}>
+  <Typography className={getTextColor('error')}>
+    Error message
+  </Typography>
+</Card>
+
+// ❌ BAD - Hardcoded colors and inline styles
+<div className="bg-blue-500">
+  <span style={{ color: '#ff0000' }}>
+    Error message
+  </span>
+</div>
+```
+
+### When Raw HTML IS Allowed
+
+Raw HTML is ONLY allowed in these specific cases:
+
+1. **Inside primitive component implementations** (packages/design-system/src/primitives/)
+2. **For semantic HTML without primitive equivalent** (e.g., `<main>`, `<nav>`, `<article>`)
+3. **For dynamic inline styles** (runtime-calculated values like `width: ${progress}%`)
+
+```typescript
+// ✅ OK - Semantic HTML without primitive
+<main className="app-container">
+  <nav aria-label="Main navigation">
+    {/* Navigation content using primitives */}
+  </nav>
+</main>
+
+// ✅ OK - Dynamic inline style
+<Box style={{ width: `${progress}%` }} className="progress-bar" />
+```
+
+### Why This Matters
+
+- **Consistency**: All UI uses the same building blocks
+- **Maintainability**: Changes to primitives automatically propagate
+- **Accessibility**: Primitives include WCAG 2.1 AA compliance
+- **Theming**: Automatic dark mode and theme support
+- **Type Safety**: TypeScript catches API misuse
+
+**See also**:
+- [recipes/component.md](./recipes/component.md) - Component creation guide
+- [recipes/storybook.md](./recipes/storybook.md) - Never use raw HTML in stories
+- [context/ds-api-guidelines.md](./context/ds-api-guidelines.md) - Design system API patterns
 
 ---
 
