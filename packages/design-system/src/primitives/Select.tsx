@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { clsx } from "clsx";
-import { ComponentIntent, ComponentSize } from "../theme";
+import { ComponentIntent, ComponentSize, getElevationClasses } from "../theme";
 import { ChevronDown } from "lucide-react";
 
 // TODO: TASK-019 - Replace conditional className logic with clsx utility for better readability
@@ -101,7 +101,7 @@ export const Select: React.FC<SelectProps> = ({
           // Variant styles
           variant === "filled"
             ? "bg-raised border-border"
-            : "bg-card shadow-[inset_2px_2px_4px_var(--shadow-color),inset_-1px_-1px_2px_var(--shadow-highlight)] border-border",
+            : clsx("bg-card border-border", getElevationClasses("inset")),
           // Intent styles
           intent === "primary" &&
             "bg-intent-primary-bg border-intent-primary focus:ring-intent-primary",

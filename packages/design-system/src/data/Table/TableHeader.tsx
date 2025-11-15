@@ -1,7 +1,12 @@
 import React from "react";
 import { clsx } from "clsx";
 import { TableColumn } from "./types";
-import { getBgColor, getBorderColor, getTextColor } from "../../theme";
+import {
+  getBgColor,
+  getBorderColor,
+  getTextColor,
+  getElevationClasses,
+} from "../../theme";
 
 export interface TableHeaderProps<T> {
   columns: TableColumn<T>[];
@@ -24,7 +29,7 @@ export const TableHeader = <T,>({
         className={clsx(
           getBgColor(undefined, true),
           getBorderColor(undefined, "bottom"),
-          "shadow-[2px_2px_4px_var(--shadow-color),_-1px_-1px_2px_var(--shadow-highlight)]"
+          getElevationClasses("raised")
         )}
       >
         {columns.map((column) => (

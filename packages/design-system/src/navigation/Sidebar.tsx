@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useTheme, Tokens } from "../theme";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
@@ -42,7 +42,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onClose,
 }) => {
   const { tokens } = useTheme();
-  const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
+
+  // Auto-open sections that contain the active route
+  const initialOpenMap = useMemo(() => {
+    const map: Record<string, boolean> = {};
+    navigation.forEach((section) => {
+      if (section.children) {
+        const hasActiveChild = section.children.some(
+          (child) => child.key === route
+        );
+        if (hasActiveChild) {
+          map[section.key] = true;
+        }
+      }
+    });
+    return map;
+  }, [navigation, route]);
+
+  const [openMap, setOpenMap] =
+    useState<Record<string, boolean>>(initialOpenMap);
 
   return (
     <>
@@ -62,15 +80,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
             tabIndex={0}
           />
           <div
-            className="absolute inset-y-0 left-0 w-72 max-w-[85vw] overflow-hidden"
+            className="absolute inset-y-0 left-0 w-72 max-w-[85vw] flex flex-col"
             style={{
-              background: tokens.card,
+              background: tokens.gradients.card,
               borderRight: `1px solid ${tokens.border}`,
               boxShadow: `0 10px 30px ${tokens.shadow.color}, 0 6px 10px ${tokens.shadow.color}`,
               color: tokens.text,
             }}
           >
-            <div className="p-4 h-full overflow-y-auto">
+            <div className="flex-1 overflow-y-auto p-4">
               <NavList
                 tokens={tokens}
                 navigation={navigation}
@@ -90,14 +108,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Desktop Sidebar */}
       <aside
-        className="hidden md:flex w-64 flex-col h-full"
+        className="hidden md:flex md:flex-col w-64 h-screen"
         style={{
-          background: tokens.card,
+          background: tokens.gradients.card,
           borderRight: `1px solid ${tokens.border}`,
           color: tokens.text,
         }}
       >
-        <div className="p-4 flex-1 overflow-y-auto custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
           <NavList
             tokens={tokens}
             navigation={navigation}
@@ -221,11 +239,14 @@ function NavList({
           </div>
         );
       })}
-      
+
       {/* Bottom Items */}
       {bottomItems && bottomItems.length > 0 && (
         <>
-          <div className="my-4 border-t" style={{ borderColor: tokens.border }} />
+          <div
+            className="my-4 border-t"
+            style={{ borderColor: tokens.border }}
+          />
           {bottomItems.map((item: NavigationItem) => {
             const isActive = route === item.key;
             return (
@@ -249,7 +270,9 @@ function NavList({
                   e.stopPropagation();
                 }}
               >
-                {item.icon && <span className="flex-shrink-0">{item.icon}</span>}
+                {item.icon && (
+                  <span className="flex-shrink-0">{item.icon}</span>
+                )}
                 <span className="flex-1 text-left">{item.label}</span>
               </button>
             );

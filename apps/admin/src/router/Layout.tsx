@@ -33,7 +33,7 @@ export function Layout() {
       <Topbar onMenu={() => setSidebarOpen(true)} />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar
-          items={ADMIN_NAVIGATION}
+          navigation={ADMIN_NAVIGATION}
           route={currentRoute}
           onNavigate={handleNavigate}
           open={sidebarOpen}

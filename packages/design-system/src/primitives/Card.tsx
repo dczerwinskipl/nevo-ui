@@ -1,12 +1,21 @@
 import React from "react";
 import { clsx } from "clsx";
+import { getElevationClasses } from "../theme";
 
 export type CardVariant = "default" | "bordered" | "elevated" | "flat";
 
+/**
+ * Tailwind safelist hint - ensures these classes are always generated:
+ * bg-gradient-inset shadow-inset
+ * bg-gradient-card shadow-card
+ * bg-gradient-elevated shadow-elevated
+ * bg-gradient-raised shadow-raised
+ */
+
 const VARIANT_CLASSES: Record<CardVariant, string> = {
-  default: "bg-card border border-border shadow-sm",
+  default: getElevationClasses("card"),
+  elevated: getElevationClasses("elevated"),
   bordered: "bg-card border-2 border-border",
-  elevated: "bg-card shadow-lg border border-border",
   flat: "bg-raised",
 } as const;
 
@@ -45,6 +54,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       onClick,
       className,
       children,
+      style,
       ...rest
     },
     ref
@@ -68,8 +78,8 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
         {...rest}
         className={clsx(
           // Base styles
-          "rounded-xl p-6 relative",
-          // Variant styles
+          "rounded-xl p-6 relative text-text",
+          // Variant styles (now using Tailwind classes)
           VARIANT_CLASSES[variant],
           // Interactive states
           {
@@ -81,6 +91,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
           // Custom className
           className
         )}
+        style={style}
         onClick={clickable ? onClick : undefined}
         role={clickable ? "button" : undefined}
         tabIndex={clickable ? 0 : undefined}

@@ -12,8 +12,18 @@
   ],
   "scripts": {
     "build": "turbo run build",
+    "build:design-system": "pnpm --filter @nevo/design-system build",
+    "build:admin": "pnpm --filter @nevo/admin build",
     "dev": "turbo run dev --parallel",
-    "lint": "turbo run lint"
+    "dev:admin": "pnpm --filter @nevo/admin dev",
+    "dev:fresh": "pnpm clean-cache && pnpm dev",
+    "clean-cache": "pnpm --filter @nevo/admin clean-cache",
+    "lint": "turbo run lint",
+    "storybook": "pnpm --filter @nevo/design-system storybook",
+    "storybook:build": "pnpm --filter @nevo/design-system build-storybook",
+    "test": "turbo run test",
+    "test:design-system": "pnpm --filter @nevo/design-system test",
+    "test:design-system:ui": "pnpm --filter @nevo/design-system test:ui"
   },
   "msw": {
     "workerDirectory": [

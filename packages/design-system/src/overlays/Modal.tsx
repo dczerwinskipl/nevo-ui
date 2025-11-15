@@ -1,5 +1,6 @@
 import React from "react";
 import { clsx } from "clsx";
+import { getElevationClasses } from "../theme";
 
 export const Modal: React.FC<{
   title: string;
@@ -45,7 +46,7 @@ export const Modal: React.FC<{
         className={clsx(
           "relative w-full max-w-xl rounded-2xl p-4",
           "bg-raised border border-border",
-          "shadow-[2px_2px_8px_var(--shadow-color),-1px_-1px_4px_var(--shadow-highlight),0_10px_20px_rgba(0,0,0,.35)]"
+          getElevationClasses("raised")
         )}
         role="dialog"
         aria-modal="true"

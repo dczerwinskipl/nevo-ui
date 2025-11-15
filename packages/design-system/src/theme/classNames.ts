@@ -521,3 +521,53 @@ export type ShadowSize = keyof typeof SHADOW_CLASSES;
 export function getShadowClasses(size: ShadowSize): string {
   return SHADOW_CLASSES[size];
 }
+
+/**
+ * =========================================================================
+ * ELEVATION / LAYER SYSTEM
+ * =========================================================================
+ */
+
+/**
+ * Elevation levels for visual hierarchy
+ * Each level combines gradient background and shadow for depth perception
+ * Note: Shadow utilities use -depth suffix to avoid collision with color names
+ */
+export const ELEVATION_CLASSES = {
+  /** Inset/recessed elements (inputs, embedded content) - darkest, appears cut into surface */
+  inset: "bg-gradient-inset shadow-inset-depth border border-border",
+  /** Default card elevation - base level */
+  card: "bg-gradient-card shadow-card-depth border border-border",
+  /** Elevated card - slightly above card level, lighter */
+  elevated: "bg-gradient-elevated shadow-elevated-depth border border-border",
+  /** Raised elements (headers, toolbars, sticky elements) - highest, lightest */
+  raised: "bg-gradient-raised shadow-raised-depth border border-border",
+} as const;
+
+export type ElevationLevel = keyof typeof ELEVATION_CLASSES;
+
+/**
+ * Get elevation classes for consistent layer styling
+ * Combines gradient backgrounds with matching shadows and borders
+ *
+ * @param level - The elevation level (inset, card, elevated, raised)
+ * @returns Combined gradient, shadow, and border Tailwind classes
+ *
+ * @example
+ * ```tsx
+ * // Input (recessed/inset)
+ * <input className={clsx(getElevationClasses('inset'), 'px-3 py-2')} />
+ *
+ * // Card (default surface)
+ * <div className={clsx(getElevationClasses('card'), 'p-4')}>
+ *
+ * // Elevated card (above card but below raised)
+ * <div className={clsx(getElevationClasses('elevated'), 'p-4')}>
+ *
+ * // Header/Toolbar (highest)
+ * <header className={clsx(getElevationClasses('raised'), 'px-4 py-3')}>
+ * ```
+ */
+export function getElevationClasses(level: ElevationLevel): string {
+  return ELEVATION_CLASSES[level];
+}

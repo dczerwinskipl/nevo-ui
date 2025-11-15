@@ -11,8 +11,38 @@ This document defines the coding standards, naming conventions, and style guidel
 **Applies to**:
 
 - Source code (`.ts`, `.tsx`, `.js`, `.jsx`)
-- Comments and JSDoc
-- README files and markdown documentation
+- Comments and JS#### 4. Text Color Classes
+
+#### 5. Background Color Classes
+
+**Use for**: Cards, panels, surfaces
+
+```typescript
+import { getBgColor } from '@nevo/design-system';
+
+// ✅ GOOD - Intent-aware background
+<div className={getBgColor('primary')}>Primary background</div>
+<div className={getBgColor(undefined, true)}>Raised surface</div>
+
+// ❌ BAD - Hardcoded background
+<div className="bg-intent-primary-bg">Primary background</div>
+```
+
+#### 6. Border Color Classespography, text with semantic meaning
+
+```typescript
+import { getTextColor } from '@nevo/design-system';
+
+// ✅ GOOD - Intent-aware text color
+<span className={getTextColor('error')}>Error message</span>
+<span className={getTextColor(undefined, true)}>Muted text</span>
+
+// ❌ BAD - Hardcoded color
+<span className="text-intent-error-text">Error message</span>
+```
+
+#### 5. Background Color Classesles and markdown documentation
+
 - Commit messages and PR descriptions
 - Error messages and console logs
 - Type definitions and interfaces
@@ -348,7 +378,79 @@ import { getShadowClasses } from '@nevo/design-system';
 - `lg` - Large shadow for active/focused states
 - `xl` - Extra large for modals and overlays
 
-#### 3. Text Color Classes
+#### 3. Elevation Classes (Gradients + Shadows)
+
+**Use for**: Visual hierarchy with depth perception (inputs, cards, headers)
+
+**Surface Scale System**: The design system uses a 10-level surface scale (50-900) similar to Material Design and Tailwind. Each level represents a subtle step in elevation (~3-5% lighter/darker).
+
+**Dark theme**: Lower numbers = deeper/darker, higher numbers = elevated/lighter
+**Light theme**: Lower numbers = elevated/lighter, higher numbers = deeper/darker
+
+```typescript
+import { getElevationClasses } from '@nevo/design-system';
+
+// ✅ GOOD - Consistent elevation with subtle gradients
+<input
+  className={clsx(
+    getElevationClasses('inset'),
+    'px-3 py-2 rounded-lg'
+  )}
+/>
+
+<div className={clsx(getElevationClasses('card'), 'p-4 rounded-xl')}>
+  Card content
+</div>
+
+<header className={clsx(getElevationClasses('raised'), 'px-4 py-3')}>
+  Table header
+</header>
+
+// ❌ BAD - Manual gradient and shadow (hard to maintain)
+<input
+  style={{
+    background: 'linear-gradient(145deg, ...)',
+    boxShadow: 'inset 2px 2px 4px ...'
+  }}
+/>
+```
+
+**Available levels** (from lowest to highest):
+
+- `inset` - Recessed/cut into surface (inputs, text areas)
+  - Gradient: surface-100 → surface-200 (reversed, darker top → lighter bottom)
+  - Shadow: Inset shadow for recessed appearance
+  - Use: Form inputs, search boxes, embedded content
+
+- `card` - Default surface elevation (cards, panels)
+  - Gradient: surface-200 → surface-100 (lighter top → darker bottom)
+  - Shadow: Subtle drop shadow with top highlight
+  - Use: Default content containers, product cards, list items
+
+- `elevated` - Medium elevation (important cards, dropdowns)
+  - Gradient: surface-500 → surface-400 (lighter top → darker bottom)
+  - Shadow: Medium drop shadow with top highlight
+  - Use: Cards that need emphasis, dropdown menus, popovers
+
+- `raised` - Highest elevation (table headers, toolbars)
+  - Gradient: surface-700 → surface-600 (lighter top → darker bottom)
+  - Shadow: Strong drop shadow with top highlight
+  - Use: Table headers, page headers, sticky navigation, floating toolbars
+
+**Design Principle**: All raised elements (card, elevated, raised) follow the same pattern:
+
+- **Lighter color at top** → darker at bottom (creates raised/convex appearance)
+- **Inset** is the exception: darker at top → lighter at bottom (creates recessed/concave appearance)
+- **Subtle transitions**: Each gradient uses adjacent surface levels for smooth, non-jarring depth
+
+**When to use each level**:
+
+- **Inset**: Form inputs, search boxes, embedded content that appears "cut into" the surface
+- **Card**: Default content containers, product cards, list items, modals
+- **Elevated**: Cards that need emphasis, dropdown menus, popovers, slightly important surfaces
+- **Raised**: Table headers, page headers, sticky navigation, floating toolbars (highest priority)
+
+#### 4. Text Color Classes
 
 **Use for**: Typography, text with semantic meaning
 
@@ -363,7 +465,7 @@ import { getTextColor } from '@nevo/design-system';
 <span className="text-intent-error-text">Error message</span>
 ```
 
-#### 4. Background Color Classes
+#### 5. Background Color Classes
 
 **Use for**: Cards, panels, surfaces
 
@@ -391,6 +493,32 @@ import { getBorderColor } from '@nevo/design-system';
 
 // ❌ BAD - Manual border
 <div className="border-b border-intent-error">
+```
+
+### Real-World Example: Form Input with Elevation
+
+```typescript
+// ✅ EXCELLENT - Uses elevation helper for gradient + shadow
+import { getElevationClasses } from '@nevo/design-system';
+
+<div className={clsx(
+  getElevationClasses('inset'),
+  'flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm'
+)}>
+  <input className="flex-1 bg-transparent outline-none" />
+</div>
+
+// ❌ BAD - Manual gradient and shadow
+<div
+  className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm border"
+  style={{
+    background: 'linear-gradient(145deg, rgb(10, 13, 17) 0%, rgb(21, 25, 34) 100%)',
+    boxShadow: 'rgba(0, 0, 0, 0.4) 2px 2px 4px inset, rgba(255, 255, 255, 0.08) -1px -1px 2px inset',
+    borderColor: 'rgb(42, 52, 65)'
+  }}
+>
+  <input className="flex-1 bg-transparent outline-none" />
+</div>
 ```
 
 ### Real-World Example: Sidebar Navigation
@@ -432,9 +560,45 @@ import { getIntentVariantClasses, getShadowClasses } from '@nevo/design-system';
 **When styling a component, follow this order:**
 
 1. ✅ **Check for existing helper function** in `theme/classNames.ts`
-2. ✅ **Use config-based Tailwind class** (e.g., `bg-card`, `text-text`)
+   - `getElevationClasses()` for layered depth (inputs, cards, headers)
+   - `getIntentVariantClasses()` for semantic colors (buttons, badges)
+   - `getShadowClasses()` for elevation depth
+2. ✅ **Use config-based Tailwind class** (e.g., `bg-card`, `text-text`, `border-border`)
 3. ⚠️ **Create new helper** if pattern repeats 3+ times
 4. ❌ **Avoid custom arbitrary values** unless absolutely necessary
+5. ❌ **Never use inline styles** for colors, gradients, or shadows
+
+### Guidelines for Visual Hierarchy
+
+**Use elevation system for depth perception (from lowest to highest):**
+
+- **Inset** (`bg-gradient-inset` + `shadow-inset`): Elements recessed into the page (darkest)
+- **Card** (`bg-gradient-card` + `shadow-card`): Default surface level for content (base)
+- **Elevated** (`bg-gradient-elevated` + `shadow-elevated`): Slightly raised above card (lighter)
+- **Raised** (`bg-gradient-raised` + `shadow-raised`): Highest elements that float above (lightest)
+
+**Visual depth hierarchy:**
+
+```
+Page/Background (darkest)
+  ↓
+Inset (cut into surface)
+  ↓
+Card (default surface)
+  ↓
+Elevated (slightly raised)
+  ↓
+Raised (highest/closest to user)
+```
+
+**Use intent colors for semantic meaning:**
+
+- **Primary**: Main actions, key information
+- **Success**: Positive feedback, completed states
+- **Error**: Errors, destructive actions
+- **Warning**: Cautions, important notices
+- **Info**: Helpful information
+- **Neutral**: Default, non-semantic actions
 
 ### Adding New Helpers
 

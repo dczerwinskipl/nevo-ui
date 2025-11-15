@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { clsx } from "clsx";
-import { ComponentIntent, ComponentSize } from "../theme";
+import { ComponentIntent, ComponentSize, getElevationClasses } from "../theme";
 
 // TODO: TASK-019 - Replace string interpolation with clsx utility for better className merging
 
@@ -56,7 +56,7 @@ export const Input: React.FC<InputProps> = ({
           // Variant styles
           variant === "filled"
             ? "bg-raised border-border"
-            : "bg-card shadow-[inset_2px_2px_4px_var(--shadow-color),inset_-1px_-1px_2px_var(--shadow-highlight)] border-border",
+            : clsx("bg-card border-border", getElevationClasses("inset")),
           // Intent styles
           intent === "primary" && "bg-intent-primary-bg border-intent-primary",
           intent === "success" && "bg-intent-success-bg border-intent-success",
@@ -64,8 +64,7 @@ export const Input: React.FC<InputProps> = ({
           intent === "error" && "bg-intent-error-bg border-intent-error",
           intent === "info" && "bg-intent-info-bg border-intent-info",
           // Focus state
-          isFocused &&
-            "shadow-[inset_2px_2px_4px_var(--color-intent-primary-bg),inset_-1px_-1px_2px_var(--shadow-highlight)]"
+          isFocused && "shadow-inset-focus"
         )}
       >
         {left}

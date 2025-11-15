@@ -27,7 +27,19 @@ import type { Tokens, ComponentIntent } from "./types";
 export function generateCSSVariables(tokens: Tokens): string {
   return `
     :root {
-      /* Base colors */
+      /* Surface elevation scale */
+      --color-surface-50: ${tokens.surface[50]};
+      --color-surface-100: ${tokens.surface[100]};
+      --color-surface-200: ${tokens.surface[200]};
+      --color-surface-300: ${tokens.surface[300]};
+      --color-surface-400: ${tokens.surface[400]};
+      --color-surface-500: ${tokens.surface[500]};
+      --color-surface-600: ${tokens.surface[600]};
+      --color-surface-700: ${tokens.surface[700]};
+      --color-surface-800: ${tokens.surface[800]};
+      --color-surface-900: ${tokens.surface[900]};
+
+      /* Legacy base colors (backward compatibility) */
       --color-page: ${tokens.page};
       --color-card: ${tokens.card};
       --color-raised: ${tokens.raised};
@@ -39,9 +51,15 @@ export function generateCSSVariables(tokens: Tokens): string {
       --color-primary-base: ${tokens.primary.base};
       --color-primary-hover: ${tokens.primary.hover};
       
-      /* Shadow */
+      /* Shadow - legacy */
       --shadow-color: ${tokens.shadow.color};
       --shadow-highlight: ${tokens.shadow.highlight};
+      
+      /* Shadow - dedicated levels for different elevations */
+      --shadow-inset: ${tokens.shadow.inset || tokens.shadow.color};
+      --shadow-card: ${tokens.shadow.card || tokens.shadow.color};
+      --shadow-elevated: ${tokens.shadow.elevated || tokens.shadow.color};
+      --shadow-raised: ${tokens.shadow.raised || tokens.shadow.color};
       
       /* Intent colors - Primary */
       --color-intent-primary-bg: ${tokens.intent.primary.bg};
