@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { clsx } from "clsx";
 import { EmptyState, ErrorState } from "../../feedback";
+import { Pagination } from "../Pagination";
 import { TableSkeleton } from "./TableSkeleton";
 import { LoadingOverlay } from "./LoadingOverlay";
 import { TableHeader } from "./TableHeader";
@@ -9,7 +10,7 @@ import { TableProps, TableAction } from "./types";
 import { getTextColor } from "../../theme";
 
 /**
- * Generic Table component with built-in loading, empty, and error states.
+ * Generic Table component with built-in loading, empty, error states, and optional pagination.
  * Supports data persistence during loading for smooth UX during filter operations.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -28,6 +29,7 @@ export const Table = <T extends Record<string, any>>({
   fetchingMessage = "Updating...",
   emptyIcon,
   actionsHeaderText = "Actions",
+  pagination,
 }: TableProps<T>): React.ReactElement => {
   const [snapshotData, setSnapshotData] = useState<T[]>([]);
   const [prevIsLoading, setPrevIsLoading] = useState(isLoading);
@@ -120,12 +122,28 @@ export const Table = <T extends Record<string, any>>({
     </div>
   );
 
+  // Wrap table with pagination if provided
+  const tableWithPagination = (
+    <>
+      {tableContent}
+      {pagination && (
+        <Pagination
+          mode={pagination.mode ?? "pages"}
+          disabled={pagination.disabled ?? isLoading}
+          {...pagination}
+        />
+      )}
+    </>
+  );
+
   // Show overlay when loading and we have snapshot data (not initial load)
   if (isLoading && snapshotData.length > 0) {
     return (
-      <LoadingOverlay message={fetchingMessage}>{tableContent}</LoadingOverlay>
+      <LoadingOverlay message={fetchingMessage}>
+        {tableWithPagination}
+      </LoadingOverlay>
     );
   }
 
-  return tableContent;
+  return tableWithPagination;
 };

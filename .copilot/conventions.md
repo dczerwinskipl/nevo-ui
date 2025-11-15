@@ -50,25 +50,35 @@ interface ButtonProps {
 ### What This Means
 
 **✅ ALWAYS USE - Design System Primitives:**
+
 - `Card` - Instead of `<div>` for containers
 - `Button` - Instead of `<button>` for actions
 - `Typography` - Instead of `<h1>`, `<h2>`, `<p>`, `<span>` for text
 - `Stack` - Instead of `<div style={{display: 'flex'}}>` for layout
 - `Box` - Instead of `<div>` for spacing/layout
+- `Input`, `Select` - Instead of `<input>`, `<select>` for form inputs
+- `Filters` - Instead of custom filter UI for search/filter functionality
+- `Table` - Instead of `<table>` for data display with built-in pagination
+- `Pagination` - With built-in page size selector support (use `pageSizeOptions` prop)
 - Other primitives from `@nevo/design-system`
 
 **❌ NEVER USE - Raw HTML Elements:**
+
 - `<div>` - Use `Card`, `Stack`, or `Box`
 - `<button>` - Use `Button`
 - `<h1>`, `<h2>`, `<h3>`, `<p>`, `<span>` - Use `Typography`
-- `<input>`, `<select>`, `<textarea>` - Use form primitives
+- `<input>`, `<select>`, `<textarea>` - Use `Input`, `Select`, `Textarea`
+- Custom filter layouts - Use `Filters` component
+- Custom page size selectors - Use `Pagination` component's built-in `pageSizeOptions`
 - Any raw HTML where a primitive exists
 
 **✅ ALWAYS USE - Theme Tokens:**
+
 - Use utility functions: `getTextColor()`, `getBgColor()`, `getSpacing()`
 - Use Tailwind config classes: `bg-card`, `text-text`, `border-border`
 
 **❌ NEVER USE - Hardcoded Values:**
+
 - No hardcoded colors: `bg-blue-500`, `text-red-600`
 - No inline styles for colors/spacing (except dynamic values)
 - No arbitrary Tailwind values: `bg-[#ff0000]`
@@ -154,6 +164,7 @@ Raw HTML is ONLY allowed in these specific cases:
 - **Type Safety**: TypeScript catches API misuse
 
 **See also**:
+
 - [recipes/component.md](./recipes/component.md) - Component creation guide
 - [recipes/storybook.md](./recipes/storybook.md) - Never use raw HTML in stories
 - [context/ds-api-guidelines.md](./context/ds-api-guidelines.md) - Design system API patterns

@@ -1,5 +1,5 @@
 import React from "react";
-import { Pagination, Typography } from "@nevo/design-system";
+import { Typography } from "@nevo/design-system";
 import { ProductsActions } from "../components/ProductsActions";
 import { ProductsFilters } from "../components/ProductsFilters";
 import { ProductsTable } from "../components/ProductsTable";
@@ -59,14 +59,6 @@ export function ProductsList() {
         error={error}
         onRetry={refetch}
       />
-
-      {/* 
-        TODO: Fix pagination total count
-        Current: data.length represents filtered results only
-        Solution: API should return { data: Product[], totalCount: number } 
-        where totalCount is the total number of products before filtering
-      */}
-      <Pagination total={pagination.totalCount} pageSize={pagination.limit} />
     </div>
   );
 }

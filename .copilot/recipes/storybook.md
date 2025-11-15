@@ -38,7 +38,7 @@ const meta: Meta<typeof ComponentName> = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["default", "primary", "secondary"],
+      options: ["primary", "success", "error", "warning", "info", "neutral"],
       description: "Visual style variant",
       table: {
         defaultValue: { summary: "default" },
@@ -230,12 +230,21 @@ Show all visual variants side-by-side:
 export const Variants: Story = {
   render: () => (
     <div className="flex gap-4">
-      <Button variant="default">Default</Button>
-      <Button variant="primary">Primary</Button>
-      <Button variant="secondary">Secondary</Button>
-      <Button variant="outline">Outline</Button>
-      <Button variant="ghost">Ghost</Button>
-      <Button variant="destructive">Destructive</Button>
+      <Button intent="primary" variant="solid">
+        Primary
+      </Button>
+      <Button intent="neutral" variant="solid">
+        Neutral
+      </Button>
+      <Button intent="neutral" variant="outline">
+        Outline
+      </Button>
+      <Button intent="neutral" variant="ghost">
+        Ghost
+      </Button>
+      <Button intent="error" variant="solid">
+        Delete
+      </Button>
     </div>
   ),
 };
@@ -569,7 +578,7 @@ export const WithRender: Story = {
   render: (args) => (
     <div className="space-y-4">
       <Button {...args} />
-      <Button {...args} variant="secondary" />
+      <Button {...args} intent="neutral" variant="outline" />
     </div>
   ),
   args: {
