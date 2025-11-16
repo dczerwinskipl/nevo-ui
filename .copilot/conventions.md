@@ -1043,6 +1043,47 @@ className = "translate-x-[calc(100%+8px)]";
 className = "bg-[var(--color-card)]"; // Use bg-card instead
 ```
 
+## 🎯 Z-Index Management
+
+**Rule**: Use the global z-index scale from theme tokens. Never use arbitrary z-index values.
+
+### Z-Index Scale
+
+| Layer        | Value | Usage                                        |
+| ------------ | ----- | -------------------------------------------- |
+| **Base**     | `0`   | Default layer for page content               |
+| **Sticky**   | `30`  | Sticky headers, table headers, topbar        |
+| **Dropdown** | `40`  | Select dropdowns, date pickers, autocomplete |
+| **Overlay**  | `50`  | Modal overlays, drawer backgrounds           |
+| **Modal**    | `50`  | Modal dialogs, drawers, full-screen overlays |
+| **Popover**  | `60`  | Popovers, tooltips that appear on demand     |
+| **Tooltip**  | `70`  | Tooltips (always on top)                     |
+| **Toast**    | `80`  | Toast notifications (highest priority)       |
+
+### Usage
+
+```tsx
+import { tokens } from '@nevo/design-system/theme';
+
+// ✅ GOOD - Use theme token
+<div style={{ zIndex: tokens.zIndex.dropdown }} />
+
+// ✅ GOOD - Use Tailwind utility classes
+<div className="z-40" />  // Dropdown
+<div className="z-50" />  // Modal
+
+// ❌ BAD - Arbitrary z-index
+<div style={{ zIndex: 9999 }} />
+<div className="z-[100]" />
+```
+
+### Guidelines
+
+1. **Never exceed toast (80)** - This is the maximum z-index in the system
+2. **Modals above dropdowns** - Modals (50) should always appear above dropdowns (40)
+3. **Tooltips above modals** - Tooltips (70) appear above everything except toasts
+4. **Document exceptions** - If you need a custom z-index, document why in code comments
+
 ## 📚 Documentation
 
 ### Design System Documentation

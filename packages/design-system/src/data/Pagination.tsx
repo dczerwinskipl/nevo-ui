@@ -215,18 +215,16 @@ export const Pagination: React.FC<PaginationProps> = ({
             <Typography type="caption" className="text-muted">
               {pageSizeLabel}
             </Typography>
-            <div className="relative">
-              <Select
-                value={pageSize}
-                onChange={handlePageSizeChange}
-                disabled={disabled}
-                options={pageSizeOptions.map((size) => ({
-                  value: size,
-                  label: String(size),
-                }))}
-                className="w-20"
-              />
-            </div>
+            <Select
+              value={pageSize}
+              onChange={handlePageSizeChange}
+              disabled={disabled}
+              options={pageSizeOptions.map((size) => ({
+                value: size,
+                label: String(size),
+              }))}
+              className="w-20"
+            />
           </div>
         )}
       </div>
