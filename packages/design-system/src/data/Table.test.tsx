@@ -525,4 +525,158 @@ describe("Table", () => {
       expect(screen.getByText("John")).toBeInTheDocument();
     });
   });
+
+  describe("Pagination integration", () => {
+    it("should render pagination when provided", () => {
+      const onPageChange = jest.fn();
+      const { container } = render(
+        <ThemeProvider>
+          <Table<TestUser>
+            data={mockUsers}
+            columns={basicColumns}
+            pagination={{
+              currentPage: 1,
+              onPageChange,
+              mode: "pages",
+              totalPages: 5,
+              totalItems: 50,
+              pageSize: 10,
+            }}
+          />
+        </ThemeProvider>
+      );
+
+      // Check for pagination navigation
+      expect(
+        container.querySelector('[aria-label="Pagination navigation"]')
+      ).toBeInTheDocument();
+      expect(screen.getByText("Showing 1-10 of 50")).toBeInTheDocument();
+    });
+
+    it("should render cursor pagination mode", () => {
+      const onPageChange = jest.fn();
+      render(
+        <ThemeProvider>
+          <Table<TestUser>
+            data={mockUsers}
+            columns={basicColumns}
+            pagination={{
+              currentPage: 2,
+              onPageChange,
+              mode: "cursor",
+              hasNext: true,
+            }}
+          />
+        </ThemeProvider>
+      );
+
+      expect(screen.getByText("Page 2")).toBeInTheDocument();
+    });
+
+    it("should not render pagination when not provided", () => {
+      const { container } = renderTable();
+
+      expect(
+        container.querySelector('[aria-label="Pagination navigation"]')
+      ).not.toBeInTheDocument();
+    });
+
+    it("should pass through pagination props correctly", () => {
+      const onPageChange = jest.fn();
+      const onPageSizeChange = jest.fn();
+      render(
+        <ThemeProvider>
+          <Table<TestUser>
+            data={mockUsers}
+            columns={basicColumns}
+            pagination={{
+              currentPage: 1,
+              onPageChange,
+              mode: "pages",
+              totalPages: 3,
+              pageSize: 10,
+              pageSizeOptions: [10, 20, 50],
+              onPageSizeChange,
+              disabled: false,
+            }}
+          />
+        </ThemeProvider>
+      );
+
+      // Verify page size selector is rendered
+      expect(screen.getByText("Items per page:")).toBeInTheDocument();
+    });
+
+    it("should disable pagination during loading", () => {
+      const onPageChange = jest.fn();
+      const { container } = render(
+        <ThemeProvider>
+          <Table<TestUser>
+            data={mockUsers}
+            columns={basicColumns}
+            isLoading={true}
+            pagination={{
+              currentPage: 1,
+              onPageChange,
+              mode: "pages",
+              totalPages: 5,
+            }}
+          />
+        </ThemeProvider>
+      );
+
+      // Pagination buttons should be disabled
+      const buttons = container.querySelectorAll("button");
+      buttons.forEach((button) => {
+        expect(button).toBeDisabled();
+      });
+    });
+
+    it("should apply default mode when not specified", () => {
+      const onPageChange = jest.fn();
+      render(
+        <ThemeProvider>
+          <Table<TestUser>
+            data={mockUsers}
+            columns={basicColumns}
+            pagination={{
+              currentPage: 1,
+              onPageChange,
+              totalPages: 5,
+              pageSize: 10,
+              totalItems: 50,
+            }}
+          />
+        </ThemeProvider>
+      );
+
+      // Should default to "pages" mode (showing range text instead of cursor-style page number)
+      expect(screen.getByText(/Showing/)).toBeInTheDocument();
+      expect(screen.queryByText(/^Page 1$/)).not.toBeInTheDocument();
+    });
+
+    it("should render pagination with loading overlay", () => {
+      const onPageChange = jest.fn();
+      const { container } = render(
+        <ThemeProvider>
+          <Table<TestUser>
+            data={mockUsers}
+            columns={basicColumns}
+            isLoading={true}
+            pagination={{
+              currentPage: 1,
+              onPageChange,
+              mode: "pages",
+              totalPages: 5,
+            }}
+          />
+        </ThemeProvider>
+      );
+
+      // Should still show pagination even with loading overlay
+      expect(
+        container.querySelector('[aria-label="Pagination navigation"]')
+      ).toBeInTheDocument();
+    });
+  });
 });

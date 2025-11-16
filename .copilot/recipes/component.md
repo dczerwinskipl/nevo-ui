@@ -110,7 +110,7 @@ export const ComponentName = React.forwardRef<
       className={cn(
         "base-classes",
         variant === "primary" && "primary-classes",
-        variant === "secondary" && "secondary-classes",
+        variant === "neutral" && "neutral-classes",
         className
       )}
       {...props}
@@ -134,7 +134,7 @@ export interface ComponentNameProps extends ComponentPropsWithoutRef<"div"> {
    * Visual style variant
    * @default 'default'
    */
-  variant?: "default" | "primary" | "secondary";
+  variant?: "default" | "primary" | "neutral";
 
   /**
    * Size of the component
@@ -359,7 +359,7 @@ const meta: Meta<typeof ComponentName> = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["default", "primary", "secondary"],
+      options: ["default", "primary", "neutral"],
       description: "Visual style variant",
     },
     size: {
@@ -384,7 +384,7 @@ export const Variants: Story = {
     <div className="flex gap-4">
       <ComponentName variant="default">Default</ComponentName>
       <ComponentName variant="primary">Primary</ComponentName>
-      <ComponentName variant="secondary">Secondary</ComponentName>
+      <ComponentName variant="neutral">Neutral</ComponentName>
     </div>
   ),
 };
@@ -725,6 +725,282 @@ export const Polymorphic = <T extends React.ElementType = 'div'>({
 <Polymorphic as="button" onClick={...}>Click</Polymorphic>
 <Polymorphic as={Link} to="/home">Home</Polymorphic>
 ```
+
+---
+
+## Common Patterns
+
+### Filter Component Pattern
+
+**ALWAYS use the `Filters` component** from design system for search and filter UI. Never build custom filter layouts.
+
+**Pattern Structure:**
+
+1. **Create Filter Hook** - Manages filter state and API integration
+2. **Create Filter Component Wrapper** - Wraps `Filters` in `Card`
+3. **Use in Page** - Compose hook + wrapper component
+
+**Example: Creating Order Filters**
+
+**1. Create Filter Hook (`useOrderFilters.ts`):**
+
+```tsx
+import useFilters from "../../../hooks/useFilters";
+import useOrders from "../../../hooks/useOrders";
+import type { OrderFilters } from "../types/Order";
+import type { FilterConfig } from "../../../hooks/useFilters";
+
+// Define filter configuration
+const orderFilterConfig: FilterConfig<OrderFilters> = {
+  search: {
+    name: "search",
+    label: "Search Orders",
+    type: "text",
+    placeholder: "Order number, customer, email...",
+  },
+  status: {
+    name: "status",
+    label: "Status",
+    type: "select",
+    placeholder: "All Statuses",
+    options: [
+      { label: "Pending", value: "pending" },
+      { label: "Processing", value: "processing" },
+      { label: "Shipped", value: "shipped" },
+    ],
+  },
+};
+
+export function useOrderFilters() {
+  const initial: OrderFilters = { search: "", status: "" };
+
+  const {
+    filters: appliedFilters,
+    pendingFilters,
+    updateFilter,
+    applyFilters,
+    clearFilters,
+    isDirty,
+    hasAppliedFilters,
+  } = useFilters(initial, orderFilterConfig);
+
+  // Integrate with API
+  const { data, isLoading, error, refetch } = useOrders(appliedFilters);
+
+  return {
+    data,
+    isLoading,
+    error,
+    refetch,
+    pendingFilters,
+    updateFilter,
+    applyFilters,
+    clearFilters,
+    isDirty,
+    hasAppliedFilters,
+    config: orderFilterConfig,
+  };
+}
+```
+
+**2. Create Filter Component (`OrdersFilters.tsx`):**
+
+```tsx
+import React from "react";
+import { Card, Filters } from "@nevo/design-system";
+import type { OrderFilters } from "../types/Order";
+import type { FilterConfig } from "../../../hooks/useFilters";
+
+export interface OrdersFiltersProps {
+  filters: OrderFilters;
+  config: FilterConfig<OrderFilters>;
+  onUpdateFilter: <K extends keyof OrderFilters>(
+    key: K,
+    value: OrderFilters[K]
+  ) => void;
+  onApplyFilters: () => void;
+  onClearFilters: () => void;
+  isLoading?: boolean;
+  isFetching?: boolean;
+  isDirty?: boolean;
+  hasAppliedFilters?: boolean;
+}
+
+export function OrdersFilters({
+  filters,
+  config,
+  onUpdateFilter,
+  onApplyFilters,
+  onClearFilters,
+  isLoading = false,
+  isFetching = false,
+  isDirty = false,
+  hasAppliedFilters = false,
+}: OrdersFiltersProps) {
+  return (
+    <Card>
+      <Filters<OrderFilters>
+        filters={filters}
+        config={config}
+        onUpdateFilter={onUpdateFilter}
+        onApplyFilters={onApplyFilters}
+        onClearFilters={onClearFilters}
+        isLoading={isLoading}
+        isFetching={isFetching}
+        isDirty={isDirty}
+        hasAppliedFilters={hasAppliedFilters}
+        applyLabel="Apply"
+        clearLabel="Clear"
+      />
+    </Card>
+  );
+}
+```
+
+**3. Use in Page (`OrdersList.tsx`):**
+
+```tsx
+import { OrdersTable } from "../components/OrdersTable";
+import { OrdersFilters } from "../components/OrdersFilters";
+import { useOrderFilters } from "../hooks/useOrderFilters";
+
+export function OrdersList() {
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+    pendingFilters,
+    updateFilter,
+    applyFilters,
+    clearFilters,
+    isDirty,
+    hasAppliedFilters,
+    config,
+  } = useOrderFilters();
+
+  return (
+    <div className="space-y-4">
+      <OrdersFilters
+        filters={pendingFilters}
+        config={config}
+        onUpdateFilter={updateFilter}
+        onApplyFilters={applyFilters}
+        onClearFilters={clearFilters}
+        isLoading={isLoading}
+        isDirty={isDirty}
+        hasAppliedFilters={hasAppliedFilters}
+      />
+
+      <OrdersTable
+        data={data}
+        isLoading={isLoading}
+        error={error}
+        onRetry={refetch}
+      />
+    </div>
+  );
+}
+```
+
+**❌ NEVER do this:**
+
+```tsx
+// BAD - Custom filter layout with raw HTML
+<div className="flex gap-4">
+  <input type="text" value={search} onChange={...} />
+  <select value={status} onChange={...}>
+    <option>All</option>
+  </select>
+  <button onClick={clearFilters}>Clear</button>
+</div>
+
+// BAD - Custom filter layout with primitives (still wrong pattern)
+<div className="flex gap-4">
+  <Input value={search} onChange={...} />
+  <Select value={status} onChange={...} options={...} />
+  <Button onClick={clearFilters}>Clear</Button>
+</div>
+```
+
+**✅ ALWAYS do this:**
+
+```tsx
+// GOOD - Use Filters component
+<OrdersFilters
+  filters={pendingFilters}
+  config={config}
+  onUpdateFilter={updateFilter}
+  onApplyFilters={applyFilters}
+  onClearFilters={clearFilters}
+  {...filterState}
+/>
+```
+
+---
+
+### Pagination with Page Size Selector
+
+**ALWAYS use Pagination component's built-in page size selector** via `pageSizeOptions` prop. Never create custom page size selectors.
+
+**Pattern:**
+
+```tsx
+// ✅ GOOD - Use Pagination's built-in page size selector
+<ProductsTable
+  data={data}
+  isLoading={isLoading}
+  error={error}
+  pagination={{
+    currentPage,
+    onPageChange: setCurrentPage,
+    mode: "pages",
+    totalPages: pagination.totalPages,
+    totalItems: pagination.totalCount,
+    pageSize,
+    disabled: isFetching,
+    pageSizeOptions: [10, 20, 50], // Built-in page size selector
+    onPageSizeChange: (newSize: number) => {
+      setPageSize(newSize);
+      setCurrentPage(1); // Reset to page 1
+    },
+  }}
+/>
+```
+
+**❌ NEVER do this:**
+
+```tsx
+// BAD - Custom page size selector with raw HTML
+<div className="flex items-center gap-2">
+  <Typography type="caption">Items per page:</Typography>
+  <select value={pageSize} onChange={handleChange}>
+    <option value={10}>10</option>
+    <option value={20}>20</option>
+  </select>
+</div>
+<ProductsTable ... />
+
+// BAD - Custom page size selector with Select component
+<div className="flex items-center gap-2">
+  <Typography type="caption">Items per page:</Typography>
+  <Select
+    value={pageSize}
+    onChange={handleChange}
+    options={[...]}
+  />
+</div>
+<ProductsTable ... />
+```
+
+**Why:**
+
+- Pagination component handles layout and styling
+- Consistent UX across all paginated tables
+- Built-in accessibility (ARIA labels)
+- Automatic positioning relative to pagination controls
+
+---
 
 ## Tips
 

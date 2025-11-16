@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 import { clsx } from "clsx";
 import { ComponentIntent, ComponentSize, getElevationClasses } from "../theme";
 import { ChevronDown } from "lucide-react";
@@ -52,23 +53,117 @@ export const Select: React.FC<SelectProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<{
+    top?: number;
+    bottom?: number;
+    left: number;
+    width: number;
+    maxHeight: number;
+    placement: "bottom" | "top";
+  }>({
+    top: 0,
+    left: 0,
+    width: 0,
+    maxHeight: 240,
+    placement: "bottom",
+  });
 
   const selectedOption = options.find((opt) => opt.value === value);
 
+  // Calculate dropdown position when it opens
+  useLayoutEffect(() => {
+    if (isOpen && triggerRef.current) {
+      const updatePosition = () => {
+        /* istanbul ignore next - Defensive guard, ref should always exist when dropdown is open */
+        if (!triggerRef.current) return;
+
+        const rect = triggerRef.current.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const spaceBelow = viewportHeight - rect.bottom;
+        const spaceAbove = rect.top;
+
+        // Determine placement (prefer bottom, flip to top if not enough space)
+        const dropdownHeight = 240; // max-h-60 = 240px
+        const placement =
+          spaceBelow >= dropdownHeight || spaceBelow > spaceAbove
+            ? "bottom"
+            : "top";
+
+        // Calculate max height based on available space
+        const maxHeight =
+          placement === "top"
+            ? Math.min(spaceAbove - 8, dropdownHeight) // 8px margin
+            : Math.min(spaceBelow - 8, dropdownHeight);
+
+        // For top placement, use bottom property (viewport height - trigger top + margin)
+        // For bottom placement, use top property (trigger bottom + margin)
+        if (placement === "top") {
+          setDropdownPosition({
+            bottom: viewportHeight - rect.top + 4, // 4px margin above trigger
+            left: rect.left,
+            width: rect.width,
+            maxHeight,
+            placement,
+          });
+        } else {
+          setDropdownPosition({
+            top: rect.bottom + 4, // 4px margin below trigger
+            left: rect.left,
+            width: rect.width,
+            maxHeight,
+            placement,
+          });
+        }
+      };
+
+      // Initial position calculation
+      updatePosition();
+
+      // Update position on scroll and resize
+      window.addEventListener("scroll", updatePosition, true);
+      window.addEventListener("resize", updatePosition);
+
+      return () => {
+        window.removeEventListener("scroll", updatePosition, true);
+        window.removeEventListener("resize", updatePosition);
+      };
+    }
+  }, [isOpen]);
+
   // Close dropdown when clicking outside
   useEffect(() => {
+    if (!isOpen) return;
+
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      // Check if click is outside both the container and dropdown
       if (
         containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
+        !containerRef.current.contains(target) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(target)
       ) {
         setIsOpen(false);
       }
     };
 
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isOpen]);
 
   const handleSelect = (option: Option | null) => {
     if (option && option.value !== CLEAR_OPTION_VALUE) {
@@ -90,9 +185,13 @@ export const Select: React.FC<SelectProps> = ({
     >
       {label && <span className="text-muted">{label}</span>}
       <button
+        ref={triggerRef}
         type="button"
         disabled={disabled}
         onClick={() => !disabled && setIsOpen(!isOpen)}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-controls={isOpen ? "select-dropdown" : undefined}
         className={clsx(
           "rounded-lg flex items-center justify-between transition-all duration-200",
           "focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-inset",
@@ -131,43 +230,56 @@ export const Select: React.FC<SelectProps> = ({
           )}
         />
       </button>
-
-      {isOpen && (
-        <div
-          role="listbox"
-          className={clsx(
-            "absolute top-full left-0 right-0 z-50 mt-1 rounded-lg shadow-lg border max-h-60 overflow-auto",
-            "bg-card border-border"
-          )}
-        >
-          {allOptions.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              role="option"
-              aria-selected={option.value === value}
-              onClick={() =>
-                handleSelect(
-                  option.value === CLEAR_OPTION_VALUE ? null : option
-                )
-              }
-              className={clsx(
-                "w-full text-left px-3 py-2 text-sm transition-colors duration-150",
-                "first:rounded-t-lg last:rounded-b-lg",
-                "text-text",
-                "hover:bg-raised",
-                {
-                  "font-medium bg-raised": option.value === value,
-                  "italic text-opacity-70": option.value === CLEAR_OPTION_VALUE,
+      {isOpen &&
+        createPortal(
+          <div
+            ref={dropdownRef}
+            id="select-dropdown"
+            role="listbox"
+            style={{
+              position: "fixed",
+              ...(dropdownPosition.top !== undefined
+                ? { top: `${dropdownPosition.top}px` }
+                : { bottom: `${dropdownPosition.bottom}px` }),
+              left: `${dropdownPosition.left}px`,
+              width: `${dropdownPosition.width}px`,
+              maxHeight: `${dropdownPosition.maxHeight}px`,
+              zIndex: 40,
+            }}
+            className={clsx(
+              "rounded-lg shadow-lg border overflow-auto",
+              "bg-card border-border"
+            )}
+          >
+            {allOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                role="option"
+                aria-selected={option.value === value}
+                onClick={() =>
+                  handleSelect(
+                    option.value === CLEAR_OPTION_VALUE ? null : option
+                  )
                 }
-              )}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      )}
-
+                className={clsx(
+                  "w-full text-left px-3 py-2 text-sm transition-colors duration-150",
+                  "first:rounded-t-lg last:rounded-b-lg",
+                  "text-text",
+                  "hover:bg-raised",
+                  {
+                    "font-medium bg-raised": option.value === value,
+                    "italic text-opacity-70":
+                      option.value === CLEAR_OPTION_VALUE,
+                  }
+                )}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>,
+          document.body
+        )}
       {helperText && (
         <span
           className={clsx(

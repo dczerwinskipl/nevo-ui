@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { Typography } from "@nevo/design-system";
-import { ProductsActions } from "../components/ProductsActions";
-import { ProductsFilters } from "../components/ProductsFilters";
-import { ProductsTable } from "../components/ProductsTable";
-import { useProductFilters } from "../hooks/useProductFilters";
+import { useProductsPaginated } from "../hooks/useProductsPaginated";
+import { ProductsActions } from "../../products/components/ProductsActions";
+import { ProductsFilters } from "../../products/components/ProductsFilters";
+import { ProductsTable } from "../../products/components/ProductsTable";
 
-export function ProductsList() {
+export function ProductsPaginatedList() {
   const [pageSize, setPageSize] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
 
   // Container component uses the hook and manages all state
   const {
@@ -24,35 +23,25 @@ export function ProductsList() {
     isDirty,
     hasAppliedFilters,
     config,
-  } = useProductFilters({ page: currentPage, limit: pageSize });
+    currentPage,
+    setCurrentPage,
+  } = useProductsPaginated(pageSize);
 
   const handleAdd = () => console.log("Add product");
   const handleExport = () => console.log("Export");
   const handleSettings = () => console.log("Settings");
 
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
-  const handlePageSizeChange = (newSize: number) => {
-    setPageSize(newSize);
-    setCurrentPage(1); // Reset to page 1 when changing page size
-  };
-
-  const handleApplyFilters = () => {
-    setCurrentPage(1); // Reset to page 1 when applying filters
-    applyFilters();
-  };
-
-  const handleClearFilters = () => {
-    setCurrentPage(1); // Reset to page 1 when clearing filters
-    clearFilters();
-  };
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <Typography type="section-title">Products</Typography>
+        <div>
+          <Typography type="section-title">
+            Products (Paginated - Page-based Mode)
+          </Typography>
+          <Typography type="caption" className="text-muted mt-1">
+            Traditional pagination with page numbers and total count
+          </Typography>
+        </div>
         <ProductsActions
           onAdd={handleAdd}
           onExport={handleExport}
@@ -65,8 +54,8 @@ export function ProductsList() {
         filters={pendingFilters}
         config={config}
         onUpdateFilter={updateFilter}
-        onApplyFilters={handleApplyFilters}
-        onClearFilters={handleClearFilters}
+        onApplyFilters={applyFilters}
+        onClearFilters={clearFilters}
         isLoading={isLoading}
         isFetching={isFetching}
         isDirty={isDirty}
@@ -82,14 +71,17 @@ export function ProductsList() {
         onRetry={refetch}
         pagination={{
           currentPage,
-          onPageChange: handlePageChange,
+          onPageChange: setCurrentPage,
           mode: "pages",
           totalPages: pagination.totalPages,
           totalItems: pagination.totalCount,
           pageSize,
           disabled: isFetching,
           pageSizeOptions: [10, 20, 50],
-          onPageSizeChange: handlePageSizeChange,
+          onPageSizeChange: (newSize: number) => {
+            setPageSize(newSize);
+            setCurrentPage(1); // Reset to page 1 when changing page size
+          },
         }}
       />
     </div>

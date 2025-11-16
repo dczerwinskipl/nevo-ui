@@ -1,9 +1,10 @@
+import { useState, useEffect } from "react";
 import useFilters from "../../../hooks/useFilters";
 import useProducts from "../../../hooks/useProducts";
-import type { ProductFilters } from "../types/Product";
+import type { ProductFilters } from "../../products/types/Product";
 import type { FilterConfig } from "../../../hooks/useFilters";
 
-// Filter configuration with options - properly typed for intellisense
+// Reuse the same filter configuration from products
 const productFilterConfig: FilterConfig<ProductFilters> = {
   search: {
     name: "search",
@@ -42,10 +43,9 @@ const productFilterConfig: FilterConfig<ProductFilters> = {
   },
 };
 
-export function useProductFilters(pagination?: {
-  page?: number;
-  limit?: number;
-}) {
+export function useProductsPaginated(pageSize: number = 10) {
+  const [currentPage, setCurrentPage] = useState(1);
+
   // Define proper initial values that match form expectations
   const initial: ProductFilters = {
     search: "",
@@ -63,22 +63,30 @@ export function useProductFilters(pagination?: {
     hasAppliedFilters,
   } = useFilters(initial, productFilterConfig);
 
-  // Combine filters with pagination params
-  const filtersWithPagination = { ...filters, ...pagination };
+  // Add page and limit to filters for API call
+  const filtersWithPagination = {
+    ...filters,
+    page: currentPage,
+    limit: pageSize,
+  };
 
   // Query hook manages its own loading states and receives applied filters directly
-  const {
-    data,
-    pagination: paginationData,
-    isLoading,
-    isFetching,
-    error,
-    refetch,
-  } = useProducts(filtersWithPagination);
+  const { data, pagination, isLoading, isFetching, error, refetch } =
+    useProducts(filtersWithPagination);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters.search, filters.tag, filters.status, filters.price]);
+
+  // Reset to page 1 when page size changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [pageSize]);
 
   return {
     data,
-    pagination: paginationData,
+    pagination,
     error,
     refetch,
     // Filter state and actions
@@ -93,7 +101,10 @@ export function useProductFilters(pagination?: {
     isFetching,
     // Config with options
     config: productFilterConfig,
+    // Pagination state
+    currentPage,
+    setCurrentPage,
   } as const;
 }
 
-export default useProductFilters;
+export default useProductsPaginated;

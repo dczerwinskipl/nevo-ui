@@ -81,4 +81,16 @@ export type Tokens = {
     disabled: string;
     loading: string;
   };
+
+  // Z-index scale for layering
+  zIndex: {
+    base: number;
+    sticky: number;
+    dropdown: number;
+    overlay: number;
+    modal: number;
+    popover: number;
+    tooltip: number;
+    toast: number;
+  };
 };

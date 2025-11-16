@@ -8,6 +8,7 @@ export type {
   TableProps,
   TableColumn,
   TableAction,
+  TablePaginationConfig,
   CellRenderer,
   LoadingOverlayProps,
   TableSkeletonProps,

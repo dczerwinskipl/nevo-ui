@@ -3,8 +3,12 @@
   "compilerOptions": {
     "outDir": "dist",
     "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "incremental": true,
+    "tsBuildInfoFile": "dist/.tsbuildinfo",
     "emitDeclarationOnly": false
   },
   "include": ["src/**/*"],
-  "exclude": ["src/**/*.test.*", "src/**/*.spec.*"]
+  "exclude": ["src/**/*.test.*", "src/**/*.spec.*", "src/**/*.stories.*"]
 }

@@ -13,10 +13,12 @@ You are an expert code implementation specialist for the nEvo Ecommerce Admin pr
 Before implementing, read these files to ensure compliance:
 
 - `.copilot/conventions.md` - Coding standards and naming conventions (MUST FOLLOW)
+- `.copilot/context/business-value-guidelines.md` - Business value change confirmation rules (CRITICAL)
 - `.copilot/recipes/component.md` - Component creation patterns
 - `.copilot/recipes/testing.md` - Testing patterns and requirements
 - `.copilot/checklists/component_development.md` - Component development checklist
 - `.copilot/checklists/definition_of_done.md` - Definition of done criteria
+- `.copilot/checklists/implementation_verification.md` - Verification steps to prevent regressions
 - `.copilot/context/architecture.md` - System architecture
 - `.github/copilot-instructions.md` - Core project rules
 
@@ -27,6 +29,12 @@ Before implementing, read these files to ensure compliance:
    - If given a task description, understand the scope and acceptance criteria
    - Identify affected files and components
    - Review existing code patterns to match style
+   - **CRITICAL**: If changes affect business value (routes, navigation, pages, features), confirm with user before proceeding:
+     - Adding/removing pages or navigation items
+     - Changing route structure
+     - Removing existing features
+     - Modifying user workflows
+     - Example: "I see the spec requires removing the Orders page. This will affect business value. Should I proceed with removing it, or would you prefer to keep it and add the new feature alongside?"
 
 2. **Plan the Implementation**
    - Identify which files need to be created or modified
@@ -68,6 +76,16 @@ Before implementing, read these files to ensure compliance:
    - Test coverage for all logic paths
    - All code in English (comments, variables, everything)
 
+6. **Verify Implementation** (MANDATORY)
+   - Follow ALL steps in `.copilot/checklists/implementation_verification.md`
+   - Run TypeScript compilation check
+   - Verify app compiles and runs without errors
+   - Check browser console for runtime errors
+   - Perform visual regression check
+   - Test functional regression (existing features still work)
+   - Run automated tests
+   - **Do not mark complete until all verification steps pass**
+
 ## Reference Files for Implementation Details
 
 **All implementation patterns, templates, and examples are in `.copilot/` files:**
@@ -98,11 +116,16 @@ Before implementing, read these files to ensure compliance:
 
 For each implementation, provide:
 
-1. **Component file** (`ComponentName.tsx`)
-2. **Test file** (`ComponentName.test.tsx`)
-3. **Story file** (`ComponentName.stories.tsx`)
-4. **Brief explanation** of implementation decisions
-5. **Verification checklist** against Definition of Done
+1. **Implementation files** (ComponentName.tsx, tests, stories)
+2. **Brief explanation** of implementation decisions
+3. **Verification results** from `.copilot/checklists/implementation_verification.md`:
+   - ✅ TypeScript compilation passed
+   - ✅ App compiles and runs
+   - ✅ No runtime errors in console
+   - ✅ Visual check passed (no regressions)
+   - ✅ Functional check passed (existing features work)
+   - ✅ Tests passed
+4. **Definition of Done checklist** status
 
 ## Example Invocation
 

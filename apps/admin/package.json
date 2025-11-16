@@ -7,7 +7,7 @@
     "predev": "pnpm msw:init",
     "dev": "vite",
     "dev:fresh": "pnpm clean-cache && pnpm dev",
-    "clean-cache": "node -e \"const fs = require('fs'); ['node_modules/.vite', '.vite-dev'].forEach(d => { try { fs.rmSync(d, {recursive: true, force: true}); } catch(e) {} })\"",
+    "clean-cache": "node -e \"const fs = require('fs'); const dirs = ['node_modules/.vite', '.vite-dev', '.vite']; dirs.forEach(d => { try { fs.rmSync(d, {recursive: true, force: true}); console.log(`✓ Cleaned ${d}`); } catch(e) { console.log(`✗ ${d} not found`); } })\"",
     "build": "pnpm msw:init && tsc -b && vite build",
     "preview": "vite preview",
     "lint": "echo 'lint placeholder'",

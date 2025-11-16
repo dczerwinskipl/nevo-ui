@@ -88,6 +88,16 @@ export const tokens = {
       disabled: "#64748b",
       loading: "#6d6aff",
     },
+    zIndex: {
+      base: 0,
+      sticky: 30,
+      dropdown: 40,
+      overlay: 50,
+      modal: 50,
+      popover: 60,
+      tooltip: 70,
+      toast: 80,
+    },
   } satisfies Tokens,
 
   light: {
@@ -179,6 +189,16 @@ export const tokens = {
       info: "#3b82f6",
       disabled: "#94a3b8",
       loading: "#6d6aff",
+    },
+    zIndex: {
+      base: 0,
+      sticky: 30,
+      dropdown: 40,
+      overlay: 50,
+      modal: 50,
+      popover: 60,
+      tooltip: 70,
+      toast: 80,
     },
   } satisfies Tokens,
 };
