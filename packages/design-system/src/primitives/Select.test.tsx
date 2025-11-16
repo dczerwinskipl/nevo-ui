@@ -814,9 +814,10 @@ describe("Select", () => {
           '[role="listbox"]'
         ) as HTMLElement;
         expect(dropdown).toBeInTheDocument();
-        // Should be positioned above trigger (top < trigger.top)
-        const dropdownTop = parseInt(dropdown.style.top);
-        expect(dropdownTop).toBeLessThan(150);
+        // Should be positioned above trigger using bottom CSS property
+        // When near bottom of viewport, dropdown uses 'bottom' instead of 'top'
+        expect(dropdown.style.bottom).toBeTruthy();
+        expect(dropdown.style.top).toBe("");
       });
     });
 
@@ -853,8 +854,9 @@ describe("Select", () => {
     });
 
     // Note: Scroll and resize tests are skipped because they test implementation details
-    // that rely on DOM APIs that don't work reliably in JSDOM (getBoundingClientRect mocking).
-    // The scroll/resize event listeners are present in the code and work correctly in real browsers.
+    // that rely on DOM APIs that don't work reliably in JSDOM (getBoundingClientRect
+    // mocking). The scroll/resize event listeners are present in the code and work
+    // correctly in real browsers.
     // These are better tested via E2E tests or manual testing.
     it.skip("should update position on scroll", async () => {
       const user = userEvent.setup();

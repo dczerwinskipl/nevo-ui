@@ -1,24 +1,52 @@
-import { defineConfig } from "vite";
+import { defineConfig, Plugin } from "vite";
 import react from "@vitejs/plugin-react";
+import path from "path";
+
+// Plugin to watch design-system dist folder and trigger full reload on changes
+function watchDesignSystem(): Plugin {
+  return {
+    name: "watch-design-system",
+    configureServer(server) {
+      const designSystemDist = path.resolve(
+        __dirname,
+        "../../packages/design-system/dist"
+      );
+
+      server.watcher.add(path.join(designSystemDist, "**/*"));
+
+      server.watcher.on("change", (file) => {
+        if (file.includes("design-system/dist")) {
+          console.log(`[HMR] Design system changed: ${path.basename(file)}`);
+          server.ws.send({
+            type: "full-reload",
+            path: "*",
+          });
+        }
+      });
+    },
+  };
+}
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), watchDesignSystem()],
 
   server: {
     port: 5173,
-    watch: {
-      // Watch workspace packages - Vite should detect changes in node_modules/@nevo
-      ignored: ["!**/node_modules/@nevo/**"],
-    },
   },
 
   resolve: {
     dedupe: ["react", "react-dom"],
+    // Alias design-system to its dist folder to bypass pre-bundling
+    alias: {
+      "@nevo/design-system": path.resolve(
+        __dirname,
+        "../../packages/design-system/dist"
+      ),
+    },
   },
 
   optimizeDeps: {
-    // Force Vite to include workspace packages in optimization
-    // This ensures changes to these packages trigger HMR
-    include: ["@nevo/design-system", "@nevo/api-client", "@nevo/api-mocks"],
+    // Exclude design-system from pre-bundling
+    exclude: ["@nevo/design-system"],
   },
 });

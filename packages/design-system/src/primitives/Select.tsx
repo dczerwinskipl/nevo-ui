@@ -230,7 +230,6 @@ export const Select: React.FC<SelectProps> = ({
           )}
         />
       </button>
-
       {isOpen &&
         createPortal(
           <div
@@ -281,7 +280,6 @@ export const Select: React.FC<SelectProps> = ({
           </div>,
           document.body
         )}
-
       {helperText && (
         <span
           className={clsx(
