@@ -20,25 +20,19 @@ export const ADMIN_NAVIGATION: NavigationItem[] = [
   },
   {
     key: "products",
-    label: "Produkty",
+    label: "Products",
     icon: <Package className="w-4 h-4" />,
-    children: [
-      { key: "products", label: "Lista produktów" },
-      { key: "products-paginated", label: "Produkty (Paginated)" },
-    ],
+    children: [{ key: "products", label: "Product List" }],
   },
   {
     key: "orders",
-    label: "Zamówienia",
+    label: "Orders",
     icon: <ShoppingCart className="w-4 h-4" />,
-    children: [
-      { key: "orders", label: "Lista zamówień" },
-      { key: "orders-cursor", label: "Orders (Cursor)" },
-    ],
+    children: [{ key: "orders", label: "Order List" }],
   },
   {
     key: "users",
-    label: "Użytkownicy",
+    label: "Users",
     icon: <Users className="w-4 h-4" />,
   },
 ];

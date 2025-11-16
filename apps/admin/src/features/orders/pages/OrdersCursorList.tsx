@@ -4,7 +4,7 @@ import { OrdersTable } from "../components/OrdersTable";
 import { OrdersFilters } from "../components/OrdersFilters";
 import { useOrderFilters } from "../hooks/useOrderFilters";
 
-export function OrdersCursorList() {
+export function OrdersList() {
   const {
     data,
     hasNext,
@@ -28,15 +28,7 @@ export function OrdersCursorList() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <div>
-          <Typography type="section-title">
-            Orders (Cursor Pagination)
-          </Typography>
-          <Typography type="caption" className="text-muted mt-1">
-            Cursor-style pagination with hasNext only - efficient for large
-            datasets
-          </Typography>
-        </div>
+        <Typography type="section-title">Orders</Typography>
       </div>
 
       {/* Filters using design system component */}
@@ -67,20 +59,6 @@ export function OrdersCursorList() {
           disabled: isFetching,
         }}
       />
-
-      {/* Info box explaining cursor pagination */}
-      <div className="mt-4 p-4 bg-card border border-border rounded-lg">
-        <Typography type="subtitle" className="mb-2">
-          About Cursor Pagination
-        </Typography>
-        <Typography type="body" className="text-muted">
-          This page demonstrates cursor-style pagination where the backend
-          fetches <strong>N+1</strong> records (e.g., 11 items when limit is
-          10). If more items are returned than requested, we know there's a next
-          page. This approach is more efficient for large datasets because it
-          doesn't require counting total records.
-        </Typography>
-      </div>
     </div>
   );
 }

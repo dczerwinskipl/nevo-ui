@@ -55,12 +55,19 @@ export const Select: React.FC<SelectProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [dropdownPosition, setDropdownPosition] = useState({
+  const [dropdownPosition, setDropdownPosition] = useState<{
+    top?: number;
+    bottom?: number;
+    left: number;
+    width: number;
+    maxHeight: number;
+    placement: "bottom" | "top";
+  }>({
     top: 0,
     left: 0,
     width: 0,
     maxHeight: 240,
-    placement: "bottom" as "bottom" | "top",
+    placement: "bottom",
   });
 
   const selectedOption = options.find((opt) => opt.value === value);
@@ -90,16 +97,25 @@ export const Select: React.FC<SelectProps> = ({
             ? Math.min(spaceAbove - 8, dropdownHeight) // 8px margin
             : Math.min(spaceBelow - 8, dropdownHeight);
 
-        setDropdownPosition({
-          top:
-            placement === "bottom"
-              ? rect.bottom + 4 // 4px offset (mt-1)
-              : rect.top - maxHeight - 4,
-          left: rect.left,
-          width: rect.width,
-          maxHeight,
-          placement,
-        });
+        // For top placement, use bottom property (viewport height - trigger top + margin)
+        // For bottom placement, use top property (trigger bottom + margin)
+        if (placement === "top") {
+          setDropdownPosition({
+            bottom: viewportHeight - rect.top + 4, // 4px margin above trigger
+            left: rect.left,
+            width: rect.width,
+            maxHeight,
+            placement,
+          });
+        } else {
+          setDropdownPosition({
+            top: rect.bottom + 4, // 4px margin below trigger
+            left: rect.left,
+            width: rect.width,
+            maxHeight,
+            placement,
+          });
+        }
       };
 
       // Initial position calculation
@@ -223,7 +239,9 @@ export const Select: React.FC<SelectProps> = ({
             role="listbox"
             style={{
               position: "fixed",
-              top: `${dropdownPosition.top}px`,
+              ...(dropdownPosition.top !== undefined
+                ? { top: `${dropdownPosition.top}px` }
+                : { bottom: `${dropdownPosition.bottom}px` }),
               left: `${dropdownPosition.left}px`,
               width: `${dropdownPosition.width}px`,
               maxHeight: `${dropdownPosition.maxHeight}px`,

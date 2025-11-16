@@ -2,22 +2,13 @@ import React from "react";
 import { RouteObject } from "react-router-dom";
 import { Layout } from "./Layout";
 import { ProductsList } from "../features/products";
-import { ProductsPaginatedList } from "../features/products-paginated";
-import { OrdersCursorList } from "../features/orders";
-import { ROUTES } from "../shared/constants";
+import { OrdersList } from "../features/orders";
 
 // Simple placeholder components for routes that don't exist yet
 const Dashboard = () => (
   <div className="p-6">
     <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
     <p className="text-gray-600">Dashboard functionality coming soon...</p>
-  </div>
-);
-
-const Orders = () => (
-  <div className="p-6">
-    <h1 className="text-2xl font-bold mb-4">Orders</h1>
-    <p className="text-gray-600">Orders management coming soon...</p>
   </div>
 );
 
@@ -45,31 +36,23 @@ export const routes: RouteObject[] = [
         element: <Dashboard />,
       },
       {
-        path: ROUTES.DASHBOARD,
+        path: "/dashboard",
         element: <Dashboard />,
       },
       {
-        path: ROUTES.PRODUCTS,
+        path: "/products",
         element: <ProductsList />,
       },
       {
-        path: ROUTES.PRODUCTS_PAGINATED,
-        element: <ProductsPaginatedList />,
-      },
-      {
-        path: `${ROUTES.PRODUCTS}/:id`,
+        path: "/products/:id",
         element: <ProductDetail />,
       },
       {
-        path: ROUTES.ORDERS,
-        element: <Orders />,
+        path: "/orders",
+        element: <OrdersList />,
       },
       {
-        path: ROUTES.ORDERS_CURSOR,
-        element: <OrdersCursorList />,
-      },
-      {
-        path: ROUTES.USERS,
+        path: "/users",
         element: <Users />,
       },
     ],

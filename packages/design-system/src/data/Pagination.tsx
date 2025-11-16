@@ -219,6 +219,7 @@ export const Pagination: React.FC<PaginationProps> = ({
               value={pageSize}
               onChange={handlePageSizeChange}
               disabled={disabled}
+              allowClear={false}
               options={pageSizeOptions.map((size) => ({
                 value: size,
                 label: String(size),

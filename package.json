@@ -16,7 +16,7 @@
     "build:admin": "pnpm --filter @nevo/ecommerce-admin-app build",
     "dev": "turbo run dev --parallel",
     "dev:admin": "pnpm --filter @nevo/ecommerce-admin-app dev",
-    "dev:fresh": "pnpm clean-dev && pnpm dev",
+    "dev:fresh": "pnpm clean-cache && pnpm dev",
     "clean-dev": "pnpm clean-cache && pnpm clean-dist",
     "clean-cache": "pnpm --filter @nevo/ecommerce-admin-app clean-cache",
     "clean-dist": "pnpm -r exec -- node -e \"const fs = require('fs'); ['dist', '.tsbuildinfo'].forEach(d => { try { fs.rmSync(d, {recursive: true, force: true}); } catch(e) {} })\"",
